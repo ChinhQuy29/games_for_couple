@@ -18,6 +18,7 @@
     "@gfc/kitchen": "*",
     "@gfc/movingin": "*",
     "@gfc/escape": "*",
+    "@gfc/carry": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/tethered": "*",

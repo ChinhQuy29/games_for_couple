@@ -151,6 +151,16 @@ export const GAMES: GameInfo[] = [
     minutes: '15–25 min',
   },
   {
+    id: 'carry',
+    title: 'Handle With Care',
+    emoji: '📦',
+    tagline: 'Carry the valuables to the truck. The piano needs both of you.',
+    path: '/carry',
+    status: 'playable',
+    accent: 'yellow',
+    minutes: '10–15 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

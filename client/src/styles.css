@@ -15,6 +15,7 @@
 @source '../../games/two-body-problem/client';
 @source '../../games/moving-in/client';
 @source '../../games/escape-room/client';
+@source '../../games/handle-with-care/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

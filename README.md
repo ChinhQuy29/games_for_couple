@@ -20,6 +20,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 🕹️ **Two-Body Problem** | `/two-body-problem` | One character, two players: one walks, one jumps. Swap pads trade the jobs. 6 levels with keys, gates and moving platforms. Co-op. | Keyboard | [README](games/two-body-problem/README.md) · [spec](games/two-body-problem/docs/spec.md) |
 | 📦 **Moving In** | `/moving-in` | Two-player Dreamy Room: each unpacks your own box and you put every item in its exact spot, together. Six rooms tell a long-distance love story. Co-op. | Laptop (mouse/trackpad) | [README](games/moving-in/README.md) · [spec](games/moving-in/docs/spec.md) |
 | 🔐 **Escape Room for Two** | `/escape` | Locked in two different rooms: one of you sees each clue, the other has the controls. Dials, keypads, colors, levers and a pitch-dark maze. Co-op. | Laptop + a call | [README](games/escape-room/README.md) · [spec](games/escape-room/docs/spec.md) |
+| 📦 **Handle With Care** | `/carry` | Two clumsy movers, one house of valuables, one truck. Small things you carry or throw; the piano and fish tank need both of you holding on. Co-op. | Keyboard | [README](games/handle-with-care/README.md) · [spec](games/handle-with-care/docs/spec.md) |
 | 🎨 Blind Portrait Duel | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -125,6 +126,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Score:** time plus 15s per mistake, per room.
 - **Built with:** the shared kit, on the Socket.IO namespace `/escape`. Each player only ever receives their own side of a puzzle.
 
+### 📦 Handle With Care
+
+- **Setup:** 2 players with keyboards, about 10 minutes, co-op. Three houses: a studio, a two-floor family house, a mansion with a freight lift.
+- **Carrying:** E grabs or drops, F throws small things. Big things (TV, piano, fish tank, sofa) need both of you holding on and walking in step: no jumping, and pulling apart drops it.
+- **Damage:** door-frame bumps, hard landings and throws chip the value; fragile things break. Put things down in the truck zone to earn their value.
+- **Built with:** the shared kit's 30 Hz loop, with physics copied from Tethered and generalised to bodies of any size, on the Socket.IO namespace `/carry`.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -143,7 +151,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape`, `/carry` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -179,7 +187,8 @@ games/
 ├─ tethered/             # @gfc/tethered: co-op chained platformer, built on the kit
 ├─ two-body-problem/     # @gfc/twobody: one body, two players, built on the kit
 ├─ moving-in/            # @gfc/movingin: two-player Dreamy Room, built on the kit
-└─ escape-room/         # @gfc/escape: co-op two-room escape puzzles, built on the kit
+├─ escape-room/         # @gfc/escape: co-op two-room escape puzzles, built on the kit
+└─ handle-with-care/    # @gfc/carry: co-op furniture moving (R.E.P.O.-style), built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

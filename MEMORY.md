@@ -24,6 +24,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #12: Two-Body Problem** (co-op, It Takes Two/Pico Park-style: one body, walker + jumper) at `/two-body-problem`, in `games/two-body-problem/` (`@gfc/twobody`). It replaced the old coming-soon card.
 - **Game #13: Moving In** (two-player Dreamy Room/Unpacking) at `/moving-in`, in `games/moving-in/` (`@gfc/movingin`).
 - **Game #14: Escape Room for Two** (We Were Here-style) at `/escape`, in `games/escape-room/` (`@gfc/escape`). The first of 5 from [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md).
+- **Game #15: Handle With Care** (R.E.P.O.-style) at `/carry`, in `games/handle-with-care/` (`@gfc/carry`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-25)
@@ -115,6 +116,17 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Handle With Care
+- **Design:**
+  - side-view houses (32×18) with a doorway in the wall at columns 24–25 and a truck zone outside;
+  - 10 valuable kinds (value, fragility, small/big); E = grab/drop, F = throw (edge-triggered on the server);
+  - big things need two holders: slower, no jump, pulled apart → drop;
+  - damage from carried bumps, hard landings and wall hits; delivered = put down and resting in the truck.
+- **Physics:** copied from Tethered and generalised (per-body w/h; `stepBody` takes `{speed, canJump}`).
+- **Level fixes before testing:** the studio loft needed a step (4-tile rise > jump); the mansion lift's bottom stop was raised so it can be boarded.
+- 10 tests, including two players carrying the TV through the doorway into the truck. Play-tested in two tabs: the render, grabbing the lamp, carrying it overhead, putting it down.
+- **Not verified in the browser:** a full two-person run of each house (it needs two keyboards). Delivery and big-item carrying are covered by tests.
 
 ### 2026-10-25: Couple games plan 2 + Escape Room for Two
 - **The ask:** the user picked ideas #4–#8 from a researched list of 10 (Escape Room, Handle With Care, Road Trip, Codenames Duet, Paint & Hide), to build one by one. The plan is in [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md).
