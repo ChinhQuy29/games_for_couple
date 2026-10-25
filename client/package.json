@@ -20,6 +20,7 @@
     "@gfc/rush": "*",
     "@gfc/shared": "*",
     "@gfc/tethered": "*",
+    "@gfc/twobody": "*",
     "@gfc/wyr": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

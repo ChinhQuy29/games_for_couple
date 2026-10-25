@@ -21,9 +21,16 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #9: Kitchen Chaos** (co-op, Overcooked-style) at `/kitchen`, in `games/kitchen-chaos/` (`@gfc/kitchen`).
 - **Game #10: Ghost Hunt** (co-op, Phasmophobia-style) at `/ghost`, in `games/ghost-hunt/` (`@gfc/ghost`).
 - **Game #11: Tethered** (co-op, Chained Together/PEAK-style platformer) at `/tethered`, in `games/tethered/` (`@gfc/tethered`).
+- **Game #12: Two-Body Problem** (co-op, It Takes Two/Pico Park-style: one body, walker + jumper) at `/two-body-problem`, in `games/two-body-problem/` (`@gfc/twobody`). It replaced the old coming-soon card.
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
-## Current status (2026-10-24)
+## Current status (2026-10-25)
+
+**Playable games: 12.** The 7 earlier games (below), plus Number Rush and the 5 co-op games built from [docs/coop-games-plan.md](docs/coop-games-plan.md): Bomb Squad, Kitchen Chaos, Ghost Hunt, Tethered and Two-Body Problem. All of these are built on the shared kit (`kit/`) and have unit tests; each was play-tested in two browser tabs at 1280×800.
+
+- **What two tabs couldn't verify:** the physics games (Tethered, Two-Body) need two real people on two keyboards to judge feel and difficulty. Two-Body's levels 1 and 6 are proven finishable by scripted tests, and Tethered's first jumps by a headless simulation. Tuning knobs are in `shared/physics.ts` (`PHYS`) and the level specs.
+- **Only coming-soon card left:** Blind Portrait Duel.
+
 
 **Jjinja Battle:** fully working as imported (classic and rally modes, bot opponent, random matchmaking, camera/WebRTC with a TURN relay, match recording, highlight clips, safety and rate limits). It's served by the shared server at `/jjinja`. Verified in two tabs: invite link, join and WebSocket. Not verified here: the mic and camera, since the browser pane blocks them.
 
@@ -98,7 +105,7 @@ npm run build && npm start   # production: one server on $PORT (default 3001) se
 
 ## Ideas backlog (future games for the portal)
 
-Already shown as "coming soon" cards in `shared/src/games.ts`: Blind Portrait Duel, Two-Body Problem, Would You Rather: Unhinged.
+Still a "coming soon" card in `shared/src/games.ts`: Blind Portrait Duel.
 Other ideas from brainstorming: Telephone Doodle, Bad Charades by Webcam, Cook Together Badly, Wobbly Tower, Liar Liar, Pet Rock Tamagotchi (async), Story Chain (async).
 
 To add a game, follow "Adding a game" in the root README: make a `games/<id>/` package with its own README and docs, add a registry entry in `shared/src/games.ts`, and plug it into `client/src/App.tsx` / `server/src/index.ts`.
@@ -106,6 +113,12 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Two-Body Problem (all 5 co-op games done)
+- **Game:** one body; Walker = left/right, Jumper = jump (only the matching part of each player's input counts). Swap pads trade jobs once per visit, and the first Walker alternates per level. 6 one-screen levels (32×18) with spikes, one-way platforms, a key/door, a 5s button gate, a ferry and a lift. R retries.
+- **Physics:** copied from Tethered on purpose (games stay independent). Runs on the kit's 30 Hz loop.
+- 10 tests, including scripted runs that finish level 1 (two separate half-controls) and level 6 (lift → key → swap → button → gate → door → goal). Play-tested in two tabs: the walker's keys move it, the jumper's key jumps it, and the walker's jump is ignored.
+- **Wrap-up:** root README table/sections/layout, the co-op plan's status line, MEMORY status refreshed.
 
 ### 2026-10-25: Kit real-time loop + Tethered
 - **Kit:**

@@ -14,6 +14,7 @@ import { registerBomb } from '@gfc/bomb/server';
 import { registerKitchen } from '@gfc/kitchen/server';
 import { registerGhost } from '@gfc/ghost/server';
 import { registerTethered } from '@gfc/tethered/server';
+import { registerTwoBody } from '@gfc/twobody/server';
 import { registerWyr } from '@gfc/wyr/server';
 
 // `--port` wins so `npm run dev` always lands on 3001 (Vite proxies there); hosts set PORT in prod.
@@ -52,6 +53,7 @@ registerBomb(io);
 registerKitchen(io);
 registerGhost(io);
 registerTethered(io);
+registerTwoBody(io);
 attachJjinja(httpServer);
 
 const onListening = () => console.log(`💞 Games for Couple server on http://${HOST ?? 'localhost'}:${PORT}`);

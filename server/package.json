@@ -19,6 +19,7 @@
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/tethered": "*",
+    "@gfc/twobody": "*",
     "@gfc/wyr": "*",
     "express": "^4.21.2",
     "socket.io": "^4.8.1",

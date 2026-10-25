@@ -1,5 +1,7 @@
 # Co-op games plan: 5 Steam hits, remade for two
 
+> **Status: all 5 built and pushed (2026-10-25):** 💣 [Bomb Squad](../games/bomb-squad/README.md) · 🍳 [Kitchen Chaos](../games/kitchen-chaos/README.md) · 🔦 [Ghost Hunt](../games/ghost-hunt/README.md) · ⛓️ [Tethered](../games/tethered/README.md) · 🕹️ [Two-Body Problem](../games/two-body-problem/README.md). Each game's `docs/spec.md` describes what was actually built, where it differs from this plan.
+>
 > Written 2026-10-25 before building. Each game gets its own folder under `games/` with a README and `docs/spec.md`, is built on the shared kit (`kit/`), and is committed and pushed when done.
 
 ## What's popular (research summary)

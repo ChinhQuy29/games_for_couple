@@ -146,7 +146,7 @@ export const GAMES: GameInfo[] = [
     emoji: '🕹️',
     tagline: 'One character, two players. You walk, they jump. Good luck.',
     path: '/two-body-problem',
-    status: 'coming-soon',
+    status: 'playable',
     accent: 'mint',
     minutes: '15 min',
   },
