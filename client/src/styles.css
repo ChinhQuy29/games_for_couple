@@ -6,6 +6,8 @@
 @source '../../games/would-you-rather/client';
 @source '../../games/aog-trivia/client';
 @source '../../games/hide-and-seek/client';
+@source '../../kit/client';
+@source '../../games/number-rush/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

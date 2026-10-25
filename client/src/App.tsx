@@ -4,6 +4,7 @@ import AogApp from '@gfc/aog/client';
 import DoodleApp from '@gfc/doodle/client';
 import FmsApp from '@gfc/fms/client';
 import HnsApp from '@gfc/hns/client';
+import RushApp from '@gfc/rush/client';
 import WyrApp from '@gfc/wyr/client';
 import NotFound from './portal/NotFound';
 
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/wyr/*" element={<WyrApp />} />
       <Route path="/aog/*" element={<AogApp />} />
       <Route path="/hns/*" element={<HnsApp />} />
+      <Route path="/rush/*" element={<RushApp />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

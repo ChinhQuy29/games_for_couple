@@ -12,6 +12,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 🤔 **Would You Rather: Unhinged** | `/wyr` | Answer ridiculous dilemmas at the same time and guess your partner's pick. Disagree, and you both have to defend yourselves. | Keyboard | [README](games/would-you-rather/README.md) · [spec](games/would-you-rather/docs/spec.md) |
 | 👻 **Fan Cứng AOG** | `/aog` | Liên Quân & AOG trivia battle: SGP, Lai Bâng and the golden era, FPT x Flash, finals, international events, drama. Vietnamese or English. | Keyboard or tap | [README](games/aog-trivia/README.md) · [spec](games/aog-trivia/docs/spec.md) |
 | 🙈 **Hide and Seek** | `/hns` | Prop hunt for two: one turns into a lamp, a cushion or a duck and hides in a room full of real ones; the other gets 5 shots to find the fake. | Laptop (mouse/trackpad) | [README](games/hide-and-seek/README.md) · [spec](games/hide-and-seek/docs/spec.md) |
+| 🔢 **Number Rush** | `/rush` | 1 to 100 on one board: race to click the next number first. Ascending, descending or random order. | Laptop (mouse/trackpad) | [README](games/number-rush/README.md) · [spec](games/number-rush/docs/spec.md) |
 | 🎨 Blind Portrait Duel · 🕹️ Two-Body Problem | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -58,6 +59,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Hunting:** 5 shots and 60 seconds. Missed shots make real props react (💥 CRASH, 🦆 QUACK). The fake wiggles every 15s, and the hider has 2 sneak moves that slide visibly across both screens.
 - **Built with:** React and one big SVG map (1600×1000 world units, made for laptops), with hand-drawn SVG props and the Socket.IO namespace `/hns`. The server never tells the hunter which prop is fake until the round ends.
 
+### 🔢 Number Rush
+
+- **Setup:** 2 players, 5–10 minutes. 30, 50 or 100 numbers scattered on a calm or chaotic board.
+- **Race:** you both hunt for the same target. The first correct click scores, timed on each device with a short photo finish, so a slower connection doesn't lose ties. A wrong click locks you out for 1.5s.
+- **Recap:** the winner, fastest find, average time, best streak, and the board colored by who found what.
+- **Built with:** the shared game kit (`kit/`) and an SVG board, on the Socket.IO namespace `/rush`.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -76,7 +84,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -104,7 +112,9 @@ games/
 ├─ telephone-doodle/     # @gfc/doodle: client/, server/, shared/, docs/, README.md
 ├─ would-you-rather/     # @gfc/wyr: client/, server/, shared/, docs/, README.md
 ├─ aog-trivia/           # @gfc/aog: client/, server/, shared/, docs/, README.md
-└─ hide-and-seek/        # @gfc/hns: client/, server/, shared/, docs/, README.md
+├─ hide-and-seek/        # @gfc/hns: client/, server/, shared/, docs/, README.md
+└─ number-rush/          # @gfc/rush: built on the kit
+kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game
 shared/                  # games.ts, the registry the portal home is built from
@@ -114,6 +124,7 @@ MEMORY.md                # running project log: status, decisions, next steps
 
 ## Adding a game
 
+0. New games should use the shared kit (see [kit/README.md](kit/README.md)): it handles rooms, joining, timers and the lobby.
 1. Create `games/<id>/` as a workspace package (add it to `workspaces` in the root `package.json`), with a `README.md` and, if needed, a `docs/` folder.
 2. Add it to `shared/src/games.ts` so it shows up on the portal.
 3. Plug it in:

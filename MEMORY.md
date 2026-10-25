@@ -16,6 +16,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #4: Would You Rather: Unhinged** at `/wyr`, in `games/would-you-rather/` (package `@gfc/wyr`). Docs: [README](games/would-you-rather/README.md), [spec](games/would-you-rather/docs/spec.md).
 - **Game #5: Fan Cứng AOG** (Liên Quân/AOG trivia) at `/aog`, in `games/aog-trivia/` (package `@gfc/aog`). Docs: [README](games/aog-trivia/README.md), [spec](games/aog-trivia/docs/spec.md).
 - **Game #6: Hide and Seek** (prop hunt) at `/hns`, in `games/hide-and-seek/` (package `@gfc/hns`). Docs: [README](games/hide-and-seek/README.md), [spec](games/hide-and-seek/docs/spec.md).
+- **Game #7: Number Rush** at `/rush`, in `games/number-rush/` (`@gfc/rush`), the first game on the shared **kit** (`kit/`, `@gfc/kit`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -101,6 +102,15 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Shared kit + Number Rush
+- **The ask:** the user requested a 1–100 number-finding race. They also requested: then research popular co-op Steam games, plan 5 couple-friendly adaptations, and build them one by one without asking, retrying failures, and not stopping until all are done.
+- **Kit:** created `kit/` (`@gfc/kit`) to stop copying room/socket/lobby code into every game. `registerGame(io, def)` on the server; `createGameClient()` on the client, which gives AppShell, LobbyShell, Choice, Scores, TimerBar, Avatar, RecapActions and WaitingBlob. Older games keep their own copies.
+- **Number Rush:**
+  - 30/50/100 numbers on a jittered grid, in asc/desc/random order, with a calm or chaos style;
+  - a 1.5s lock after a wrong click;
+  - a fair "photo finish": the first correct click opens a 350ms window, and the lowest device-timed reaction (clamped to the server-seen time −3s/+1.5s) wins.
+  - 9 tests. Play-tested in two tabs at 1280×800 through a full 100-number game.
 
 ### 2026-10-25: Hide and Seek (prop hunt)
 - **Request:** the user wanted a prop hunt where one player becomes a random object (3 choices) and hides, and the other shoots (5 chances). They chose "go with your recommendations", the name **Hide and Seek**, and **laptops** as the main device.

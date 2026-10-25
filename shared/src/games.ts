@@ -81,6 +81,16 @@ export const GAMES: GameInfo[] = [
     minutes: '15–20 min',
   },
   {
+    id: 'rush',
+    title: 'Number Rush',
+    emoji: '🔢',
+    tagline: '1 to 100 on one board. Race to find the next number first.',
+    path: '/rush',
+    status: 'playable',
+    accent: 'yellow',
+    minutes: '5–10 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',
