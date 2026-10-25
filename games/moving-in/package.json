@@ -1,0 +1,32 @@
+{
+  "name": "@gfc/movingin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": "./client/MovingInApp.tsx",
+    "./server": "./server/index.ts",
+    "./shared": "./shared/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gfc/kit": "*",
+    "framer-motion": "^11.15.0",
+    "zod": "^3.24.1"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "vitest": "^2.1.8"
+  }
+}

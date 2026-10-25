@@ -18,6 +18,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 🔦 **Ghost Hunt** | `/ghost` | One walks a dark haunted house with a flashlight; the other has the map, cameras and EMF. Find the evidence, name the ghost, get out. Co-op. | Laptop + keyboard | [README](games/ghost-hunt/README.md) · [spec](games/ghost-hunt/docs/spec.md) |
 | ⛓️ **Tethered** | `/tethered` | Two climbers chained together on a tall tower: jump, anchor, swing. If one falls, you both do. Co-op. | Keyboard | [README](games/tethered/README.md) · [spec](games/tethered/docs/spec.md) |
 | 🕹️ **Two-Body Problem** | `/two-body-problem` | One character, two players: one walks, one jumps. Swap pads trade the jobs. 6 levels with keys, gates and moving platforms. Co-op. | Keyboard | [README](games/two-body-problem/README.md) · [spec](games/two-body-problem/docs/spec.md) |
+| 📦 **Moving In** | `/moving-in` | Two-player Dreamy Room: each unpacks your own box and you put every item in its exact spot, together. Six rooms tell a long-distance love story. Co-op. | Laptop (mouse/trackpad) | [README](games/moving-in/README.md) · [spec](games/moving-in/docs/spec.md) |
 | 🎨 Blind Portrait Duel | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -107,6 +108,14 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Levels:** spikes, one-way platforms, a key and door, a 5-second button gate, a ferry over spikes, and a final level with everything. R restarts a level.
 - **Built with:** the same 30 Hz kit loop, with physics copied from Tethered, on the Socket.IO namespace `/twobody`.
 
+### 📦 Moving In
+
+- **Setup:** 2 players, 20–30 minutes for all 6 rooms, co-op. Inspired by Dreamy Room and Unpacking.
+- **Unpacking:** each of you clicks your own box to take things out, then drags them into place. Every item has one exact spot (identical items can swap). Anyone can move anything, and you see each other's drags live.
+- **Help:** misplaced items glow red once both boxes are empty, and 3 shared hints per room show a ghost outline.
+- **The story:** two bedrooms on a call → the visit → our bedroom, kitchen, bathroom, living room. A polaroid after each room and a photo album at the end.
+- **Built with:** the shared kit, 43 hand-drawn SVG items, on the Socket.IO namespace `/movingin`. Which item goes where never leaves the server.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -125,7 +134,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -159,7 +168,8 @@ games/
 ├─ kitchen-chaos/        # @gfc/kitchen: co-op cooking, built on the kit
 ├─ ghost-hunt/           # @gfc/ghost: co-op ghost hunting, built on the kit
 ├─ tethered/             # @gfc/tethered: co-op chained platformer, built on the kit
-└─ two-body-problem/     # @gfc/twobody: one body, two players, built on the kit
+├─ two-body-problem/     # @gfc/twobody: one body, two players, built on the kit
+└─ moving-in/            # @gfc/movingin: two-player Dreamy Room, built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

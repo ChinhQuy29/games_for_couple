@@ -22,11 +22,12 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #10: Ghost Hunt** (co-op, Phasmophobia-style) at `/ghost`, in `games/ghost-hunt/` (`@gfc/ghost`).
 - **Game #11: Tethered** (co-op, Chained Together/PEAK-style platformer) at `/tethered`, in `games/tethered/` (`@gfc/tethered`).
 - **Game #12: Two-Body Problem** (co-op, It Takes Two/Pico Park-style: one body, walker + jumper) at `/two-body-problem`, in `games/two-body-problem/` (`@gfc/twobody`). It replaced the old coming-soon card.
+- **Game #13: Moving In** (two-player Dreamy Room/Unpacking) at `/moving-in`, in `games/moving-in/` (`@gfc/movingin`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-25)
 
-**Playable games: 12.** The 7 earlier games (below), plus Number Rush and the 5 co-op games built from [docs/coop-games-plan.md](docs/coop-games-plan.md): Bomb Squad, Kitchen Chaos, Ghost Hunt, Tethered and Two-Body Problem. All of these are built on the shared kit (`kit/`) and have unit tests; each was play-tested in two browser tabs at 1280×800.
+**Playable games: 13** (Moving In added later the same day). The 7 earlier games (below), plus Number Rush and the 5 co-op games built from [docs/coop-games-plan.md](docs/coop-games-plan.md): Bomb Squad, Kitchen Chaos, Ghost Hunt, Tethered and Two-Body Problem. All of these are built on the shared kit (`kit/`) and have unit tests; each was play-tested in two browser tabs at 1280×800.
 
 - **What two tabs couldn't verify:** the physics games (Tethered, Two-Body) need two real people on two keyboards to judge feel and difficulty. Two-Body's levels 1 and 6 are proven finishable by scripted tests, and Tethered's first jumps by a headless simulation. Tuning knobs are in `shared/physics.ts` (`PHYS`) and the level specs.
 - **Only coming-soon card left:** Blind Portrait Duel.
@@ -113,6 +114,23 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Moving In (two-player Dreamy Room)
+- **The ask:** the user requested a 2-player version of *Dreamy Room* (ABI Games). Their choices:
+  - co-op "moving in together": each unpacks their own boxes;
+  - our long-distance story over 6 rooms;
+  - **strict** placement (every item one spot);
+  - hand-drawn SVG; glow + hint button; anyone can move anything; the name "Moving In".
+- **Design:**
+  - 1600×900 front-view rooms built from furniture rects plus slots `{x, y, kind, owner?}`, and 43 item kinds drawn in `client/ItemArt.tsx`;
+  - a drop snaps to the nearest free slot within 70 (any kind, so wrong placements are possible); identical kinds swap;
+  - room 1's slots are owner-bound (your stuff in your bedroom);
+  - the red glow comes only when both boxes are empty; 3 shared hints per room (4s ghost);
+  - live drags are relayed through `onConnection` without touching the state.
+- **Redaction:** slot kinds never leave the server.
+- 12 tests. Play-tested in two tabs at 1280×800: all 6 rooms completed by real pointer drags from both tabs (each tab placing its own box), plus a hint, the polaroids and the final album.
+- **Fixed after the play-test:** unpacked items stacked on one spot; they now fan out across the box top.
+- **Possible polish:** the rooms read a bit sparse; items could be larger, with more decor and sounds.
 
 ### 2026-10-25: Two-Body Problem (all 5 co-op games done)
 - **Game:** one body; Walker = left/right, Jumper = jump (only the matching part of each player's input counts). Swap pads trade jobs once per visit, and the first Walker alternates per level. 6 one-screen levels (32×18) with spikes, one-way platforms, a key/door, a 5s button gate, a ferry and a lift. R retries.

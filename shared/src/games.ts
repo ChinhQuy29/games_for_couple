@@ -131,6 +131,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–20 min',
   },
   {
+    id: 'moving-in',
+    title: 'Moving In',
+    emoji: '📦',
+    tagline: 'Unpack your two lives into one home. Every item has its place.',
+    path: '/moving-in',
+    status: 'playable',
+    accent: 'pink',
+    minutes: '20–30 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

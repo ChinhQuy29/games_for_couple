@@ -10,6 +10,7 @@ import KitchenApp from '@gfc/kitchen/client';
 import GhostApp from '@gfc/ghost/client';
 import TetheredApp from '@gfc/tethered/client';
 import TwoBodyApp from '@gfc/twobody/client';
+import MovingInApp from '@gfc/movingin/client';
 import WyrApp from '@gfc/wyr/client';
 import NotFound from './portal/NotFound';
 
@@ -29,6 +30,7 @@ export default function App() {
       <Route path="/ghost/*" element={<GhostApp />} />
       <Route path="/tethered/*" element={<TetheredApp />} />
       <Route path="/two-body-problem/*" element={<TwoBodyApp />} />
+      <Route path="/moving-in/*" element={<MovingInApp />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
