@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { HOUSES, ITEMS, type Frame, type ItemKind } from '../shared';
+import { TouchControls, type TouchButton } from '@gfc/kit/client';
 import { kit } from './kit';
 import { Stage, type Buffered } from './Stage';
 
@@ -54,23 +55,39 @@ const KEYS: Record<string, 'left' | 'right' | 'jump' | 'grab' | 'throw'> = {
   f: 'throw',
 };
 
+/** Keyboard and on-screen buttons together: a control is held if either holds it. */
+const merge = (keys: Record<string, boolean>, touch: Record<string, boolean>) =>
+  Object.fromEntries(Object.entries(keys).map(([k, v]) => [k, v || !!touch[k]]));
+
+const TOUCH: TouchButton[] = [
+  { id: 'left', icon: 'left', side: 'left', label: 'Walk left' },
+  { id: 'right', icon: 'right', side: 'left', label: 'Walk right' },
+  { id: 'grab', icon: 'grab', side: 'right', label: 'Pick up or put down' },
+  { id: 'throw', icon: 'throw', side: 'right', label: 'Throw' },
+  { id: 'jump', icon: 'jump', side: 'right', label: 'Jump' },
+];
+
 function useHeldKeys() {
   const { send } = useGame();
+  const keyHeld = useRef<Record<string, boolean>>({});
+  const touchHeld = useRef<Record<string, boolean>>({});
   useEffect(() => {
     const held = { left: false, right: false, jump: false, grab: false, throw: false };
+    keyHeld.current = held;
     const set = (e: KeyboardEvent, v: boolean) => {
       const what = KEYS[e.key.toLowerCase()];
       if (!what) return;
       e.preventDefault();
       if (held[what] === v) return;
       held[what] = v;
-      send('input', { ...held });
+      send('input', merge(held, touchHeld.current));
     };
     const down = (e: KeyboardEvent) => set(e, true);
     const up = (e: KeyboardEvent) => set(e, false);
     const blur = () => {
+      touchHeld.current = {};
       held.left = held.right = held.jump = held.grab = held.throw = false;
-      send('input', { ...held });
+      send('input', merge(held, touchHeld.current));
     };
     window.addEventListener('keydown', down);
     window.addEventListener('keyup', up);
@@ -81,6 +98,10 @@ function useHeldKeys() {
       window.removeEventListener('blur', blur);
     };
   }, [send]);
+  return (touch: Record<string, boolean>) => {
+    touchHeld.current = touch;
+    send('input', merge(keyHeld.current, touch));
+  };
 }
 
 export function Move() {
@@ -90,7 +111,7 @@ export function Move() {
   const frames = useRef<Buffered>({ prev: null, last: s.frame, at: performance.now() });
   const [hud, setHud] = useState<Frame | null>(s.frame);
   const [now, setNow] = useState(Date.now());
-  useHeldKeys();
+  const onTouch = useHeldKeys();
   useFrame<Frame>((f) => {
     frames.current = { prev: frames.current.last, last: f, at: performance.now() };
   });
@@ -109,7 +130,8 @@ export function Move() {
 
   return (
     <main className="relative flex flex-1 flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-3">
+      {/* On short screens (a phone held sideways) the HUD folds into a strip over the house. */}
+      <div className="flex flex-wrap items-center gap-3 [@media(max-height:520px)]:hidden">
         <span className="sticker px-3 py-1 font-display font-extrabold">
           🏠 {s.house + 1}/{HOUSES.length} · {house.name}
         </span>
@@ -117,11 +139,15 @@ export function Move() {
         <span className="sticker px-3 py-1 font-display font-extrabold">
           💰 {money(hud?.earned ?? s.earned)} <span className="text-sm text-ink-soft">/ {money(s.possible)}</span>
         </span>
-        <span className="ml-auto text-sm font-bold text-ink-soft">A/D move · W jump · E grab/drop · F throw</span>
+        <span className="ml-auto text-sm font-bold text-ink-soft [@media(pointer:coarse)]:hidden">A/D move · W jump · E grab/drop · F throw</span>
       </div>
-      <p className="text-sm font-semibold text-ink-soft">💡 {house.hint}</p>
+      <p className="text-sm font-semibold text-ink-soft [@media(max-height:520px)]:hidden">💡 {house.hint}</p>
       <div className="relative">
         <Stage frames={frames} house={s.house} kinds={kinds} names={names} mySlot={s.mySlot} />
+        <TouchControls buttons={TOUCH} onChange={onTouch} />
+        <span className="pointer-events-none absolute left-3 top-2 hidden rounded-lg bg-black/45 px-2 font-mono text-sm font-bold text-white [@media(max-height:520px)]:block">
+          🏠 {s.house + 1}/{HOUSES.length} · ⏱️ {fmt(left)} · 💰 {money(hud?.earned ?? s.earned)}
+        </span>
         <div className="pointer-events-none absolute right-3 top-3 flex flex-col items-end gap-1">
           <AnimatePresence>
             {s.feed.slice(-3).map((f) => (

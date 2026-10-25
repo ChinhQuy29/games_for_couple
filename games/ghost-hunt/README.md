@@ -56,6 +56,8 @@ One of you creeps through a dark, haunted house with a flashlight. The other sit
 | Mare | spirit box, orbs, writing | Hunts early |
 | Demon | handprints, writing, freezing | Hunts early and often |
 
+📱 **On a phone or tablet**, the Explorer gets on-screen arrows (◀ ▶ on the left, ▲ ▼ on the right; hold to keep walking). The tools are buttons in the panel.
+
 ## Run it
 
 From the repository root, `npm install`, then `npm run dev`. Open http://localhost:5173/ghost.

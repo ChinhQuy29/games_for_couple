@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { PLAYER_COLORS } from '@gfc/kit/client';
+import { PLAYER_COLORS, TouchControls, type TouchButton } from '@gfc/kit/client';
 import { LEVELS, type Frame } from '../shared';
 import { kit } from './kit';
 import { Stage, type Buffered } from './Stage';
@@ -53,12 +53,19 @@ const KEYS: Record<string, 'left' | 'right' | 'jump'> = {
   ' ': 'jump',
 };
 
+/** Keyboard and on-screen buttons together: a control is held if either holds it. */
+const merge = (keys: Record<string, boolean>, touch: Record<string, boolean>) =>
+  Object.fromEntries(Object.entries(keys).map(([k, v]) => [k, v || !!touch[k]]));
+
 function useHeldKeys(onRetry: () => void) {
   const { send } = useGame();
+  const keyHeld = useRef<Record<string, boolean>>({});
+  const touchHeld = useRef<Record<string, boolean>>({});
   const retry = useRef(onRetry);
   retry.current = onRetry;
   useEffect(() => {
     const held = { left: false, right: false, jump: false };
+    keyHeld.current = held;
     const set = (e: KeyboardEvent, v: boolean) => {
       const k = e.key.toLowerCase();
       if (k === 'r' && v && !e.repeat) return retry.current();
@@ -67,13 +74,14 @@ function useHeldKeys(onRetry: () => void) {
       e.preventDefault();
       if (held[what] === v) return;
       held[what] = v;
-      send('input', { ...held });
+      send('input', merge(held, touchHeld.current));
     };
     const down = (e: KeyboardEvent) => set(e, true);
     const up = (e: KeyboardEvent) => set(e, false);
     const blur = () => {
+      touchHeld.current = {};
       held.left = held.right = held.jump = false;
-      send('input', { ...held });
+      send('input', merge(held, touchHeld.current));
     };
     window.addEventListener('keydown', down);
     window.addEventListener('keyup', up);
@@ -84,7 +92,17 @@ function useHeldKeys(onRetry: () => void) {
       window.removeEventListener('blur', blur);
     };
   }, [send]);
+  return (touch: Record<string, boolean>) => {
+    touchHeld.current = touch;
+    send('input', merge(keyHeld.current, touch));
+  };
 }
+
+const WALK_TOUCH: TouchButton[] = [
+  { id: 'left', icon: 'left', side: 'left', label: 'Walk left' },
+  { id: 'right', icon: 'right', side: 'right', label: 'Walk right' },
+];
+const JUMP_TOUCH: TouchButton[] = [{ id: 'jump', icon: 'jump', side: 'right', label: 'Jump' }];
 
 export function Play() {
   const { act, clockOffset } = useGame();
@@ -93,7 +111,7 @@ export function Play() {
   const frames = useRef<Buffered>({ prev: null, last: s.frame, at: performance.now() });
   const [hud, setHud] = useState<Frame | null>(s.frame);
   const [now, setNow] = useState(Date.now());
-  useHeldKeys(() => void act('level:retry'));
+  const onTouch = useHeldKeys(() => void act('level:retry'));
   useFrame<Frame>((f) => {
     frames.current = { prev: frames.current.last, last: f, at: performance.now() };
   });
@@ -114,7 +132,8 @@ export function Play() {
 
   return (
     <main className="relative flex flex-1 flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-3">
+      {/* On short screens (a phone held sideways) the HUD folds into a strip over the level. */}
+      <div className="flex flex-wrap items-center gap-3 [@media(max-height:520px)]:hidden">
         <span className="sticker px-3 py-1 font-display font-extrabold">
           Level {s.level + 1}/{LEVELS.length} · {level.name}
         </span>
@@ -139,9 +158,18 @@ export function Play() {
           </button>
         </span>
       </div>
-      <p className="text-sm font-semibold text-ink-soft">💡 {level.hint}</p>
+      <p className="text-sm font-semibold text-ink-soft [@media(max-height:520px)]:hidden">💡 {level.hint}</p>
       <div className="relative">
         <Stage frames={frames} level={s.level} walkerColor={PLAYER_COLORS[seat(walkerId ?? '')]!} jumperColor={PLAYER_COLORS[seat(jumperId)]!} />
+        <TouchControls buttons={iWalk ? WALK_TOUCH : JUMP_TOUCH} onChange={onTouch} />
+        <span className="pointer-events-none absolute left-3 top-2 hidden rounded-lg bg-black/45 px-2 font-mono text-sm font-bold text-white [@media(max-height:520px)]:block">
+          {s.level + 1}/{LEVELS.length} · {iWalk ? '👟 you walk' : '🦘 you jump'} · ⏱️ {fmt((hud?.t ?? 0) * 1000)} · 💀 {hud?.deaths ?? s.deaths}
+          {hud?.key ? ' · 🔑' : ''}
+          {hud && hud.gate > 0 ? ` · 🚪 ${Math.ceil(hud.gate)}s` : ''}
+        </span>
+        <button className="chip absolute right-3 top-2 hidden !min-h-0 !py-0.5 text-xs [@media(max-height:520px)]:block" onClick={() => act('level:retry')}>
+          ↺ Retry
+        </button>
         {died && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <span className="sticker !bg-[#ff4f4f] px-6 py-3 font-display text-3xl font-extrabold text-white">OOPS 💀</span>

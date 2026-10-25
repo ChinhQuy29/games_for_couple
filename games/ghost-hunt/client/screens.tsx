@@ -13,6 +13,7 @@ import {
   type ExplorerView,
   type NavigatorView,
 } from '../shared';
+import { TouchControls, type TouchButton } from '@gfc/kit/client';
 import { kit } from './kit';
 import { ExplorerMap, NavigatorMap, useMovementKeys } from './Maps';
 
@@ -153,14 +154,6 @@ function ExplorerPanel({ v }: { v: ExplorerView }) {
   const { s } = useRoom();
   const now = useNow(200);
   const tool = (t: string) => void act('tool', { tool: t });
-  useMovementKeys(
-    (dir) => void act('move', { dir }),
-    (k) => {
-      const map: Record<string, string> = { f: 'uv', q: 'spiritbox', b: 'book', c: 'camera', ' ': 'hide', e: 'hide' };
-      if (map[k]) tool(map[k]!);
-    },
-    true,
-  );
   const sbReady = now >= s.spiritboxReadyAt;
   const btn = 'chip justify-between text-sm';
   return (
@@ -183,7 +176,7 @@ function ExplorerPanel({ v }: { v: ExplorerView }) {
           <span>🚪 {v.hidden ? 'Come out' : 'Hide (in a closet)'}</span> <kbd>Space</kbd>
         </button>
       </div>
-      <p className="text-xs font-bold text-ink-soft">Move with WASD or the arrow keys. Ask your Navigator where you are!</p>
+      <p className="text-xs font-bold text-ink-soft">Move with WASD, the arrow keys, or the on-screen arrows on a phone. Ask your Navigator where you are!</p>
     </div>
   );
 }
@@ -239,9 +232,25 @@ function NavigatorPanel({ v }: { v: NavigatorView }) {
   );
 }
 
+const TOUCH: TouchButton[] = [
+  { id: 'left', icon: 'left', side: 'left', label: 'Walk left' },
+  { id: 'right', icon: 'right', side: 'left', label: 'Walk right' },
+  { id: 'up', icon: 'up', side: 'right', label: 'Walk up' },
+  { id: 'down', icon: 'down', side: 'right', label: 'Walk down' },
+];
+
 export function Hunt() {
+  const { act } = useGame();
   const { s } = useRoom();
   const v = s.view;
+  const onTouch = useMovementKeys(
+    (dir) => void act('move', { dir }),
+    (k) => {
+      const map: Record<string, string> = { f: 'uv', q: 'spiritbox', b: 'book', c: 'camera', ' ': 'hide', e: 'hide' };
+      if (map[k]) void act('tool', { tool: map[k] });
+    },
+    v?.role === 'explorer',
+  );
   if (!v) return null;
   return (
     <main className="grid flex-1 gap-3 lg:grid-cols-[1fr_320px]">
@@ -249,7 +258,14 @@ export function Hunt() {
         <p className="font-display font-extrabold">
           {v.role === 'explorer' ? '🔦 You are the Explorer. Your partner has the map.' : '🗺️ You are the Navigator. Guide them, read the instruments, watch the cameras.'}
         </p>
-        {v.role === 'explorer' ? <ExplorerMap v={v} hunt={s.hunt} gameKey={s.results.length} /> : <NavigatorMap v={v} hunt={s.hunt} house={houseOf(s.house)} />}
+        {v.role === 'explorer' ? (
+          <div className="relative">
+            <ExplorerMap v={v} hunt={s.hunt} gameKey={s.results.length} />
+            <TouchControls buttons={TOUCH} onChange={onTouch} />
+          </div>
+        ) : (
+          <NavigatorMap v={v} hunt={s.hunt} house={houseOf(s.house)} />
+        )}
       </div>
       <aside className="flex flex-col gap-3">
         <Status />

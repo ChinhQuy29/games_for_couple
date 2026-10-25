@@ -28,6 +28,8 @@ The host picks which trip to **start at**; the drive goes on to the last one. Ea
 
 Stars: ⭐ for arriving, another for beating the par time, and another for no wrong turns with the van at 70%+.
 
+📱 **On a phone or tablet**, on-screen buttons appear for your seat: ◀ and ▶ to steer, or brake and gas pedals. Upright, they sit under the road.
+
 ## Run it
 
 From the repository root, `npm install`, then `npm run dev`. Open http://localhost:5173/road-trip.

@@ -35,6 +35,8 @@ One character, two players. One of you can only **walk**, the other can only **j
 
 Each level has its own look (grass, snow, sand, mushroom land or forest). The tiles, backgrounds, keys, locks, switches and flags are from Kenney's free **New Platformer Pack** (CC0, public domain): see `client/assets/CREDITS.md`.
 
+📱 **On a phone or tablet**, on-screen buttons appear for your job: ◀ and ▶ under your thumbs for the Walker, a jump button for the Jumper. Sideways is best: the level fills the screen and the HUD shrinks to a strip.
+
 ## Run it
 
 From the repository root, `npm install`, then `npm run dev`. Open http://localhost:5173/two-body-problem.

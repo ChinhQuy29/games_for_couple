@@ -193,10 +193,10 @@ export function Stage({ frames, level, walkerColor, jumperColor }: { frames: Rea
   }, [frames, level, walkerColor, jumperColor]);
 
   return (
-    <canvas
-      ref={canvas}
-      className="twobody-canvas mx-auto block rounded-2xl border-[3px] border-line"
-      style={{ width: `min(100%, calc((100dvh - 230px) * ${LW / LH}))`, aspectRatio: `${LW} / ${LH}` }}
-    />
+    <>
+      {/* Fit the screen; phones held sideways get nearly the full height. */}
+      <style>{`.twobody-canvas{width:min(100%,calc((100dvh - 230px)*${LW / LH}))}@media (max-height:520px){.twobody-canvas{width:min(100%,calc((100dvh - 64px)*${LW / LH}))}}`}</style>
+      <canvas ref={canvas} className="twobody-canvas mx-auto block rounded-2xl border-[3px] border-line" style={{ aspectRatio: `${LW} / ${LH}` }} />
+    </>
   );
 }

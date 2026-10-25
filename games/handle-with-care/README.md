@@ -24,6 +24,8 @@ You're two very unqualified movers. Get the valuables out of the house and into 
 
 The host picks which house to **start at**; the move goes on to the last one. The tiles, backgrounds, bricks, windows and signs are from Kenney's free **New Platformer Pack** (CC0, public domain): see `client/assets/CREDITS.md`.
 
+📱 **On a phone or tablet**, on-screen buttons appear: ◀ ▶ on the left; grab, throw and jump on the right. Sideways is best: the house fills the screen and the HUD shrinks to a strip.
+
 ## Run it
 
 From the repository root, `npm install`, then `npm run dev`. Open http://localhost:5173/carry.

@@ -166,9 +166,13 @@ export function NavigatorMap({ v, hunt, house }: { v: NavigatorView; hunt: strin
   );
 }
 
-/** Holds WASD/arrow keys and repeats moves while held. */
+/**
+ * Holds WASD/arrow keys (or on-screen arrows) and repeats moves while held.
+ * Returns the handler for the kit's TouchControls.
+ */
 export function useMovementKeys(onMove: (d: Dir) => void, onKey: (k: string) => void, enabled: boolean) {
   const held = useRef<Dir[]>([]);
+  const touch = useRef<Dir[]>([]);
   const move = useRef(onMove);
   const key = useRef(onKey);
   move.current = onMove;
@@ -195,9 +199,12 @@ export function useMovementKeys(onMove: (d: Dir) => void, onKey: (k: string) => 
       const dir = map[e.key.toLowerCase()];
       if (dir) held.current = held.current.filter((d) => d !== dir);
     };
-    const blur = () => (held.current = []);
+    const blur = () => {
+      held.current = [];
+      touch.current = [];
+    };
     const id = setInterval(() => {
-      const d = held.current[held.current.length - 1];
+      const d = held.current[held.current.length - 1] ?? touch.current[touch.current.length - 1];
       if (d) move.current(d);
     }, 160);
     window.addEventListener('keydown', down);
@@ -210,4 +217,11 @@ export function useMovementKeys(onMove: (d: Dir) => void, onKey: (k: string) => 
       window.removeEventListener('blur', blur);
     };
   }, [enabled]);
+  return (buttons: Record<string, boolean>) => {
+    const now = (Object.keys(DIRS) as Dir[]).filter((d) => buttons[d]);
+    const fresh = now.filter((d) => !touch.current.includes(d));
+    touch.current = [...touch.current.filter((d) => now.includes(d)), ...fresh];
+    // A new press steps at once; holding keeps stepping with the keys' repeat.
+    if (enabled && fresh.length) move.current(fresh[fresh.length - 1]!);
+  };
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { TRIPS, type Frame } from '../shared';
+import { TouchControls, type TouchButton } from '@gfc/kit/client';
 import { kit } from './kit';
 import { Road, type Buffered } from './Road';
 
@@ -56,23 +57,40 @@ const KEYS: Record<string, 'left' | 'right' | 'gas' | 'brake'> = {
   arrowdown: 'brake',
 };
 
+/** Keyboard and on-screen buttons together: a control is held if either holds it. */
+const merge = (keys: Record<string, boolean>, touch: Record<string, boolean>) =>
+  Object.fromEntries(Object.entries(keys).map(([k, v]) => [k, v || !!touch[k]]));
+
+const DRIVER_TOUCH: TouchButton[] = [
+  { id: 'left', icon: 'left', side: 'left', label: 'Steer left' },
+  { id: 'right', icon: 'right', side: 'right', label: 'Steer right' },
+];
+const COPILOT_TOUCH: TouchButton[] = [
+  { id: 'brake', icon: 'brake', side: 'left', label: 'Brake' },
+  { id: 'gas', icon: 'gas', side: 'right', label: 'Gas' },
+];
+
 function useHeldKeys() {
   const { send } = useGame();
+  const keyHeld = useRef<Record<string, boolean>>({});
+  const touchHeld = useRef<Record<string, boolean>>({});
   useEffect(() => {
     const held = { left: false, right: false, gas: false, brake: false };
+    keyHeld.current = held;
     const set = (e: KeyboardEvent, v: boolean) => {
       const what = KEYS[e.key.toLowerCase()];
       if (!what) return;
       e.preventDefault();
       if (held[what] === v) return;
       held[what] = v;
-      send('input', { ...held });
+      send('input', merge(held, touchHeld.current));
     };
     const down = (e: KeyboardEvent) => set(e, true);
     const up = (e: KeyboardEvent) => set(e, false);
     const blur = () => {
+      touchHeld.current = {};
       held.left = held.right = held.gas = held.brake = false;
-      send('input', { ...held });
+      send('input', merge(held, touchHeld.current));
     };
     window.addEventListener('keydown', down);
     window.addEventListener('keyup', up);
@@ -83,6 +101,10 @@ function useHeldKeys() {
       window.removeEventListener('blur', blur);
     };
   }, [send]);
+  return (touch: Record<string, boolean>) => {
+    touchHeld.current = touch;
+    send('input', merge(keyHeld.current, touch));
+  };
 }
 
 function Meter({ label, value, color }: { label: string; value: number; color: string }) {
@@ -106,7 +128,7 @@ export function Drive() {
   const frames = useRef<Buffered>({ prev: null, last: s.frame, at: performance.now() });
   const [hud, setHud] = useState<Frame | null>(s.frame);
   const [now, setNow] = useState(Date.now());
-  useHeldKeys();
+  const onTouch = useHeldKeys();
   useFrame<Frame>((f) => {
     frames.current = { prev: frames.current.last, last: f, at: performance.now() };
   });
@@ -125,25 +147,28 @@ export function Drive() {
 
   return (
     <main className="relative grid flex-1 gap-3 lg:grid-cols-[1fr_300px]">
-      <div className="relative min-h-[520px]" style={{ height: 'calc(100dvh - 140px)' }}>
-        <Road frames={frames} s={s} />
-        <div className="pointer-events-none absolute right-3 top-3 flex flex-col items-end gap-1">
-          <AnimatePresence>
-            {s.feed.slice(-3).map((f) => (
-              <motion.span key={f.id} initial={reduce ? false : { x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ opacity: 0 }} className={`sticker px-3 py-1 text-sm font-extrabold ${f.good ? '!bg-mint' : '!bg-[#ff4f4f] text-white'} text-[#2b2140]`}>
-                {f.text}
-              </motion.span>
-            ))}
-          </AnimatePresence>
-        </div>
-        {countdown > 0 && (
-          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/30">
-            <span className="sticker px-10 py-6 text-center font-display text-7xl font-extrabold">
-              {Math.ceil(countdown / 1000)}
-              <span className="mt-1 block text-xl">{s.myRole === 'driver' ? '🛞 You steer' : '🦶 You drive the pedals + 🗺️ map'}</span>
-            </span>
+      <div className="relative">
+        <div className="relative h-[calc(100dvh-140px)] min-h-[260px] portrait:h-[58dvh]">
+          <Road frames={frames} s={s} />
+          <div className="pointer-events-none absolute right-3 top-3 flex flex-col items-end gap-1">
+            <AnimatePresence>
+              {s.feed.slice(-3).map((f) => (
+                <motion.span key={f.id} initial={reduce ? false : { x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ opacity: 0 }} className={`sticker px-3 py-1 text-sm font-extrabold ${f.good ? '!bg-mint' : '!bg-[#ff4f4f] text-white'} text-[#2b2140]`}>
+                  {f.text}
+                </motion.span>
+              ))}
+            </AnimatePresence>
           </div>
-        )}
+          {countdown > 0 && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/30">
+              <span className="sticker px-10 py-6 text-center font-display text-7xl font-extrabold">
+                {Math.ceil(countdown / 1000)}
+                <span className="mt-1 block text-xl">{s.myRole === 'driver' ? '🛞 You steer' : '🦶 You drive the pedals + 🗺️ map'}</span>
+              </span>
+            </div>
+          )}
+        </div>
+        <TouchControls buttons={s.myRole === 'driver' ? DRIVER_TOUCH : COPILOT_TOUCH} onChange={onTouch} />
       </div>
       <aside className="flex flex-col gap-3">
         <div className={`sticker p-3 font-display font-extrabold ${s.myRole === 'driver' ? '!bg-pink' : '!bg-sky'} text-[#2b2140]`}>
