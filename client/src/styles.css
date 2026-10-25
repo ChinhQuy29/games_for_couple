@@ -1,0 +1,222 @@
+@import 'tailwindcss';
+
+/* ---------- theme tokens (shared by the portal and every game) ---------- */
+:root {
+  --bg: #fff6e9;
+  --card: #ffffff;
+  --ink: #2b2140;
+  --ink-soft: #6b5f80;
+  --line: #2b2140;
+  --on-accent: #2b2140;
+  --pink: #ff4f8b;
+  --yellow: #ffc93c;
+  --mint: #3ddc97;
+  --sky: #4cc9f0;
+  --muted: #efe4d4;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #1e1530;
+    --card: #2c2145;
+    --ink: #fff6e9;
+    --ink-soft: #b9acd0;
+    --line: #0e0a18;
+    --muted: #3a2d58;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --bg: #1e1530;
+  --card: #2c2145;
+  --ink: #fff6e9;
+  --ink-soft: #b9acd0;
+  --line: #0e0a18;
+  --muted: #3a2d58;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-on-accent: var(--on-accent);
+  --color-pink: var(--pink);
+  --color-yellow: var(--yellow);
+  --color-mint: var(--mint);
+  --color-sky: var(--sky);
+  --color-muted: var(--muted);
+  --font-display: 'Baloo 2', ui-rounded, system-ui, sans-serif;
+  --font-body: 'Nunito', ui-rounded, system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  /* polka dots, because why not */
+  background-image: radial-gradient(color-mix(in srgb, var(--pink) 14%, transparent) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
+/* ---------- cartoon sticker look ---------- */
+@layer components {
+  .sticker {
+    background: var(--card);
+    border: 3px solid var(--line);
+    border-radius: 24px;
+    box-shadow: 4px 4px 0 var(--line);
+  }
+
+  .btn {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    min-height: 52px;
+    padding: 0.5rem 1.4rem;
+    border: 3px solid var(--line);
+    border-radius: 999px;
+    box-shadow: 4px 4px 0 var(--line);
+    color: var(--on-accent);
+    background: var(--yellow);
+    transition:
+      transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 120ms;
+    cursor: pointer;
+    user-select: none;
+  }
+  .btn:hover {
+    transform: translate(-1px, -1px) rotate(-1deg);
+    box-shadow: 5px 5px 0 var(--line);
+  }
+  .btn:active {
+    transform: translate(3px, 3px) scale(0.96);
+    box-shadow: 1px 1px 0 var(--line);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-pink {
+    background: var(--pink);
+    color: #fff;
+  }
+  .btn-mint {
+    background: var(--mint);
+  }
+  .btn-sky {
+    background: var(--sky);
+  }
+  .btn-ghost {
+    background: var(--card);
+    color: var(--ink);
+  }
+
+  .field {
+    width: 100%;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--ink);
+    background: var(--card);
+    border: 3px solid var(--line);
+    border-radius: 18px;
+    padding: 0.8rem 1rem;
+    outline: none;
+  }
+  .field:focus {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--pink) 45%, transparent);
+  }
+
+  /* Bottom-pinned primary actions; fades the page out behind it so content never shows through. */
+  .action-bar {
+    position: sticky;
+    bottom: 0;
+    margin-inline: -1rem;
+    padding: 1.5rem 1rem max(0.75rem, env(safe-area-inset-bottom));
+    background: linear-gradient(to bottom, transparent, var(--bg) 1.25rem);
+    z-index: 10;
+  }
+
+  .chip {
+    font-family: var(--font-display);
+    font-weight: 700;
+    border: 2.5px solid var(--line);
+    border-radius: 999px;
+    padding: 0.25rem 0.85rem;
+    background: var(--card);
+    min-height: 40px;
+    cursor: pointer;
+  }
+  .chip[aria-pressed='true'] {
+    background: var(--pink);
+    color: #fff;
+  }
+  .chip:disabled {
+    cursor: default;
+  }
+}
+
+/* ---------- silly motion ---------- */
+@keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg) scale(1.02);
+  }
+}
+.wobble {
+  animation: wobble 2.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+.blink {
+  animation: blink 3.5s infinite;
+  transform-origin: center;
+}
+
+@keyframes jiggle {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  75% {
+    transform: translateX(3px) rotate(1deg);
+  }
+}
+.jiggle {
+  animation: jiggle 0.3s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wobble,
+  .blink,
+  .jiggle {
+    animation: none;
+  }
+}
