@@ -34,7 +34,8 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 
 **Playable games: 18.** The 7 earlier games, Number Rush, the 5 co-op games from [docs/coop-games-plan.md](docs/coop-games-plan.md), Moving In, and the 5 from [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md): Escape Room for Two, Handle With Care, Road Trip, Codenames Duet and Paint & Hide. All of these newer games are built on the shared kit (`kit/`) and have unit tests; each was play-tested in two browser tabs at 1280×800.
 
-- **What two tabs couldn't verify:** the physics/real-time games (Tethered, Two-Body, Handle With Care, Road Trip) need two real people on two keyboards to judge feel and difficulty. Two-Body's levels 1 and 6 are proven finishable by scripted tests, and Tethered's first jumps by a headless simulation. Tuning knobs are in `shared/physics.ts` (`PHYS`) and the level specs.
+- **Polish pass (done 2026-10-25, see the Log):** role picker everywhere, Bomb Squad editions + 9 modules, Tethered towers + Kenney art, Hide and Seek 7 maps / 61 props, Ghost Hunt 4 houses, Two-Body 10 levels, Handle With Care 5 houses, Road Trip 6 trips with scenery, and phone controls for every keyboard game. **Not polished in this pass:** Kitchen Chaos, Moving In, Escape Room and Paint & Hide (their content is generated or story-based already); ideas for them are in the Log.
+- **What two tabs couldn't verify:** the physics/real-time games (Tethered, Two-Body, Handle With Care, Road Trip) need two real people to judge feel and difficulty, and the phone controls need a real phone (only emulated sizes were checked). Two-Body's levels 1, 6, 7, 8, 9 and 10 are proven finishable by scripted tests, and Tethered's generated towers by a reachability test. Tuning knobs are in `shared/physics.ts` (`PHYS`) and the level specs.
 - **Only coming-soon card left:** Blind Portrait Duel.
 
 
@@ -46,7 +47,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 
 **Fan Cứng AOG:** playable end to end (VI/EN per player, simultaneous answers with device-timed speed, clue questions revealed by the server, SGP Special ×2 finale, streak banners, Liên Quân ranks, 🚩 report). Verified in two tabs over a full game plus a clue question. 16 unit tests. **The 70 questions are sourced but NOT checked by a fan yet**: the user chose to skip checking for now.
 
-**Hide and Seek:** playable end to end (3 maps, hiding with drag/rotate/resize, hunter curtain, 5 shots with prop reactions, taunt wiggle, sneak moves, reveal, recap). Verified in two tabs at a laptop size (1280×800) over a full 2-round game:
+**Hide and Seek:** playable end to end (7 maps since the polish pass, hiding with drag/rotate/resize, hunter curtain, 5 shots with prop reactions, taunt wiggle, sneak moves, reveal, recap). Verified in two tabs at a laptop size (1280×800) over a full 2-round game:
 - the timeout and survive path, and a found-on-the-first-shot path,
 - a real-mouse hide, rotation, shot and sneak,
 - the hunter's page holding no room data while hiding.
@@ -107,6 +108,7 @@ npm run build && npm start   # production: one server on $PORT (default 3001) se
 - **Timeouts:** when a phase deadline passes, clients auto-submit whatever is typed. The server waits 3s of grace, then fills the gaps (a deck starter, or an AFK line).
 - **Who reveals:** the starter's author reveals their sentence. If the author is disconnected, the partner may reveal it instead so nobody gets stuck.
 - **Ratings** stay hidden from the partner until RECAP.
+- **Hash helpers:** `(h ^ (h >>> 16))` is a signed 32-bit number. Add `>>> 0` before dividing by 2³², or half the values come out negative (that silently skipped decorations in three games).
 - **Spec vs. code:** `game.ts` mutates rooms in place rather than returning new ones. The spec's "pure" means deterministic and I/O-free.
 
 ## Ideas backlog (future games for the portal)
@@ -126,6 +128,7 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
   - more maps and items; Bomb Squad with more modules, varied per bomb, and rules that change per game;
   - phone controls for all keyboard games; a "who does what" choice at room creation for every role game.
   The user picked the order: role picker → Bomb Squad → Tethered → Hide and Seek → the other environment games → phone controls.
+- **Left for later:** Kitchen Chaos could get more kitchen layouts and dishes; Escape Room more puzzle kinds; Moving In a seventh room; Paint & Hide more scene themes. The live server (terminal tab "Games server") still runs the code from before this pass until it's restarted, which drops any open rooms.
 - **Done: phone controls for every keyboard game.** Two-Body, Handle With Care and Road Trip merge keyboard and kit `TouchControls` (role-specific buttons); Ghost Hunt's Explorer gets on-screen arrows (the movement hook moved up to `Hunt` and returns the touch handler). On short screens (phone sideways) the Two-Body and Handle With Care HUDs fold into a strip over the canvas. Checked at 844×390 and 375×812.
 - **Done: Road Trip trips and scenery.** 3 new trips (rice fields, desert highway, snowy village; 6 in all), a `scene` per trip with drawn roadside decor, a "start at" pick. Fixed: crowded trips could drop an obstacle on a fork. Also fixed the shared decoration `hash` (Tethered, Two-Body, Road Trip) returning negatives, which silently skipped about half the decorations.
 - **Done: platformer polish.** Two-Body Problem: Kenney sprites with a theme per level, 4 new levels (Stairway, Locked in, Sprint, The ferry; 10 in all), each with a scripted test run. Handle With Care: Kenney tiles, wallpaper, windows and a truck; 2 new houses (apartment, art gallery; 5 in all) and a "start at" lobby pick.
