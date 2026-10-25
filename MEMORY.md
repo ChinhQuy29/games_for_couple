@@ -15,6 +15,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #3: Telephone Doodle** at `/doodle`, in `games/telephone-doodle/` (package `@gfc/doodle`). Docs: [README](games/telephone-doodle/README.md), [spec](games/telephone-doodle/docs/spec.md).
 - **Game #4: Would You Rather: Unhinged** at `/wyr`, in `games/would-you-rather/` (package `@gfc/wyr`). Docs: [README](games/would-you-rather/README.md), [spec](games/would-you-rather/docs/spec.md).
 - **Game #5: Fan Cứng AOG** (Liên Quân/AOG trivia) at `/aog`, in `games/aog-trivia/` (package `@gfc/aog`). Docs: [README](games/aog-trivia/README.md), [spec](games/aog-trivia/docs/spec.md).
+- **Game #6: Hide and Seek** (prop hunt) at `/hns`, in `games/hide-and-seek/` (package `@gfc/hns`). Docs: [README](games/hide-and-seek/README.md), [spec](games/hide-and-seek/docs/spec.md).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -26,6 +27,13 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 **Would You Rather: Unhinged:** playable end to end (secret pick + prediction, debate on disagreement, write-your-own turns, recap with match rate, verdict, reads and hot takes). Verified in two tabs over a full 10-question game. 13 unit tests.
 
 **Fan Cứng AOG:** playable end to end (VI/EN per player, simultaneous answers with device-timed speed, clue questions revealed by the server, SGP Special ×2 finale, streak banners, Liên Quân ranks, 🚩 report). Verified in two tabs over a full game plus a clue question. 16 unit tests. **The 70 questions are sourced but NOT checked by a fan yet**: the user chose to skip checking for now.
+
+**Hide and Seek:** playable end to end (3 maps, hiding with drag/rotate/resize, hunter curtain, 5 shots with prop reactions, taunt wiggle, sneak moves, reveal, recap). Verified in two tabs at a laptop size (1280×800) over a full 2-round game:
+- the timeout and survive path, and a found-on-the-first-shot path,
+- a real-mouse hide, rotation, shot and sneak,
+- the hunter's page holding no room data while hiding.
+
+13 unit tests.
 
 **Finish My Sentence milestones:**
 
@@ -93,6 +101,20 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Hide and Seek (prop hunt)
+- **Request:** the user wanted a prop hunt where one player becomes a random object (3 choices) and hides, and the other shoots (5 chances). They chose "go with your recommendations", the name **Hide and Seek**, and **laptops** as the main device.
+- **Design** (docs/spec.md, written first):
+  - 2D top-down SVG map 1600×1000, hand-drawn SVG props (no emoji, for fairness across devices),
+  - 3 maps (living room, kitchen, park) with spot-based layouts reshuffled every round,
+  - 3 choices from types present in the room, rotate (15° steps) and resize (90–110%),
+  - 2 sneak moves, a taunt wiggle every 15s, 5 shots and 60s, roles swapping every round,
+  - scoring: found = 100 + 20 per unused shot; survived = 150; +10 per miss for the hider.
+- **Redaction:** the hunter gets no room data while hiding; while seeking, ids are random and props are sorted by id, so the fake is indistinguishable; the taunt id is in the state only during the wiggle.
+- **Delayed:** shell commands failed the auto-mode safety check (classifier errors) for a while, so the code was written blind and run afterwards. It passed tests and typecheck on the first run.
+- **Fixed after the play-test:**
+  - at 1280×800 the full-width hunt map overflowed the screen height, so `MapView` now caps its width at `(100dvh − 230px) × 1.6`;
+  - "1 shots" now reads "1 shot".
 
 ### 2026-10-24: Fan Cứng AOG (Liên Quân trivia)
 - **Built for the user's girlfriend:** a big Liên Quân/AOG fan whose favorite team is **SGP (Saigon Phantom)**, especially the era with **Lai Bâng**, and old members **Fish, Khoa, Shin**. She **dislikes FPT x Flash** (SGP's rival). Both partners play (the user plays Liên Quân too).

@@ -11,6 +11,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 🖍️ **Telephone Doodle** | `/doodle` | Broken telephone with drawings: draw a prompt, your partner guesses it, you draw their guess… then watch it fall apart. | Mouse or finger | [README](games/telephone-doodle/README.md) · [spec](games/telephone-doodle/docs/spec.md) |
 | 🤔 **Would You Rather: Unhinged** | `/wyr` | Answer ridiculous dilemmas at the same time and guess your partner's pick. Disagree, and you both have to defend yourselves. | Keyboard | [README](games/would-you-rather/README.md) · [spec](games/would-you-rather/docs/spec.md) |
 | 👻 **Fan Cứng AOG** | `/aog` | Liên Quân & AOG trivia battle: SGP, Lai Bâng and the golden era, FPT x Flash, finals, international events, drama. Vietnamese or English. | Keyboard or tap | [README](games/aog-trivia/README.md) · [spec](games/aog-trivia/docs/spec.md) |
+| 🙈 **Hide and Seek** | `/hns` | Prop hunt for two: one turns into a lamp, a cushion or a duck and hides in a room full of real ones; the other gets 5 shots to find the fake. | Laptop (mouse/trackpad) | [README](games/hide-and-seek/README.md) · [spec](games/hide-and-seek/docs/spec.md) |
 | 🎨 Blind Portrait Duel · 🕹️ Two-Body Problem | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -50,6 +51,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Recap:** the winner plus a Liên Quân rank for each of you (Đồng → Thách Đấu 👑). 🚩 lets you report a wrong question so it can be fixed.
 - **Built with:** React with the Socket.IO namespace `/aog`, a per-player 🇻🇳/🇬🇧 switch, and answers and clues revealed only by the server.
 
+### 🙈 Hide and Seek
+
+- **Setup:** 2 players, 15–20 minutes, roles swap every round (6 by default). Three maps: 🛋️ living room, 🍳 kitchen, 🌳 park, with the layout reshuffled every round.
+- **Hiding:** the hider picks one of 3 objects that already exist in the room, then drags, rotates and resizes it to blend in. The hunter sees only a curtain.
+- **Hunting:** 5 shots and 60 seconds. Missed shots make real props react (💥 CRASH, 🦆 QUACK). The fake wiggles every 15s, and the hider has 2 sneak moves that slide visibly across both screens.
+- **Built with:** React and one big SVG map (1600×1000 world units, made for laptops), with hand-drawn SVG props and the Socket.IO namespace `/hns`. The server never tells the hunter which prop is fake until the round ends.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -68,7 +76,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -95,7 +103,8 @@ games/
 ├─ jjinja-battle/        # @gfc/jjinja: public/, server/, README.md
 ├─ telephone-doodle/     # @gfc/doodle: client/, server/, shared/, docs/, README.md
 ├─ would-you-rather/     # @gfc/wyr: client/, server/, shared/, docs/, README.md
-└─ aog-trivia/           # @gfc/aog: client/, server/, shared/, docs/, README.md
+├─ aog-trivia/           # @gfc/aog: client/, server/, shared/, docs/, README.md
+└─ hide-and-seek/        # @gfc/hns: client/, server/, shared/, docs/, README.md
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game
 shared/                  # games.ts, the registry the portal home is built from

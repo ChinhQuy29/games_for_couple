@@ -5,6 +5,7 @@
 @source '../../games/telephone-doodle/client';
 @source '../../games/would-you-rather/client';
 @source '../../games/aog-trivia/client';
+@source '../../games/hide-and-seek/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

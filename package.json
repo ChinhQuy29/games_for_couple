@@ -9,6 +9,7 @@
     "games/telephone-doodle",
     "games/would-you-rather",
     "games/aog-trivia",
+    "games/hide-and-seek",
     "server",
     "client"
   ],
@@ -17,7 +18,7 @@
     "build": "npm run build -w client",
     "start": "npm start -w server",
     "test": "npm test --workspaces --if-present",
-    "typecheck": "tsc -p shared --noEmit && tsc -p games/finish-my-sentence --noEmit && tsc -p games/jjinja-battle --noEmit && tsc -p games/telephone-doodle --noEmit && tsc -p games/would-you-rather --noEmit && tsc -p games/aog-trivia --noEmit && tsc -p server --noEmit && tsc -p client --noEmit"
+    "typecheck": "tsc -p shared --noEmit && tsc -p games/finish-my-sentence --noEmit && tsc -p games/jjinja-battle --noEmit && tsc -p games/telephone-doodle --noEmit && tsc -p games/would-you-rather --noEmit && tsc -p games/aog-trivia --noEmit && tsc -p games/hide-and-seek --noEmit && tsc -p server --noEmit && tsc -p client --noEmit"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

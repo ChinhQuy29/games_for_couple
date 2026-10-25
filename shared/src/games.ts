@@ -71,6 +71,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–15 min',
   },
   {
+    id: 'hns',
+    title: 'Hide and Seek',
+    emoji: '🙈',
+    tagline: 'Turn into a lamp, a cushion or a duck and hide in plain sight. They get 5 shots. Best on laptops.',
+    path: '/hns',
+    status: 'playable',
+    accent: 'sky',
+    minutes: '15–20 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

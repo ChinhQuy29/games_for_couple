@@ -1,0 +1,33 @@
+import { useEffect, useState } from 'react';
+import { useHns } from '../store';
+
+/** Countdown bar for the current phase. */
+export default function TimerBar({ total }: { total: number }) {
+  const { state, clockOffset } = useHns();
+  const deadline = state?.deadline ?? null;
+  const [now, setNow] = useState(() => Date.now() + clockOffset);
+
+  useEffect(() => {
+    if (deadline === null) return;
+    const id = setInterval(() => setNow(Date.now() + clockOffset), 200);
+    return () => clearInterval(id);
+  }, [deadline, clockOffset]);
+
+  if (deadline === null) return null;
+  const left = Math.max(0, deadline - now);
+  const secs = Math.ceil(left / 1000);
+  const pct = Math.min(100, (left / (total * 1000)) * 100);
+  const urgent = secs <= 10;
+
+  return (
+    <div className={`flex items-center gap-3 ${urgent ? 'jiggle' : ''}`} aria-label={`${secs} seconds left`}>
+      <div className="h-5 flex-1 overflow-hidden rounded-full border-[3px] border-line bg-card">
+        <div
+          className={`h-full transition-[width] duration-200 ease-linear ${urgent ? 'bg-pink' : 'bg-mint'}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span className={`w-12 text-right font-display text-xl font-extrabold ${urgent ? 'text-pink' : ''}`}>{secs}s</span>
+    </div>
+  );
+}

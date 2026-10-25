@@ -11,6 +11,7 @@
     "@gfc/aog": "*",
     "@gfc/doodle": "*",
     "@gfc/fms": "*",
+    "@gfc/hns": "*",
     "@gfc/jjinja": "*",
     "@gfc/wyr": "*",
     "express": "^4.21.2",

@@ -12,6 +12,7 @@
     "@gfc/aog": "*",
     "@gfc/doodle": "*",
     "@gfc/fms": "*",
+    "@gfc/hns": "*",
     "@gfc/shared": "*",
     "@gfc/wyr": "*",
     "react": "^18.3.1",
