@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { DIFFICULTIES, DIFFICULTY_IDS, MAX_STRIKES, formatTimer } from '../shared';
+import { DIFFICULTIES, DIFFICULTY_IDS, MAX_STRIKES, MODULE_INFO, formatTimer } from '../shared';
 import { kit } from './kit';
 import Manual from './Manual';
 import { ModulePanel } from './Modules';
@@ -20,6 +20,7 @@ export function Lobby() {
           <p>📖 The other is the <b>Expert</b> and has the manual, but can't see the bomb.</p>
           <p>🗣️ Describe what you see, follow instructions, and defuse every module before the timer hits 0:00.</p>
           <p>❌ Three mistakes and it blows up. You swap roles every bomb.</p>
+          <p>🔀 Every bomb gets a different mix of 9 kinds of module, and a <b>new manual edition</b>: the rules change, so don't trust your memory!</p>
         </>
       }
       settings={
@@ -69,6 +70,7 @@ function StatusBar() {
       <span className="sticker px-3 py-1 font-display font-extrabold">
         {s.modulesSolved}/{s.modulesTotal} modules defused
       </span>
+      {s.edition && <span className="sticker px-3 py-1 font-display text-sm font-extrabold">📘 Edition #{s.edition}</span>}
       <span className="ml-auto font-display font-bold text-ink-soft">
         {s.role === 'defuser' ? `💣 You're defusing · ${partner?.name ?? 'your partner'} has the manual` : `📖 You're the Expert · ${partner?.name ?? 'your partner'} sees the bomb`}
       </span>
@@ -112,7 +114,7 @@ export function Armed() {
           </div>
         </section>
       ) : (
-        <Manual />
+        s.manual && <Manual ed={s.manual} kinds={s.kinds} />
       )}
     </main>
   );
@@ -157,7 +159,8 @@ export function Result() {
             return (
               <li key={r.n} className="flex items-center gap-2">
                 {p && <Avatar id={p.id} size="text-xl" />} {r.outcome === 'defused' ? '✅' : '💥'} {DIFFICULTIES[r.difficulty].label} · {p?.name} defusing ·{' '}
-                {r.outcome === 'defused' ? `${formatTimer(r.timeLeftMs)} left` : r.cause === 'time' ? 'out of time' : '3 strikes'}
+                {r.outcome === 'defused' ? `${formatTimer(r.timeLeftMs)} left` : r.cause === 'time' ? 'out of time' : '3 strikes'}{' '}
+                <span className="text-sm">{r.kinds.map((k) => MODULE_INFO[k].emoji).join('')}</span>
               </li>
             );
           })}

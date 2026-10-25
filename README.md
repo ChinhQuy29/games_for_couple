@@ -79,9 +79,10 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 
 ### 💣 Bomb Squad
 
-- **Setup:** 2 players on a call, 10–20 minutes. Co-op: you win or explode together. Easy (3 modules, 5:00), Normal (4, 4:00) or Hard (5, 3:00).
+- **Setup:** 2 players on a call, 10–20 minutes. Co-op: you win or explode together. Easy (3 modules, 5:00), Normal (4, 4:30) or Hard (6, 5:30).
 - **Roles:** the Defuser sees the bomb, the Expert reads the manual. Neither sees the other's screen, and the roles swap every bomb.
-- **Modules:** wires, the button (tap or hold, release on the right digit), symbols, Simon Says and passwords, with rules that depend on the serial number and batteries. Three strikes or the timer ends it.
+- **Modules:** 9 kinds (wires, the button, symbols, Simon Says, passwords, Morse code, a maze, memory, switches), mixed differently on every bomb. Three strikes or the timer ends it.
+- **No memorizing:** every bomb comes with a new randomly generated manual edition, so the rules change every time.
 - **Built with:** the shared kit, on the Socket.IO namespace `/bomb`. The server never sends the armed bomb to the Expert.
 
 ### 🍳 Kitchen Chaos

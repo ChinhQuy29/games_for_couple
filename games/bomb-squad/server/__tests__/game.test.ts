@@ -1,15 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { addPlayer, seededRng } from '@gfc/kit/server';
 import {
-  MANUAL,
+  MODULE_KINDS,
   buttonAction,
   formatTimer,
+  makeEdition,
+  mazeFor,
+  memoryPress,
   releaseDigit,
   simonMap,
   spellable,
-  symbolColumn,
+  switchShouldBeUp,
+  symbolColumns,
   symbolOrder,
   wireToCut,
+  type BombAct,
   type Module,
   type Room,
 } from '../../shared';
@@ -17,9 +22,6 @@ import * as game from '../game';
 import { toPublicState } from '../index';
 
 const ctxAt = (now: number, seed = 1) => ({ now, rng: seededRng(seed) });
-const odd = { serial: 'XB3CD7', batteries: 1 };
-const even = { serial: 'XZ9QQ4', batteries: 3 };
-const vowel = { serial: 'EB3CD2', batteries: 2 };
 
 function armed(difficulty: Room['difficulty'] = 'normal', seed = 1) {
   const room = game.newRoom('ABCD', ctxAt(0));
@@ -32,165 +34,195 @@ function armed(difficulty: Room['difficulty'] = 'normal', seed = 1) {
   return { room, defuser, expert, bomb: room.bomb! };
 }
 
-/** Swap in a hand-made module so a test controls exactly what's on the bomb. */
-function withModule(room: Room, mod: Module, serial = 'XB3CD7', batteries = 1) {
-  room.bomb!.modules = [mod];
-  room.bomb!.serial = serial;
-  room.bomb!.batteries = batteries;
+/** Puts exactly these modules on the bomb. */
+function withKinds(room: Room, kinds: Module['kind'][], seed = 5) {
+  const ed = game.editionOf(room.bomb!.edition);
+  room.bomb!.modules = kinds.map((k) => game.makeModule(k, ed, seededRng(seed)));
 }
 
-describe('wire rules', () => {
-  it('3 wires', () => {
-    expect(wireToCut(['red', 'blue', 'red'], odd)).toBe(0); // no yellow
-    expect(wireToCut(['yellow', 'red', 'black'], odd)).toBe(1); // last black
-    expect(wireToCut(['yellow', 'red', 'blue'], odd)).toBe(2);
-  });
-  it('4 wires', () => {
-    expect(wireToCut(['red', 'blue', 'red', 'white'], odd)).toBe(2); // 2 reds, odd → last red
-    expect(wireToCut(['red', 'yellow', 'red', 'white'], even)).toBe(2); // no blue → third
-    expect(wireToCut(['blue', 'white', 'red', 'yellow'], even)).toBe(0); // one white
-    expect(wireToCut(['blue', 'yellow', 'red', 'black'], even)).toBe(1);
-  });
-  it('5 wires', () => {
-    expect(wireToCut(['red', 'red', 'red', 'red', 'yellow'], even)).toBe(3); // last yellow, 3 batteries
-    expect(wireToCut(['red', 'black', 'blue', 'black', 'white'], odd)).toBe(1); // two blacks → first black
-    expect(wireToCut(['blue', 'blue', 'white', 'yellow', 'white'], odd)).toBe(1); // no red
-    expect(wireToCut(['red', 'blue', 'white', 'yellow', 'white'], odd)).toBe(0);
-  });
-  it('6 wires', () => {
-    expect(wireToCut(['red', 'blue', 'blue', 'red', 'black', 'yellow'], even)).toBe(2); // no white, even
-    expect(wireToCut(['red', 'blue', 'white', 'red', 'black', 'yellow'], odd)).toBe(4); // one blue
-    expect(wireToCut(['red', 'red', 'white', 'blue', 'blue', 'yellow'], odd)).toBe(5); // more red than yellow
-    expect(wireToCut(['yellow', 'red', 'white', 'blue', 'blue', 'yellow'], odd)).toBe(3);
-  });
-});
+/** Plays a module perfectly, the way a Defuser following the manual would. */
+function solveModule(room: Room, defuser: string, index: number, now = 1000): string {
+  const bomb = room.bomb!;
+  const ed = game.editionOf(bomb.edition);
+  const info = { serial: bomb.serial, batteries: bomb.batteries };
+  const m = bomb.modules[index]!;
+  const act = (a: BombAct, t = now) => game.act(room, defuser, a, ctxAt(t));
+  let r = 'ok';
+  switch (m.kind) {
+    case 'wires':
+      return act({ op: 'cut', module: index, wire: wireToCut(ed, m.wires, info) });
+    case 'button': {
+      const should = buttonAction(ed, m.color, m.label, info);
+      act({ op: 'press', module: index }, now);
+      if (should === 'tap') return act({ op: 'release', module: index, shown: '' }, now + 100);
+      const digit = releaseDigit(ed, m.holding!.strip);
+      // Find a moment where the timer shows that digit.
+      for (let t = now + 1000; t < bomb.endsAt; t += 1000) {
+        const shown = formatTimer(bomb.endsAt - t);
+        if (shown.includes(digit)) return act({ op: 'release', module: index, shown }, t);
+      }
+      return 'no-digit';
+    }
+    case 'symbols':
+      for (const s of symbolOrder(ed, m.symbols)) r = act({ op: 'symbol', module: index, symbol: s });
+      return r;
+    case 'simon':
+      while (!m.solved && room.phase === 'ARMED') for (const f of m.flashes.slice(0, m.stage)) r = act({ op: 'simon', module: index, color: simonMap(ed, f, bomb.strikes, info) });
+      return r;
+    case 'password': {
+      const word = spellable(ed, m.columns)[0]!;
+      [...word].forEach((ch, i) => {
+        while (m.columns[i]![m.positions[i]!] !== ch) act({ op: 'spin', module: index, column: i, dir: 1 });
+      });
+      return act({ op: 'submit', module: index });
+    }
+    case 'morse': {
+      const want = ed.morse.find((x) => x.word === m.word)!.freq;
+      while (m.freqs[m.index] !== want) act({ op: 'tune', module: index, dir: 1 });
+      return act({ op: 'transmit', module: index });
+    }
+    case 'maze': {
+      const walls = ed.mazes[mazeFor(ed, m.markers[0], m.markers[1])]!.walls;
+      const steps: [BombAct & { op: 'move' }, number, number, number][] = [
+        [{ op: 'move', module: index, dir: 'up' }, 0, -1, 1],
+        [{ op: 'move', module: index, dir: 'right' }, 1, 0, 2],
+        [{ op: 'move', module: index, dir: 'down' }, 0, 1, 4],
+        [{ op: 'move', module: index, dir: 'left' }, -1, 0, 8],
+      ];
+      // BFS from pos to goal.
+      const key = (x: number, y: number) => y * 6 + x;
+      const prev = new Map<number, [number, number]>();
+      const q: [number, number][] = [m.pos];
+      prev.set(key(...m.pos), [-1, -1]);
+      while (q.length) {
+        const [x, y] = q.shift()!;
+        steps.forEach(([, dx, dy, bit], si) => {
+          if (walls[key(x, y)]! & bit) return;
+          const n = key(x + dx, y + dy);
+          if (prev.has(n)) return;
+          prev.set(n, [key(x, y), si]);
+          q.push([x + dx, y + dy]);
+        });
+      }
+      const path: number[] = [];
+      for (let c = key(...m.goal); c !== key(...m.pos); c = prev.get(c)![0]) path.unshift(prev.get(c)![1]);
+      for (const si of path) r = act(steps[si]![0]);
+      return r;
+    }
+    case 'memory':
+      while (!m.solved) r = act({ op: 'memory', module: index, pos: memoryPress(ed, m.stage, m.display, m.labels, m.history) });
+      return r;
+    case 'switches':
+      m.leds.forEach((led, i) => {
+        if (m.up[i] !== switchShouldBeUp(ed, led, m.leds, info)) act({ op: 'flip', module: index, i });
+      });
+      return act({ op: 'check', module: index });
+  }
+}
 
-describe('other solvers', () => {
-  it('button', () => {
-    expect(buttonAction('blue', 'ABORT', even)).toBe('hold');
-    expect(buttonAction('red', 'DETONATE', vowel)).toBe('tap');
-    expect(buttonAction('white', 'PRESS', vowel)).toBe('hold');
-    expect(buttonAction('yellow', 'PRESS', even)).toBe('tap');
-    expect(buttonAction('red', 'HOLD', odd)).toBe('tap');
-    expect(buttonAction('blue', 'PRESS', odd)).toBe('hold');
-    expect(releaseDigit('blue')).toBe('4');
-    expect(formatTimer(64_000)).toBe('1:04');
+describe('manual editions', () => {
+  it('are deterministic per id and different across ids', () => {
+    expect(makeEdition(1234)).toEqual(makeEdition(1234));
+    const a = makeEdition(1234);
+    const b = makeEdition(4321);
+    expect(a.button.strip).not.toEqual(b.button.strip);
+    expect(a.symbols).not.toEqual(b.symbols);
   });
-  it('simon uses the vowel table and current strikes', () => {
-    expect(simonMap('red', 0, vowel)).toBe('green');
-    expect(simonMap('red', 1, vowel)).toBe('yellow');
-    expect(simonMap('red', 0, odd)).toBe('blue');
-    expect(simonMap('yellow', 2, odd)).toBe('green');
+
+  it('every edition is playable: mazes are identifiable, strips use distinct digits', () => {
+    for (let id = 1000; id < 1060; id++) {
+      const ed = makeEdition(id);
+      expect(new Set(Object.values(ed.button.strip)).size).toBe(4);
+      for (let i = 0; i < ed.mazes.length; i++) expect(mazeFor(ed, ed.mazes[i]!.markers[0], ed.mazes[i]!.markers[1])).toBe(i);
+      expect(new Set(ed.morse.map((m) => m.freq)).size).toBe(8);
+      for (const n of [3, 4, 5, 6] as const)
+        for (let k = 0; k < 20; k++) {
+          const wires = Array.from({ length: n }, (_, i) => (['red', 'blue', 'yellow', 'white', 'black'] as const)[(k * 7 + i * 3 + id) % 5]!);
+          const cut = wireToCut(ed, wires, { serial: 'AB3CD7', batteries: k % 5 });
+          expect(cut).toBeGreaterThanOrEqual(0);
+          expect(cut).toBeLessThan(n);
+        }
+    }
   });
-  it('symbols are pressed in column order', () => {
-    const col = MANUAL.symbols.columns[0];
-    const four = [col[5], col[1], col[3], col[0]];
-    expect(symbolColumn(four)).toEqual([0]);
-    expect(symbolOrder(four)).toEqual([col[0], col[1], col[3], col[5]]);
-  });
-  it('generators always make solvable, unambiguous modules', () => {
-    for (let seed = 1; seed <= 50; seed++) {
-      const rng = seededRng(seed);
-      const sym = game.makeModule('symbols', rng);
-      if (sym.kind === 'symbols') expect(symbolColumn(sym.symbols)).toHaveLength(1);
-      const pw = game.makeModule('password', rng);
-      if (pw.kind === 'password') expect(spellable(pw.columns)).toHaveLength(1);
-      const serial = game.makeSerial(rng);
-      expect(serial).toMatch(/^[A-Z0-9]{5}\d$/);
+
+  it('generated modules are unambiguous: one symbol column, one spellable password', () => {
+    for (let id = 1000; id < 1030; id++) {
+      const ed = makeEdition(id);
+      for (let s = 1; s < 6; s++) {
+        const sym = game.makeModule('symbols', ed, seededRng(s)) as Extract<Module, { kind: 'symbols' }>;
+        expect(symbolColumns(ed, sym.symbols)).toHaveLength(1);
+        const pw = game.makeModule('password', ed, seededRng(s)) as Extract<Module, { kind: 'password' }>;
+        expect(spellable(ed, pw.columns)).toHaveLength(1);
+      }
     }
   });
 });
 
-describe('defusing', () => {
-  it('a correct cut solves, a wrong cut strikes, and only the Defuser can act', () => {
-    const { room, defuser, expert } = armed('easy');
-    withModule(room, { kind: 'wires', wires: ['red', 'blue', 'red'], cut: [], solved: false });
-    expect(() => game.act(room, expert, { op: 'cut', module: 0, wire: 0 }, ctxAt(1000))).toThrow(
-      expect.objectContaining({ code: 'NOT_YOUR_ROLE' }),
-    );
-    expect(game.act(room, defuser, { op: 'cut', module: 0, wire: 2 }, ctxAt(1000))).toBe('strike');
-    expect(game.act(room, defuser, { op: 'cut', module: 0, wire: 0 }, ctxAt(2000))).toBe('solved');
-    expect(room.phase).toBe('RESULT');
-    expect(room.results[0]).toMatchObject({ outcome: 'defused', strikes: 1 });
+describe('bombs', () => {
+  it('mix modules up: the next bomb favours kinds the last one did not have', () => {
+    const last = ['wires', 'button', 'symbols', 'simon'] as const;
+    for (let s = 1; s < 10; s++) {
+      const kinds = game.pickKinds(4, [...last], seededRng(s));
+      expect(kinds.every((k) => !last.includes(k as (typeof last)[number]))).toBe(true);
+    }
+    expect(new Set(game.pickKinds(6, [], seededRng(2))).size).toBe(6);
   });
 
-  it('three strikes explode the bomb', () => {
-    const { room, defuser } = armed();
-    withModule(room, { kind: 'wires', wires: ['red', 'blue', 'red', 'black', 'white', 'yellow'], cut: [], solved: false });
-    game.act(room, defuser, { op: 'cut', module: 0, wire: 0 }, ctxAt(1));
-    game.act(room, defuser, { op: 'cut', module: 0, wire: 1 }, ctxAt(2));
-    game.act(room, defuser, { op: 'cut', module: 0, wire: 2 }, ctxAt(3));
+  it('every module kind can be defused; a full hard bomb defuses', () => {
+    const { room, defuser } = armed('hard', 3);
+    withKinds(room, [...MODULE_KINDS]);
+    room.bomb!.endsAt = 10_000_000;
+    MODULE_KINDS.forEach((kind, i) => expect(solveModule(room, defuser, i), kind).toBe('solved'));
+    expect(room.phase).toBe('RESULT');
+    expect(room.results[0]).toMatchObject({ outcome: 'defused', strikes: 0 });
+  });
+
+  it('mistakes strike: a wrong wire, a maze wall, a wrong memory press; three strikes explode', () => {
+    const { room, defuser } = armed('normal', 4);
+    withKinds(room, ['wires', 'maze', 'memory']);
+    const bomb = room.bomb!;
+    const ed = game.editionOf(bomb.edition);
+    const w = bomb.modules[0] as Extract<Module, { kind: 'wires' }>;
+    const right = wireToCut(ed, w.wires, bomb);
+    expect(game.act(room, defuser, { op: 'cut', module: 0, wire: (right + 1) % w.wires.length }, ctxAt(1000))).toBe('strike');
+    const mz = bomb.modules[1] as Extract<Module, { kind: 'maze' }>;
+    const walls = ed.mazes[mz.maze]!.walls;
+    const blocked = (['up', 'right', 'down', 'left'] as const).find((d, i) => walls[mz.pos[1] * 6 + mz.pos[0]]! & [1, 2, 4, 8][i]!)!;
+    const before = [...mz.pos];
+    expect(game.act(room, defuser, { op: 'move', module: 1, dir: blocked }, ctxAt(1000))).toBe('strike');
+    expect(mz.pos).toEqual(before);
+    const mem = bomb.modules[2] as Extract<Module, { kind: 'memory' }>;
+    const want = memoryPress(ed, mem.stage, mem.display, mem.labels, mem.history);
+    game.act(room, defuser, { op: 'memory', module: 2, pos: (want + 1) % 4 }, ctxAt(1000));
     expect(room.phase).toBe('RESULT');
     expect(room.results[0]).toMatchObject({ outcome: 'exploded', cause: 'strikes' });
   });
 
-  it('the button: tap vs hold, and releasing on the right digit', () => {
-    const { room, defuser } = armed();
-    // red HOLD → tap
-    withModule(room, { kind: 'button', color: 'red', label: 'HOLD', holding: null, solved: false });
-    game.act(room, defuser, { op: 'press', module: 0 }, ctxAt(1000));
-    expect(game.act(room, defuser, { op: 'release', module: 0, shown: '' }, ctxAt(1200))).toBe('solved');
-
-    const second = armed('normal', 2);
-    withModule(second.room, { kind: 'button', color: 'blue', label: 'PRESS', holding: null, solved: false });
-    game.act(second.room, second.defuser, { op: 'press', module: 0 }, ctxAt(1000));
-    const strip = (second.room.bomb!.modules[0] as Extract<Module, { kind: 'button' }>).holding!.strip;
-    const digit = releaseDigit(strip);
-    // Find a moment when the timer shows that digit, and release then.
-    let t = 3000;
-    while (!formatTimer(second.room.bomb!.endsAt - t).includes(digit)) t += 1000;
-    expect(game.act(second.room, second.defuser, { op: 'release', module: 0, shown: formatTimer(second.room.bomb!.endsAt - t) }, ctxAt(t))).toBe(
-      'solved',
-    );
-  });
-
-  it('symbols, simon and password modules', () => {
-    const { room, defuser } = armed();
-    const col = MANUAL.symbols.columns[0];
-    const four = [col[5]!, col[1]!, col[3]!, col[0]!];
-    withModule(room, { kind: 'symbols', symbols: four, pressed: [], solved: false });
-    expect(game.act(room, defuser, { op: 'symbol', module: 0, symbol: col[1]! }, ctxAt(1))).toBe('strike');
-    for (const s of symbolOrder(four).slice(0, 3)) expect(game.act(room, defuser, { op: 'symbol', module: 0, symbol: s }, ctxAt(2))).toBe('ok');
-    expect(game.act(room, defuser, { op: 'symbol', module: 0, symbol: col[5]! }, ctxAt(3))).toBe('solved');
-
-    const s2 = armed('normal', 3);
-    withModule(s2.room, { kind: 'simon', flashes: ['red', 'blue'], stage: 1, input: [], solved: false }, 'XB3CD7');
-    expect(game.act(s2.room, s2.defuser, { op: 'simon', module: 0, color: 'blue' }, ctxAt(1))).toBe('ok'); // red → blue (no vowel, 0 strikes)
-    expect(game.act(s2.room, s2.defuser, { op: 'simon', module: 0, color: 'blue' }, ctxAt(2))).toBe('ok');
-    expect(game.act(s2.room, s2.defuser, { op: 'simon', module: 0, color: 'yellow' }, ctxAt(3))).toBe('solved'); // blue → yellow
-
-    const s3 = armed('normal', 4);
-    const cols = ['axxxxx', 'bxxxxx', 'oxxxxx', 'uxxxxx', 'txxxxx'].map((c) => c.split(''));
-    withModule(s3.room, { kind: 'password', columns: cols, positions: [1, 0, 0, 0, 0], solved: false });
-    expect(game.act(s3.room, s3.defuser, { op: 'submit', module: 0 }, ctxAt(1))).toBe('strike');
-    game.act(s3.room, s3.defuser, { op: 'spin', module: 0, column: 0, dir: -1 }, ctxAt(2));
-    expect(game.act(s3.room, s3.defuser, { op: 'submit', module: 0 }, ctxAt(3))).toBe('solved'); // "about"
-  });
-
-  it('runs out of time, then swaps roles for the next bomb', () => {
-    const { room, defuser, bomb } = armed('hard');
-    expect(bomb.modules).toHaveLength(5);
-    expect(game.wakeAt(room)).toBe(180_000);
-    expect(game.tick(room, ctxAt(180_000))).toBe(true);
-    expect(room.results[0]).toMatchObject({ outcome: 'exploded', cause: 'time' });
-    game.readyForNext(room, 'pa', ctxAt(181_000));
-    game.readyForNext(room, 'pb', ctxAt(181_000));
-    expect(room.phase).toBe('ARMED');
+  it('a new bomb brings a new edition and swapped roles', () => {
+    const { room, defuser, bomb } = armed();
+    game.tick(room, ctxAt(bomb.endsAt));
+    expect(room.results[0]!.cause).toBe('time');
+    game.readyForNext(room, 'pa', ctxAt(500_000, 9));
+    game.readyForNext(room, 'pb', ctxAt(500_000, 9));
     expect(room.defuserId).not.toBe(defuser);
+    expect(room.bomb!.edition).not.toBe(bomb.edition);
   });
-});
 
-describe('view', () => {
-  it('the Expert never sees the armed bomb; everyone sees strikes and progress', () => {
+  it('only the Expert gets the manual and only the Defuser gets the bomb', () => {
     const { room, defuser, expert } = armed();
-    const forExpert = toPublicState(room, expert, 0);
-    expect(forExpert.role).toBe('expert');
-    expect(forExpert.bomb).toBeNull();
-    expect(JSON.stringify(forExpert).includes(room.bomb!.serial)).toBe(false);
-    expect(forExpert.modulesTotal).toBe(4);
-    const forDefuser = toPublicState(room, defuser, 0);
-    expect(forDefuser.bomb?.serial).toBe(room.bomb!.serial);
-    expect(JSON.stringify(forDefuser).includes('token-')).toBe(false);
+    const d = toPublicState(room, defuser, 0);
+    const e = toPublicState(room, expert, 0);
+    expect(d.bomb).not.toBeNull();
+    expect(d.manual).toBeNull();
+    expect(e.bomb).toBeNull();
+    expect(e.manual?.id).toBe(room.bomb!.edition);
+    expect(e.kinds).toEqual(room.bomb!.modules.map((m) => m.kind));
+    expect(JSON.stringify(d)).not.toContain('token-');
+  });
+
+  it('only the Defuser can act', () => {
+    const { room, expert } = armed();
+    expect(() => game.act(room, expert, { op: 'cut', module: 0, wire: 0 }, ctxAt(1000))).toThrow(/Expert/);
   });
 });
 

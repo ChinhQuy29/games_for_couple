@@ -15,18 +15,27 @@ One of you is looking at a ticking bomb. The other has the defusal manual. Neith
 | Difficulty | Modules | Timer |
 |---|---|---|
 | 🟢 Easy | 3 | 5:00 |
-| 🟡 Normal | 4 | 4:00 |
-| 🔴 Hard | 5 | 3:00 |
+| 🟡 Normal | 4 | 4:30 |
+| 🔴 Hard | 6 | 5:30 |
+
+### Nothing stays the same
+
+- **A new manual every bomb.** Each bomb comes with a randomly generated **manual edition** (the number is on both screens). The wire rules, button rules, strip digits, symbol columns, Simon tables, password list, Morse frequencies, mazes, memory steps and switch rules all change. Last bomb's rules won't help you.
+- **A different mix of modules.** There are 9 kinds. Each bomb draws its modules at random, preferring kinds the previous bomb didn't have, and the Expert's manual only has tabs for the ones on this bomb.
 
 ### The modules
 
-- **〰️ Wires:** 3–6 colored wires. Cut exactly one. Which one depends on the colors, the count, the batteries and the serial's last digit.
-- **🔴 The Button:** tap it or hold it, depending on its color, its word, the batteries and the serial. When held, a strip lights up, and its color says which digit to let go on.
+- **〰️ Wires:** 3–6 colored wires. Cut exactly one, chosen by the first matching rule (colors, positions, batteries, the serial's last digit, vowels).
+- **🔴 The Button:** tap or hold, by the first matching rule. While held, a strip lights up; its color says which digit to let go on.
 - **🔣 Symbols:** four strange symbols. One manual column has all four; press them in that column's order.
-- **🟦 Simon Says:** pads flash a growing sequence. Press the *mapped* color, not the one that flashed. The map changes with the strike count and whether the serial has a vowel.
-- **🔤 Password:** five letter wheels. Only one word from the list of 35 can be spelled. Spell it and submit.
+- **🟦 Simon Says:** pads flash a growing sequence. Press the *mapped* color, which depends on the strike count and whether the serial has a vowel.
+- **🔤 Password:** five letter wheels. Only one word from the manual's list can be spelled.
+- **📡 Morse Code:** a light blinks a word. The Expert decodes it with the Morse alphabet, looks up its frequency, and the Defuser tunes to it and presses TX.
+- **🌀 Maze:** the Defuser sees two green circles, a white light and a red triangle, but no walls. The circles identify one of the manual's six mazes; walking into a wall is a strike.
+- **🧠 Memory:** a display number and four labeled buttons, over 5 stages. Later stages say things like "same position as stage 2". A mistake resets it to stage 1.
+- **🎚️ Switches:** five switches with colored lights. Each light's rule says up or down, based on the serial, the batteries, or how many lights share its color.
 
-The manual was written for this game; its rules are not copied from KTANE.
+The rules are generated for this game; none are copied from KTANE.
 
 ## Run it
 
@@ -36,12 +45,11 @@ From the repository root, `npm install`, then `npm run dev`. Open http://localho
 
 ```
 games/bomb-squad/           # @gfc/bomb, built on the shared kit (../../kit)
-├─ shared/manual.ts         # the manual text and tables (what the Expert reads)
-├─ shared/rules.ts          # solvers that implement exactly those rules
+├─ shared/edition.ts        # manual editions: generated rules, their solvers, and their text
 ├─ shared/index.ts          # difficulties, module types, state, zod schemas
-├─ server/game.ts           # bomb generation, actions → ok / strike / solved, timer
+├─ server/game.ts           # bombs (edition + module mix), actions → ok / strike / solved, timer
 ├─ server/index.ts          # view + registerGame() wiring (namespace /bomb)
-├─ server/__tests__/        # 14 unit tests
+├─ server/__tests__/        # 11 unit tests
 ├─ client/                  # BombApp, screens, Modules (bomb panels), Manual (tabs)
 └─ docs/spec.md
 ```
@@ -53,8 +61,10 @@ npm test -w @gfc/bomb
 ```
 
 The tests cover:
-- every solver (wires by count, button tap/hold and release digits, symbol columns, Simon maps, spellable passwords),
-- bomb generation (unique symbol columns, exactly one spellable password),
-- strikes, explosions on 3 strikes and on time, a full defuse,
-- role swaps between bombs,
-- the view (the Expert never receives the armed bomb).
+- editions: deterministic per id, different across ids, always playable (valid wire targets, distinct strip digits, identifiable mazes),
+- generated symbols and passwords are unambiguous,
+- the module mix avoids the last bomb's kinds,
+- every one of the 9 module kinds defused by following the manual,
+- strikes (a wrong wire, a maze wall, a wrong memory press) and exploding,
+- a new edition and swapped roles for the next bomb,
+- only the Expert gets the manual, only the Defuser gets the bomb; the "who goes first" choice.

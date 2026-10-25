@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { BombAct, Module, SimonColor } from '../shared';
+import { MODULE_INFO, morseFor, type BombAct, type LedColor, type Module, type SimonColor } from '../shared';
 
 // The Defuser's module panels. Each sends a BombAct; the server decides right or wrong.
 
@@ -17,18 +17,21 @@ export function ModulePanel({ mod, index, send, timerText }: { mod: Module; inde
         aria-label={mod.solved ? 'Solved' : 'Not solved'}
       />
       <p className="mb-2 font-display text-sm font-extrabold uppercase tracking-wider opacity-70">
-        {index + 1} · {TITLES[mod.kind]}
+        {index + 1} · {MODULE_INFO[mod.kind].title}
       </p>
       {mod.kind === 'wires' && <Wires mod={mod} index={index} send={send} />}
       {mod.kind === 'button' && <BigButton mod={mod} index={index} send={send} timerText={timerText} />}
       {mod.kind === 'symbols' && <Symbols mod={mod} index={index} send={send} />}
       {mod.kind === 'simon' && <Simon mod={mod} index={index} send={send} />}
       {mod.kind === 'password' && <Password mod={mod} index={index} send={send} />}
+      {mod.kind === 'morse' && <Morse mod={mod} index={index} send={send} />}
+      {mod.kind === 'maze' && <Maze mod={mod} index={index} send={send} />}
+      {mod.kind === 'memory' && <Memory mod={mod} index={index} send={send} />}
+      {mod.kind === 'switches' && <Switches mod={mod} index={index} send={send} />}
     </div>
   );
 }
 
-const TITLES = { wires: 'Wires', button: 'The Button', symbols: 'Symbols', simon: 'Simon Says', password: 'Password' } as const;
 
 function Wires({ mod, index, send }: { mod: Extract<Module, { kind: 'wires' }>; index: number; send: Send }) {
   return (
@@ -159,6 +162,144 @@ function Password({ mod, index, send }: { mod: Extract<Module, { kind: 'password
       </div>
       <button disabled={mod.solved} className="chip !min-h-0 !bg-yellow !py-1 text-sm !text-[#2b2140]" onClick={() => send({ op: 'submit', module: index })}>
         SUBMIT
+      </button>
+    </div>
+  );
+}
+
+function Morse({ mod, index, send }: { mod: Extract<Module, { kind: 'morse' }>; index: number; send: Send }) {
+  // Blink the word: dot 250ms, dash 750ms, a short gap between symbols, a longer one between letters, 2s at the end.
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    if (mod.solved) return;
+    let cancelled = false;
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const run = async () => {
+      while (!cancelled) {
+        for (const letter of morseFor(mod.word).split(' ')) {
+          for (const sym of letter) {
+            if (cancelled) return;
+            setOn(true);
+            await wait(sym === '.' ? 250 : 750);
+            setOn(false);
+            await wait(250);
+          }
+          await wait(500);
+        }
+        await wait(2000);
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [mod.word, mod.solved]);
+  return (
+    <div className="flex flex-col items-center gap-3 py-1">
+      <span className="h-10 w-10 rounded-full border-[3px] border-line transition-colors" style={{ background: on ? '#ffc93c' : '#3a3020', boxShadow: on ? '0 0 20px #ffc93c' : 'none' }} aria-label={on ? 'Light on' : 'Light off'} />
+      <div className="flex items-center gap-2">
+        <button disabled={mod.solved} className="chip !min-h-0 !py-1" onClick={() => send({ op: 'tune', module: index, dir: -1 })} aria-label="Lower frequency">
+          ◀
+        </button>
+        <span className="rounded-lg border-[3px] border-line bg-[#1f1b2e] px-3 py-1 font-mono text-xl text-[#7dff9a]">{mod.freqs[mod.index]} MHz</span>
+        <button disabled={mod.solved} className="chip !min-h-0 !py-1" onClick={() => send({ op: 'tune', module: index, dir: 1 })} aria-label="Higher frequency">
+          ▶
+        </button>
+      </div>
+      <button disabled={mod.solved} className="chip !min-h-0 !bg-yellow !py-1 text-sm !text-[#2b2140]" onClick={() => send({ op: 'transmit', module: index })}>
+        TX
+      </button>
+    </div>
+  );
+}
+
+function Maze({ mod, index, send }: { mod: Extract<Module, { kind: 'maze' }>; index: number; send: Send }) {
+  const isAt = (p: [number, number], x: number, y: number) => p[0] === x && p[1] === y;
+  const arrow = (dir: 'up' | 'down' | 'left' | 'right', label: string) => (
+    <button disabled={mod.solved} className="chip !min-h-0 justify-center !py-0" onClick={() => send({ op: 'move', module: index, dir })} aria-label={dir}>
+      {label}
+    </button>
+  );
+  return (
+    <div className="flex flex-col items-center gap-2 py-1">
+      <div className="grid w-40 grid-cols-6 gap-0.5 rounded-lg bg-[#1f1b2e] p-1">
+        {Array.from({ length: 36 }, (_, i) => {
+          const x = i % 6;
+          const y = Math.floor(i / 6);
+          return (
+            <span key={i} className="flex aspect-square items-center justify-center rounded-sm bg-[#2b2f38] text-xs">
+              {isAt(mod.pos, x, y) ? (
+                <span className="h-3 w-3 rounded-full bg-white shadow-[0_0_6px_#fff]" />
+              ) : isAt(mod.goal, x, y) ? (
+                <span className="text-[#ff4f4f]">▲</span>
+              ) : mod.markers.some((m) => isAt(m, x, y)) ? (
+                <span className="h-3 w-3 rounded-full border-2 border-mint" />
+              ) : (
+                <span className="h-1 w-1 rounded-full bg-white/20" />
+              )}
+            </span>
+          );
+        })}
+      </div>
+      <div className="grid w-28 grid-cols-3 gap-1">
+        <span />
+        {arrow('up', '▲')}
+        <span />
+        {arrow('left', '◀')}
+        {arrow('down', '▼')}
+        {arrow('right', '▶')}
+      </div>
+    </div>
+  );
+}
+
+function Memory({ mod, index, send }: { mod: Extract<Module, { kind: 'memory' }>; index: number; send: Send }) {
+  return (
+    <div className="flex flex-col items-center gap-3 py-1">
+      <span className="flex h-16 w-24 items-center justify-center rounded-xl border-[3px] border-line bg-[#1f1b2e] font-mono text-5xl text-[#7dff9a]">{mod.solved ? '✓' : mod.display}</span>
+      <div className="flex gap-2">
+        {mod.labels.map((l, pos) => (
+          <button
+            key={pos}
+            disabled={mod.solved}
+            onClick={() => send({ op: 'memory', module: index, pos })}
+            className="h-14 w-11 rounded-lg border-[3px] border-line bg-[#f3efe6] font-display text-2xl font-extrabold text-[#2b2140] hover:bg-yellow"
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+      <div className="flex gap-1">
+        {Array.from({ length: 5 }, (_, s) => (
+          <span key={s} className={`h-2 w-4 rounded-sm border border-line ${s < mod.history.length || mod.solved ? 'bg-mint' : 'bg-[#1f1b2e]'}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const LED_HEX: Record<LedColor, string> = { red: '#ff4f4f', green: '#3ddc97', blue: '#3b82f6', yellow: '#ffc93c' };
+
+function Switches({ mod, index, send }: { mod: Extract<Module, { kind: 'switches' }>; index: number; send: Send }) {
+  return (
+    <div className="flex flex-col items-center gap-3 py-1">
+      <div className="flex gap-3">
+        {mod.leds.map((led, i) => (
+          <div key={i} className="flex flex-col items-center gap-1">
+            <span className="h-4 w-4 rounded-full border-2 border-line" style={{ background: LED_HEX[led], boxShadow: `0 0 8px ${LED_HEX[led]}` }} aria-label={`${led} light`} />
+            <button
+              disabled={mod.solved}
+              onClick={() => send({ op: 'flip', module: index, i })}
+              className="flex h-16 w-8 flex-col rounded-lg border-[3px] border-line bg-[#1f1b2e] p-0.5"
+              aria-label={`Switch ${i + 1}, ${mod.up[i] ? 'up' : 'down'}`}
+            >
+              <span className={`h-7 w-full rounded-md bg-[#c9c9d6] transition-all ${mod.up[i] ? '' : 'mt-auto'}`} />
+            </button>
+          </div>
+        ))}
+      </div>
+      <button disabled={mod.solved} className="chip !min-h-0 !bg-yellow !py-1 text-sm !text-[#2b2140]" onClick={() => send({ op: 'check', module: index })}>
+        CHECK
       </button>
     </div>
   );
