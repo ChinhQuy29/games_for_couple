@@ -15,6 +15,7 @@ import EscapeApp from '@gfc/escape/client';
 import CarryApp from '@gfc/carry/client';
 import RoadTripApp from '@gfc/roadtrip/client';
 import DuetApp from '@gfc/duet/client';
+import PaintApp from '@gfc/paint/client';
 import WyrApp from '@gfc/wyr/client';
 import NotFound from './portal/NotFound';
 
@@ -39,6 +40,7 @@ export default function App() {
       <Route path="/carry/*" element={<CarryApp />} />
       <Route path="/road-trip/*" element={<RoadTripApp />} />
       <Route path="/codenames/*" element={<DuetApp />} />
+      <Route path="/paint-hide/*" element={<PaintApp />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

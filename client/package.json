@@ -21,6 +21,7 @@
     "@gfc/carry": "*",
     "@gfc/roadtrip": "*",
     "@gfc/duet": "*",
+    "@gfc/paint": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/shared": "*",

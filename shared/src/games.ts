@@ -181,6 +181,16 @@ export const GAMES: GameInfo[] = [
     minutes: '15–20 min',
   },
   {
+    id: 'paint-hide',
+    title: 'Paint & Hide',
+    emoji: '🦎',
+    tagline: 'Paint a chameleon to vanish into a crazy scene. 25 seconds, 3 clicks to find it.',
+    path: '/paint-hide',
+    status: 'playable',
+    accent: 'sky',
+    minutes: '10–15 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

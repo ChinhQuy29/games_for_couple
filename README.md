@@ -23,6 +23,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 📦 **Handle With Care** | `/carry` | Two clumsy movers, one house of valuables, one truck. Small things you carry or throw; the piano and fish tank need both of you holding on. Co-op. | Keyboard | [README](games/handle-with-care/README.md) · [spec](games/handle-with-care/docs/spec.md) |
 | 🚐 **Road Trip** | `/road-trip` | One of you steers; the other has the pedals and the only map. Forks, cows, potholes, fuel and a night drive. Co-op. | Keyboard + a call | [README](games/road-trip/README.md) · [spec](games/road-trip/docs/spec.md) |
 | 🕵️ **Codenames Duet** | `/codenames` | 25 words, two different secret keys. Take turns giving one-word clues to find all 15 agents together, and avoid the assassins. English or Vietnamese. Co-op. | Keyboard + a call | [README](games/codenames-duet/README.md) · [spec](games/codenames-duet/docs/spec.md) |
+| 🦎 **Paint & Hide** | `/paint-hide` | One paints a chameleon to vanish into a crazy generated scene (eyedropper, brushes, fill); the other gets 25 seconds and 3 clicks to find it. Rounds swap. | Mouse | [README](games/paint-hide/README.md) · [spec](games/paint-hide/docs/spec.md) |
 | 🎨 Blind Portrait Duel | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -149,6 +150,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Turns:** one gives a one-word clue and a number; the other taps cards, read with the clue giver's key. An agent continues, a bystander ends the turn, an assassin loses the game. Find all 15 to win; your record carries across boards.
 - **Built with:** the shared kit, on the Socket.IO namespace `/duet`. Your partner's key is only revealed when the game is over.
 
+### 🦎 Paint & Hide
+
+- **Setup:** 2 players, 4 rounds, about 10 minutes. Roles swap every round.
+- **Hiding:** 80 seconds to drag, rotate and flip a chameleon on a new random painted scene, then paint it: brushes, a palette from the scene, a 💧 eyedropper, and fill.
+- **Seeking:** 25 seconds and 3 clicks. Found = 100 + 4 per second left; not found = 150 to the hider.
+- **Built with:** the shared kit; the scene is generated from a seed on both screens; the paint is sent as a small PNG; on the Socket.IO namespace `/paint`. The seeker gets nothing until seeking starts.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -167,7 +175,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape`, `/carry`, `/road-trip`, `/codenames` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape`, `/carry`, `/road-trip`, `/codenames`, `/paint-hide` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -206,7 +214,8 @@ games/
 ├─ escape-room/         # @gfc/escape: co-op two-room escape puzzles, built on the kit
 ├─ handle-with-care/    # @gfc/carry: co-op furniture moving (R.E.P.O.-style), built on the kit
 ├─ road-trip/           # @gfc/roadtrip: co-op split-controls driving, built on the kit
-└─ codenames-duet/      # @gfc/duet: co-op word clues (two secret keys), built on the kit
+├─ codenames-duet/      # @gfc/duet: co-op word clues (two secret keys), built on the kit
+└─ paint-hide/          # @gfc/paint: paint-to-blend hide and seek, built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

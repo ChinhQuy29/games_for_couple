@@ -18,6 +18,7 @@
 @source '../../games/handle-with-care/client';
 @source '../../games/road-trip/client';
 @source '../../games/codenames-duet/client';
+@source '../../games/paint-hide/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

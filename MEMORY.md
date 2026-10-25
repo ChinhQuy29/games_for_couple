@@ -27,6 +27,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #15: Handle With Care** (R.E.P.O.-style) at `/carry`, in `games/handle-with-care/` (`@gfc/carry`).
 - **Game #16: Road Trip** (RV There Yet?-style) at `/road-trip`, in `games/road-trip/` (`@gfc/roadtrip`).
 - **Game #17: Codenames Duet** at `/codenames`, in `games/codenames-duet/` (`@gfc/duet`).
+- **Game #18: Paint & Hide** (Meccha Chameleon-style) at `/paint-hide`, in `games/paint-hide/` (`@gfc/paint`). The last of the 5 from couple-games-plan-2.
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-25)
@@ -118,6 +119,14 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Paint & Hide (plan 2 done)
+- **Design:**
+  - a seeded busy scene (mulberry32, 5 palettes, ~270 shapes) drawn identically on both screens;
+  - a chameleon made of 9 ellipses at scale 0.75, with placement {x, y, rot, flip} and a server-side hit test with 6 units of padding;
+  - the paint job is a 240×120 texture sent as a PNG data URL (≤500 KB), clipped to the outline;
+  - hide 80s (auto-submit, then an unpainted fallback), seek 25s / 3 clicks, 4 rounds alternating.
+- 7 tests. Play-tested in two tabs: the curtain for the seeker, move + eyedropper + fill + brush strokes, submit, the seeker's miss and hit, scores, the reveal outline. The scene matched on both screens and the painted texture arrived intact.
 
 ### 2026-10-25: Codenames Duet
 - **Rules:**
