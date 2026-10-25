@@ -126,6 +126,9 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
   - more maps and items; Bomb Squad with more modules, varied per bomb, and rules that change per game;
   - phone controls for all keyboard games; a "who does what" choice at room creation for every role game.
   The user picked the order: role picker → Bomb Squad → Tethered → Hide and Seek → the other environment games → phone controls.
+- **Done: Hide and Seek (maps, props, art).**
+  - No top-down CC0 pack matched the style, so all art is hand-drawn SVG in code. 4 new maps (🛏️ bedroom, 🛁 bathroom, 🏫 classroom, 🏖️ beach) for 7 in all, and 34 new prop types (61 in all) with 5 new miss reactions (splash, squeak, ring, boing, snap).
+  - Every floor is richer: sunlight, shadows, patterned rugs, flowers and lily pads in the park, the sea and a boardwalk on the beach.
 - **Done: Tethered (towers, art, phones).**
   - With the user's OK, downloaded Kenney CC0 packs to the scratchpad: New Platformer Pack 1.1 (3.3 MB) and Mobile Controls (3.1 MB). Only the files used are copied into the repo: `games/tethered/client/assets/` (73 PNGs) and `kit/client/assets/touch/` (9 icons), 108 KB total, each with a CREDITS.md.
   - Towers: Classic plus a seeded generator (lifts, ferries, crumbles, spikes, 3 camps, summit), as Frozen Peak / Desert Cliffs / Mushroom Caves plus a 🎲 random tower each climb. Lobby choice `towerId`.

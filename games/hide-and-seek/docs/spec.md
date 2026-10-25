@@ -78,9 +78,13 @@ Per round:
 |---|---|---|
 | 🛋️ Living room | Wood floor, rug, sofa, TV | plant, lamp, cushion, vase, books, mug, chair |
 | 🍳 Kitchen | Tiles, counters, dining table | mug, pot, toaster, bottle, stool, fruit bowl, plant, chair |
-| 🌳 Park | Grass, path, pond | bush, rock, flower, duck, mushroom, bin, lamp post |
+| 🌳 Park | Grass, flowers, path, pond with lily pads | bush, rock, flower, duck, mushroom, bin, lamp post |
+| 🛏️ Bedroom | Carpet, starry rug, bed, wardrobe, desk | pillow, teddy, slippers, alarm clock, guitar, laundry basket, lamp, plant, books, mug, cushion, chair |
+| 🛁 Bathroom | Tiles, toilet stalls, bathtub, sink, shower corner | toilet, towel, soap, toothbrush cup, toilet roll, shampoo, rubber duck, bucket, slippers, basket, bin, plant, bottle |
+| 🏫 Classroom | Wood floor, blackboard, teacher's desk, 9 school desks | chair, books, apple, pencil cup, mug, backpack, globe, trophy, plant, bin |
+| 🏖️ Beach | Sea, sand, boardwalk, palms, umbrellas, towels | surfboard, sandcastle, beach ball, shell, crab, bucket, starfish, rock, bin |
 
-Big pieces (sofa, TV, counters, trees) are props too: they can be shot, but can't be chosen for hiding.
+Big pieces (sofa, TV, counters, trees, bed, wardrobe, desks, bathtub, sink, blackboard, palms, umbrellas, beach towels) are props too: they can be shot, but can't be chosen for hiding.
 
 ## 5. Props
 
@@ -93,6 +97,11 @@ Big pieces (sofa, TV, counters, trees) are props too: they can be shot, but can'
 | `leaves` | plant, bush, flower, tree | 🍃 burst + "*rustle*" |
 | `quack` | duck | "*QUACK!*" |
 | `spark` | toaster, TV, lamp post | ⚡ + "*bzzt*" |
+| `splash` | bathtub, sink, toilet, soap, shampoo, bucket, starfish | 💦 + "*sploosh!*" |
+| `squeak` | teddy | 🧸 + "*squeak!*" |
+| `ring` | alarm clock, guitar, trophy | 🔔 + "*RRRING!*" |
+| `boing` | beach umbrella, surfboard, beach ball | 🌀 + "*boing!*" |
+| `snap` | crab | 🦀 + "*snip snap!*" |
 | `thud` | everything else | "*thunk*" |
 
 ## 6. Data
@@ -106,7 +115,7 @@ Round      { n, map, hiderId, hunterId, choices[3], hiderType, hider: Placement,
 Room       { phase, roundIndex, rounds[], scores, deadline, startedAt, taunt {propId, until} | null,
              nextTauntAt, readyForNext, settings }
 Settings   { rounds: 2|4|6, hideSec: 30|45|60, seekSec: 45|60|90, shots: 3|5|7,
-             map: 'random'|'living'|'kitchen'|'park', taunts: boolean, sneaks: 0|2|3 }
+             map: 'random'|'living'|'kitchen'|'park'|'bedroom'|'bathroom'|'classroom'|'beach', taunts: boolean, sneaks: 0|2|3 }
 ```
 
 ## 7. Socket events (namespace `/hns`)

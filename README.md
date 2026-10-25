@@ -65,7 +65,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 
 ### 🙈 Hide and Seek
 
-- **Setup:** 2 players, 15–20 minutes, roles swap every round (6 by default). Three maps: 🛋️ living room, 🍳 kitchen, 🌳 park, with the layout reshuffled every round.
+- **Setup:** 2 players, 15–20 minutes, roles swap every round (6 by default). Seven maps: 🛋️ living room, 🍳 kitchen, 🌳 park, 🛏️ bedroom, 🛁 bathroom, 🏫 classroom, 🏖️ beach, with 61 kinds of props and the layout reshuffled every round.
 - **Hiding:** the hider picks one of 3 objects that already exist in the room, then drags, rotates and resizes it to blend in. The hunter sees only a curtain.
 - **Hunting:** 5 shots and 60 seconds. Missed shots make real props react (💥 CRASH, 🦆 QUACK). The fake wiggles every 15s, and the hider has 2 sneak moves that slide visibly across both screens.
 - **Built with:** React and one big SVG map (1600×1000 world units, made for laptops), with hand-drawn SVG props and the Socket.IO namespace `/hns`. The server never tells the hunter which prop is fake until the round ends.

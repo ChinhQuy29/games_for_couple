@@ -44,7 +44,7 @@ Roles swap every round. After the last round (6 by default), the recap shows the
 
 ### Settings (host only)
 
-Map (🛋️ Living room, 🍳 Kitchen, 🌳 Park, or 🎲 random each round), rounds (2/4/6), time to hide (30/45/60s), time to hunt (45/60/90s), shots (3/5/7), sneak moves (0/2/3), and taunts on/off.
+Map (🛋️ Living room, 🍳 Kitchen, 🌳 Park, 🛏️ Bedroom, 🛁 Bathroom, 🏫 Classroom, 🏖️ Beach, or 🎲 random each round, never the same map twice in a row), rounds (2/4/6), time to hide (30/45/60s), time to hunt (45/60/90s), shots (3/5/7), sneak moves (0/2/3), and taunts on/off.
 
 ## Run it
 
@@ -68,7 +68,7 @@ Open http://localhost:5173/hns. To play both sides on one computer, open the roo
   - Only after the round does anyone learn which prop it was.
   - The taunt prop id is in the state only while the wiggle plays (about 1.2s).
 - **Server-driven timers** (`server/timers.ts`) wake for the phase end, each taunt, and the end of each taunt.
-- **Art:** every prop is a small hand-made SVG drawing (`client/components/PropArt.tsx`), with no emoji, so a fake lamp looks exactly like a real one on every device. Floors, rugs, the path and the pond are in `MapBackground.tsx`.
+- **Art:** every prop is a small hand-made SVG drawing (`client/components/PropArt.tsx`), with no emoji, so a fake lamp looks exactly like a real one on every device. There are 61 kinds of props across the 7 maps. Floors, rugs, sunlight, the path, the pond, the sea and the sand are in `MapBackground.tsx`.
 - **Map:** one SVG in world units (1600×1000) that scales to the window. Dragging converts the mouse position to world units. Sneak moves animate with a CSS transition, so the slide is visible.
 - **Real-time:** the Socket.IO namespace `/hns` on the shared server. Rooms are kept in memory.
 
@@ -110,4 +110,4 @@ The tests cover:
 
 ## Status
 
-Playable end to end. Ideas for later: sound effects, more maps (a bedroom, her favorite café), and a "decoy" power-up that makes a real prop wiggle.
+Playable end to end. Ideas for later: sound effects, more maps (her favorite café), and a "decoy" power-up that makes a real prop wiggle.

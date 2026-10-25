@@ -31,6 +31,11 @@ const REACTIONS = {
   quack: { emoji: '🦆', text: 'QUACK!' },
   spark: { emoji: '⚡', text: 'bzzt' },
   thud: { emoji: '💢', text: 'thunk' },
+  splash: { emoji: '💦', text: 'sploosh!' },
+  squeak: { emoji: '🧸', text: 'squeak!' },
+  ring: { emoji: '🔔', text: 'RRRING!' },
+  boing: { emoji: '🌀', text: 'boing!' },
+  snap: { emoji: '🦀', text: 'snip snap!' },
 } as const;
 
 /** Big pieces underneath, small things on top, then top-to-bottom. */

@@ -4,7 +4,7 @@ export type Text = Record<Lang, string>;
 /** The world is 1600×1000 units; clients scale it to fit the window. */
 export const WORLD = { w: 1600, h: 1000 } as const;
 
-export type Reaction = 'shatter' | 'feathers' | 'leaves' | 'quack' | 'spark' | 'thud';
+export type Reaction = 'shatter' | 'feathers' | 'leaves' | 'quack' | 'spark' | 'thud' | 'splash' | 'squeak' | 'ring' | 'boing' | 'snap';
 
 export interface PropTypeDef {
   label: Text;
@@ -47,6 +47,44 @@ export const PROP_TYPES = {
   mushroom: { label: { vi: 'Nấm', en: 'Mushroom' }, w: 44, h: 44, hideable: true, reaction: 'thud' },
   bin: { label: { vi: 'Thùng rác', en: 'Bin' }, w: 54, h: 54, hideable: true, reaction: 'thud' },
   lampPost: { label: { vi: 'Cột đèn', en: 'Lamp post' }, w: 50, h: 50, hideable: true, reaction: 'spark' },
+  // bedroom
+  bed: { label: { vi: 'Giường', en: 'Bed' }, w: 260, h: 320, hideable: false, reaction: 'feathers' },
+  wardrobe: { label: { vi: 'Tủ quần áo', en: 'Wardrobe' }, w: 260, h: 80, hideable: false, reaction: 'thud' },
+  desk: { label: { vi: 'Bàn làm việc', en: 'Desk' }, w: 200, h: 90, hideable: false, reaction: 'thud' },
+  teddy: { label: { vi: 'Gấu bông', en: 'Teddy bear' }, w: 60, h: 64, hideable: true, reaction: 'squeak' },
+  slippers: { label: { vi: 'Dép', en: 'Slippers' }, w: 56, h: 50, hideable: true, reaction: 'thud' },
+  pillow: { label: { vi: 'Gối ngủ', en: 'Pillow' }, w: 86, h: 56, hideable: true, reaction: 'feathers' },
+  alarmClock: { label: { vi: 'Đồng hồ báo thức', en: 'Alarm clock' }, w: 44, h: 44, hideable: true, reaction: 'ring' },
+  guitar: { label: { vi: 'Đàn guitar', en: 'Guitar' }, w: 50, h: 116, hideable: true, reaction: 'ring' },
+  basket: { label: { vi: 'Giỏ đồ', en: 'Laundry basket' }, w: 64, h: 64, hideable: true, reaction: 'feathers' },
+  // bathroom
+  bathtub: { label: { vi: 'Bồn tắm', en: 'Bathtub' }, w: 320, h: 150, hideable: false, reaction: 'splash' },
+  sinkUnit: { label: { vi: 'Bồn rửa', en: 'Sink' }, w: 220, h: 80, hideable: false, reaction: 'splash' },
+  toilet: { label: { vi: 'Bồn cầu', en: 'Toilet' }, w: 66, h: 88, hideable: true, reaction: 'splash' },
+  towel: { label: { vi: 'Khăn tắm', en: 'Towel' }, w: 70, h: 50, hideable: true, reaction: 'feathers' },
+  soap: { label: { vi: 'Xà phòng', en: 'Soap' }, w: 42, h: 30, hideable: true, reaction: 'splash' },
+  toothCup: { label: { vi: 'Cốc bàn chải', en: 'Toothbrush cup' }, w: 36, h: 36, hideable: true, reaction: 'shatter' },
+  toiletRoll: { label: { vi: 'Cuộn giấy', en: 'Toilet roll' }, w: 40, h: 40, hideable: true, reaction: 'feathers' },
+  shampoo: { label: { vi: 'Dầu gội', en: 'Shampoo' }, w: 34, h: 46, hideable: true, reaction: 'splash' },
+  // classroom
+  blackboard: { label: { vi: 'Bảng đen', en: 'Blackboard' }, w: 440, h: 40, hideable: false, reaction: 'thud' },
+  schoolDesk: { label: { vi: 'Bàn học', en: 'School desk' }, w: 120, h: 70, hideable: false, reaction: 'thud' },
+  globe: { label: { vi: 'Quả địa cầu', en: 'Globe' }, w: 56, h: 56, hideable: true, reaction: 'spark' },
+  backpack: { label: { vi: 'Ba lô', en: 'Backpack' }, w: 60, h: 66, hideable: true, reaction: 'thud' },
+  apple: { label: { vi: 'Quả táo', en: 'Apple' }, w: 34, h: 36, hideable: true, reaction: 'thud' },
+  pencilCup: { label: { vi: 'Ống bút', en: 'Pencil cup' }, w: 36, h: 36, hideable: true, reaction: 'shatter' },
+  trophy: { label: { vi: 'Cúp', en: 'Trophy' }, w: 46, h: 46, hideable: true, reaction: 'ring' },
+  // beach
+  umbrella: { label: { vi: 'Dù đi biển', en: 'Beach umbrella' }, w: 180, h: 180, hideable: false, reaction: 'boing' },
+  palm: { label: { vi: 'Cây dừa', en: 'Palm tree' }, w: 210, h: 210, hideable: false, reaction: 'leaves' },
+  beachTowel: { label: { vi: 'Khăn đi biển', en: 'Beach towel' }, w: 120, h: 210, hideable: false, reaction: 'feathers' },
+  surfboard: { label: { vi: 'Ván lướt sóng', en: 'Surfboard' }, w: 48, h: 150, hideable: true, reaction: 'boing' },
+  sandcastle: { label: { vi: 'Lâu đài cát', en: 'Sandcastle' }, w: 80, h: 76, hideable: true, reaction: 'thud' },
+  beachBall: { label: { vi: 'Bóng bãi biển', en: 'Beach ball' }, w: 52, h: 52, hideable: true, reaction: 'boing' },
+  shell: { label: { vi: 'Vỏ sò', en: 'Shell' }, w: 42, h: 38, hideable: true, reaction: 'shatter' },
+  crab: { label: { vi: 'Con cua', en: 'Crab' }, w: 62, h: 44, hideable: true, reaction: 'snap' },
+  bucket: { label: { vi: 'Xô', en: 'Bucket' }, w: 48, h: 48, hideable: true, reaction: 'splash' },
+  starfish: { label: { vi: 'Sao biển', en: 'Starfish' }, w: 46, h: 46, hideable: true, reaction: 'splash' },
 } as const satisfies Record<string, PropTypeDef>;
 
 export type PropType = keyof typeof PROP_TYPES;
@@ -56,6 +94,10 @@ export const MAPS = {
   living: { name: { vi: 'Phòng khách', en: 'Living room' }, emoji: '🛋️' },
   kitchen: { name: { vi: 'Nhà bếp', en: 'Kitchen' }, emoji: '🍳' },
   park: { name: { vi: 'Công viên', en: 'Park' }, emoji: '🌳' },
+  bedroom: { name: { vi: 'Phòng ngủ', en: 'Bedroom' }, emoji: '🛏️' },
+  bathroom: { name: { vi: 'Phòng tắm', en: 'Bathroom' }, emoji: '🛁' },
+  classroom: { name: { vi: 'Lớp học', en: 'Classroom' }, emoji: '🏫' },
+  beach: { name: { vi: 'Bãi biển', en: 'Beach' }, emoji: '🏖️' },
 } as const;
 export type MapId = keyof typeof MAPS;
 export const MAP_IDS = Object.keys(MAPS) as MapId[];
