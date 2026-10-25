@@ -5,7 +5,8 @@ import {
   EVIDENCE_IDS,
   GHOSTS,
   GHOST_IDS,
-  ROOMS,
+  HOUSES,
+  houseOf,
   possibleGhosts,
   roomById,
   type Evidence,
@@ -15,7 +16,7 @@ import {
 import { kit } from './kit';
 import { ExplorerMap, NavigatorMap, useMovementKeys } from './Maps';
 
-const { useGame, useRoom, LobbyShell, Avatar, RecapActions, FirstChoice } = kit;
+const { useGame, useRoom, LobbyShell, Avatar, RecapActions, FirstChoice, Choice } = kit;
 
 function useNow(ms = 250) {
   const { clockOffset } = useGame();
@@ -33,6 +34,9 @@ const fmt = (ms: number) => {
 };
 
 export function Lobby() {
+  const { act } = useGame();
+  const { s } = useRoom();
+  const picked = s.houseChoice >= 0 ? houseOf(s.houseChoice) : null;
   return (
     <LobbyShell
       startLabel="Enter the house 🏚️"
@@ -47,8 +51,16 @@ export function Lobby() {
       }
       settings={
         <>
+          <Choice
+            label="🏚️ House"
+            value={s.houseChoice}
+            options={[-1, ...HOUSES.map((h) => h.id)]}
+            onPick={(house) => act('settings:update', { house })}
+            render={(id) => (id < 0 ? '🎲 Random' : `${houseOf(id).emoji} ${houseOf(id).name}`)}
+          />
+          <p className="text-sm font-semibold text-ink-soft">{picked ? picked.blurb : 'A different house every game.'}</p>
           <FirstChoice label="🔦 Who explores first?" />
-          <p className="font-semibold text-ink-soft">One house, 8 kinds of ghost, 10 minutes before sunrise. A coin flip picks the first Explorer.</p>
+          <p className="font-semibold text-ink-soft">{HOUSES.length} houses, 8 kinds of ghost, 10 minutes before sunrise.</p>
         </>
       }
     />
@@ -189,8 +201,9 @@ function EmfMeter({ level }: { level: number }) {
 }
 
 function NavigatorPanel({ v }: { v: NavigatorView }) {
-  const { partner } = useRoom();
-  const room = v.readings.room ? roomById(v.readings.room).name : '—';
+  const { s, partner } = useRoom();
+  const house = houseOf(s.house);
+  const room = v.readings.room ? roomById(house, v.readings.room).name : '—';
   return (
     <div className="sticker space-y-3 p-3">
       <h3 className="font-display font-extrabold">📡 Readings · {partner?.name ?? 'Explorer'} is in the <span className="text-pink">{room}</span></h3>
@@ -209,7 +222,7 @@ function NavigatorPanel({ v }: { v: NavigatorView }) {
           const cam = v.cameras[k];
           return (
             <div key={k} className="relative h-24 overflow-hidden rounded-xl border-[3px] border-line bg-[#0d0d12] p-1 text-xs font-bold text-[#7dff9a]">
-              <span>CAM {k + 1} {cam ? `· ${ROOMS.find((r) => r.id === cam.room)!.name}` : ''}</span>
+              <span>CAM {k + 1} {cam ? `· ${roomById(house, cam.room).name}` : ''}</span>
               {!cam && <p className="mt-6 text-center text-white/40">no signal</p>}
               {cam?.orbs && (
                 <>
@@ -236,7 +249,7 @@ export function Hunt() {
         <p className="font-display font-extrabold">
           {v.role === 'explorer' ? '🔦 You are the Explorer. Your partner has the map.' : '🗺️ You are the Navigator. Guide them, read the instruments, watch the cameras.'}
         </p>
-        {v.role === 'explorer' ? <ExplorerMap v={v} hunt={s.hunt} gameKey={s.results.length} /> : <NavigatorMap v={v} hunt={s.hunt} />}
+        {v.role === 'explorer' ? <ExplorerMap v={v} hunt={s.hunt} gameKey={s.results.length} /> : <NavigatorMap v={v} hunt={s.hunt} house={houseOf(s.house)} />}
       </div>
       <aside className="flex flex-col gap-3">
         <Status />
@@ -278,7 +291,7 @@ export function Result() {
       <section className="sticker space-y-2 p-5 text-center font-semibold">
         <p>{o.text}</p>
         <p className="font-display text-2xl font-extrabold">
-          It was a {g.name} 👻 in the {roomById(last.ghostRoom).name}
+          It was a {g.name} 👻 in the {roomById(houseOf(last.house), last.ghostRoom).name} ({houseOf(last.house).emoji} {houseOf(last.house).name})
         </p>
         <p>
           Evidence: {g.evidence.map((e) => `${EVIDENCE[e].emoji} ${EVIDENCE[e].name}`).join(' · ')}

@@ -5,25 +5,34 @@ import {
   GHOSTS,
   GHOST_IDS,
   H,
-  MAP,
-  ROOMS,
-  START,
+  HOUSES,
   TIMING,
   W,
-  doorsOf,
+  houseOf,
   idx,
-  nextStep,
   possibleGhosts,
-  roomAt,
-  tileAt,
-  visibleFrom,
-  walkable,
+  roomAt as roomAtIn,
+  doorsOf as doorsOfIn,
+  nextStep as nextStepIn,
+  tileAt as tileAtIn,
+  visibleFrom as visibleFromIn,
+  walkable as walkableIn,
   type ExplorerView,
   type NavigatorView,
   type Room,
 } from '../../shared';
 import * as game from '../game';
 import { toPublicState } from '../index';
+
+// Most tests play in the old house (house 0), the default when a ghost room is forced.
+const H0 = houseOf(0);
+const { map: MAP, rooms: ROOMS, start: START } = H0;
+const roomAt = (x: number, y: number) => roomAtIn(H0, x, y);
+const doorsOf = (id: string) => doorsOfIn(H0, id);
+const tileAt = (x: number, y: number) => tileAtIn(H0, x, y);
+const walkable = (x: number, y: number) => walkableIn(H0, x, y);
+const visibleFrom = (x: number, y: number, f: Parameters<typeof visibleFromIn>[3]) => visibleFromIn(H0, x, y, f);
+const nextStep = (x0: number, y0: number, x1: number, y1: number, blocked?: (x: number, y: number) => boolean) => nextStepIn(H0, x0, y0, x1, y1, blocked);
 
 const ctxAt = (now: number, seed = 1) => ({ now, rng: seededRng(seed) });
 
@@ -81,6 +90,67 @@ describe('the house', () => {
     expect(possibleGhosts(marks).sort()).toEqual(['spirit', 'wraith']);
     marks.freezing = 'no';
     expect(possibleGhosts(marks)).toEqual(['spirit']);
+  });
+});
+
+describe('the houses', () => {
+  it('every house is a closed grid where every floor tile, closet and the exit can be reached', () => {
+    expect(HOUSES.length).toBeGreaterThanOrEqual(4);
+    for (const h of HOUSES) {
+      expect(h.map, h.name).toHaveLength(W * H);
+      const [sx, sy] = h.start;
+      const [ex, ey] = h.exit;
+      expect(Math.abs(sx - ex) + Math.abs(sy - ey), h.name).toBe(1);
+      expect(ex === 0 || ey === 0 || ex === W - 1 || ey === H - 1, h.name).toBe(true);
+      // the outer border is wall, except the front door
+      for (let x = 0; x < W; x++) for (const y of [0, H - 1]) if (x !== ex || y !== ey) expect(h.map[idx(x, y)], `${h.name} ${x},${y}`).toBe('#');
+      for (let y = 0; y < H; y++) for (const x of [0, W - 1]) if (x !== ex || y !== ey) expect(h.map[idx(x, y)], `${h.name} ${x},${y}`).toBe('#');
+      for (let i = 0; i < W * H; i++) {
+        if (h.map[i] === '#') continue;
+        const [x, y] = [i % W, Math.floor(i / W)];
+        if (x === sx && y === sy) continue;
+        expect(nextStepIn(h, sx, sy, x, y), `${h.name} ${x},${y}`).not.toBeNull();
+      }
+      // closets sit inside rooms; doors sit between rooms
+      for (const [x, y] of h.closets) expect(roomAtIn(h, x, y), `${h.name} closet ${x},${y}`).not.toBeNull();
+      for (const [x, y] of h.doors) expect(roomAtIn(h, x, y), `${h.name} door ${x},${y}`).toBeNull();
+      expect(h.closets.length, h.name).toBeGreaterThanOrEqual(5);
+    }
+  });
+
+  it('every ghost room has a doorway (for handprints) and is not where you start', () => {
+    for (const h of HOUSES) {
+      const startRoom = roomAtIn(h, ...h.start);
+      for (const id of h.ghostRooms) {
+        expect(h.rooms.some((r) => r.id === id), `${h.name} ${id}`).toBe(true);
+        expect(doorsOfIn(h, id).length, `${h.name} ${id}`).toBeGreaterThan(0);
+        expect(id, h.name).not.toBe(startRoom);
+      }
+    }
+  });
+
+  it('the host can pick a house; random never repeats the last one', () => {
+    const room = game.newRoom('ABCD', ctxAt(0));
+    addPlayer(room, { id: 'pa', token: 'token-aaaaaaaaaa', name: 'Alex' });
+    addPlayer(room, { id: 'pb', token: 'token-bbbbbbbbbb', name: 'Bao' });
+    expect(() => game.setHouse(room, 'pb', 2)).toThrow();
+    game.setHouse(room, 'pa', 2);
+    game.startGame(room, 'pa', ctxAt(0));
+    expect(room.houseId).toBe(2);
+    expect(roomAtIn(houseOf(2), ...room.me.pos)).toBe('reception');
+    expect(houseOf(2).ghostRooms).toContain(room.ghostRoom);
+    const v = toPublicState(room, room.players.find((p) => p.id !== room.explorerId)!.id, 0);
+    expect((v.view as NavigatorView).map).toBe(houseOf(2).map);
+
+    game.resetToLobby(room);
+    game.setHouse(room, 'pa', -1);
+    let last = room.houseId;
+    for (let seed = 1; seed <= 30; seed++) {
+      game.beginGame(room, 'pa', ctxAt(0, seed));
+      expect(room.houseId).not.toBe(last);
+      room.results.push({ n: seed, explorerId: 'pa', house: room.houseId, ghost: room.ghost, ghostRoom: room.ghostRoom, guess: null, outcome: 'timeout', ms: 0 });
+      last = room.houseId;
+    }
   });
 });
 

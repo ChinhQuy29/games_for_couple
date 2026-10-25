@@ -126,6 +126,7 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
   - more maps and items; Bomb Squad with more modules, varied per bomb, and rules that change per game;
   - phone controls for all keyboard games; a "who does what" choice at room creation for every role game.
   The user picked the order: role picker → Bomb Squad → Tethered → Hide and Seek → the other environment games → phone controls.
+- **Done: Ghost Hunt houses.** `shared/map.ts` now has 4 houses (old house, school, hospital, lake cabin) on the same 30×18 grid; every map function takes the house first. Lobby pick or 🎲 random (never the same twice in a row). 16 tests, including a closed-walls / all-reachable / doorway-per-ghost-room check for every house.
 - **Done: Hide and Seek (maps, props, art).**
   - No top-down CC0 pack matched the style, so all art is hand-drawn SVG in code. 4 new maps (🛏️ bedroom, 🛁 bathroom, 🏫 classroom, 🏖️ beach) for 7 in all, and 34 new prop types (61 in all) with 5 new miss reactions (splash, squeak, ring, boing, snap).
   - Every floor is richer: sunlight, shadows, patterned rugs, flowers and lily pads in the park, the sea and a boardwalk on the beach.

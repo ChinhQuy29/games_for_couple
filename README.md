@@ -94,7 +94,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 
 ### 🔦 Ghost Hunt
 
-- **Setup:** 2 players on a call, up to 10 minutes per house, co-op. Roles swap every game.
+- **Setup:** 2 players on a call, up to 10 minutes per house, co-op. Roles swap every game. Four houses: 🏚️ the old house, 🏫 a school, 🏥 a hospital, 🌲 a lake cabin, or a random one each game.
 - **Explorer:** walks with WASD in the dark and sees only the flashlight cone. Tools: UV light, spirit box, a book, 2 cameras, closets to hide in.
 - **Navigator:** sees the floor plan, the Explorer's dot, EMF and temperature for their room, and the camera feeds, but never the ghost.
 - **Goal:** 6 kinds of evidence, 8 ghost types. Mark evidence in the shared journal, pick the ghost, walk out the front door. Low sanity brings hunts: hide or run.

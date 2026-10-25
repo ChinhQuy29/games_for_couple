@@ -7,7 +7,15 @@ One of you creeps through a dark, haunted house with a flashlight. The other sit
 ## How to play
 
 1. One of you opens **Ghost Hunt** from the portal and creates a room. Send the code or link (`/ghost/CODE`).
-2. The host starts. A coin flip picks the first **Explorer**; the other is the **Navigator**. Roles swap every game.
+2. The host picks a **house** (or 🎲 random: a different one every game) and who explores first, then starts. The other player is the **Navigator**. Roles swap every game.
+
+   | House | What it's like |
+   |---|---|
+   | 🏚️ The old house | Nursery, bedroom, bathroom, study, kitchen, dining and living room off one hallway |
+   | 🏫 The school | Two classrooms and a library, a big gym, the cafeteria and the principal's office. You come in at the end of the hallway |
+   | 🏥 The hospital | Two wards, surgery, the morgue, pharmacy, X-ray and a chapel along a corridor |
+   | 🌲 The lake cabin | A hallway down the middle: bunk room, kitchen and cellar on one side, sauna, boathouse, lounge and workshop on the other |
+
 3. **Explorer:** walk with **WASD** or the arrow keys. You only see what your flashlight hits (and a little around you); the tiles you've seen stay on your map, dimmed. Tools:
    - **F** UV light on/off (handprints show up on doorways),
    - **Q** spirit box (ask the ghost something; sometimes it answers),
@@ -56,11 +64,11 @@ From the repository root, `npm install`, then `npm run dev`. Open http://localho
 
 ```
 games/ghost-hunt/           # @gfc/ghost, built on the shared kit (../../kit)
-├─ shared/map.ts            # the house (rooms → tile grid), line of sight, flashlight, pathfinding
+├─ shared/map.ts            # the 4 houses (rooms → tile grid), line of sight, flashlight, pathfinding
 ├─ shared/index.ts          # ghosts, evidence, timing, state and view types, schemas
 ├─ server/game.ts           # rules: tools, moves, the ghost simulation (5 ticks/s), hunts, endings
 ├─ server/index.ts          # per-role views (redaction) + registerGame() wiring (namespace /ghost)
-├─ server/__tests__/        # 13 unit tests
+├─ server/__tests__/        # 16 unit tests
 ├─ client/                  # GhostApp, Maps (explorer + navigator SVG, key handling), screens
 └─ docs/spec.md
 ```
@@ -72,7 +80,7 @@ npm test -w @gfc/ghost
 ```
 
 The tests cover:
-- the house (everything reachable, the flashlight and walls),
+- the houses (closed walls, every tile reachable, closets in rooms, a doorway for every ghost room, the flashlight and walls), picking a house, and random houses never repeating,
 - unique evidence per ghost and journal filtering,
 - moves (rate limit, walls, Navigator can't move),
 - each kind of evidence appearing only for the right ghost and room,

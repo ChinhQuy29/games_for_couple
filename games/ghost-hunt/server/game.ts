@@ -12,10 +12,10 @@ import {
   EVIDENCE_IDS,
   GHOSTS,
   GHOST_IDS,
-  ROOMS,
-  START,
+  HOUSE_IDS,
   TIMING,
   doorsOf,
+  houseOf,
   nextStep,
   roomAt,
   roomById,
@@ -32,7 +32,6 @@ import {
 
 const SPIRIT_BOX_LINES = ['…here…', '…behind you…', '…get out…', '…cold…', '…mine…', '…kill…', '…child…', '…close…'];
 const GHOST_EVENTS = ['🚪 A door slams somewhere', '💡 The lights flicker', '🧸 Something falls over', '👣 Footsteps upstairs… wait, there is no upstairs', '🎶 A music box plays for a second', '😮‍💨 You hear breathing'];
-const GHOST_ROOMS: RoomId[] = ['nursery', 'bedroom', 'bathroom', 'study', 'kitchen', 'dining'];
 
 const emptyJournal = (): Journal => ({ marks: Object.fromEntries(EVIDENCE_IDS.map((e) => [e, null])) as Journal['marks'], guess: null });
 
@@ -44,10 +43,12 @@ export function newRoom(code: string, ctx: Ctx): Room {
     players: [],
     phase: 'LOBBY',
     explorerId: null,
+    houseChoice: -1,
+    houseId: 0,
     ghost: 'spirit',
     ghostRoom: 'nursery',
     ghostPos: [2, 2],
-    me: { pos: [...START], facing: 'up', hidden: false, uv: false, lastMoveAt: 0 },
+    me: { pos: [...houseOf(0).start], facing: 'up', hidden: false, uv: false, lastMoveAt: 0 },
     sanity: 100,
     hunt: 'calm',
     huntUntil: 0,
@@ -56,7 +57,7 @@ export function newRoom(code: string, ctx: Ctx): Room {
     book: null,
     prints: [],
     readings: { room: null, emf: 1, temp: 18 },
-    roomTemps: Object.fromEntries(ROOMS.map((r) => [r.id, 18])) as Record<RoomId, number>,
+    roomTemps: Object.fromEntries(houseOf(0).rooms.map((r) => [r.id, 18])) as Record<RoomId, number>,
     spiritboxReadyAt: 0,
     feed: [],
     journal: emptyJournal(),
@@ -85,25 +86,45 @@ function say(room: Room, text: string, ctx: Ctx) {
   room.feed = room.feed.slice(-6);
 }
 
-/** Sets up a new house with a new ghost. `ghost`/`ghostRoom` can be forced for tests. */
-export function beginGame(room: Room, explorerId: string, ctx: Ctx, force?: { ghost?: GhostType; ghostRoom?: RoomId }): void {
+/** The house the room is playing in. */
+export const houseIn = (room: Room) => houseOf(room.houseId);
+
+/** The host's pick, or a random house that isn't the last one. */
+function nextHouse(room: Room, ctx: Ctx): number {
+  if (room.houseChoice >= 0) return room.houseChoice;
+  const others = HOUSE_IDS.filter((id) => id !== room.houseId || room.results.length === 0);
+  return pick(others, ctx.rng);
+}
+
+export function setHouse(room: Room, playerId: string, house: number): void {
+  requirePhase(room, 'LOBBY');
+  requireHost(room, playerId);
+  if (house !== -1 && !HOUSE_IDS.includes(house)) fail('BAD_HOUSE', 'No such house');
+  room.houseChoice = house;
+}
+
+/** Sets up a new house with a new ghost. `ghost`/`ghostRoom`/`house` can be forced for tests. */
+export function beginGame(room: Room, explorerId: string, ctx: Ctx, force?: { ghost?: GhostType; ghostRoom?: RoomId; house?: number }): void {
   room.phase = 'HUNT';
   room.explorerId = explorerId;
+  room.houseId = force?.house ?? (force?.ghostRoom ? 0 : nextHouse(room, ctx));
+  const h = houseIn(room);
   room.ghost = force?.ghost ?? pick(GHOST_IDS, ctx.rng);
-  room.ghostRoom = force?.ghostRoom ?? pick(GHOST_ROOMS, ctx.rng);
-  room.ghostPos = pick(roomTiles(room.ghostRoom), ctx.rng);
-  room.me = { pos: [...START], facing: 'up', hidden: false, uv: false, lastMoveAt: 0 };
+  room.ghostRoom = force?.ghostRoom ?? pick(h.ghostRooms, ctx.rng);
+  room.ghostPos = pick(roomTiles(h, room.ghostRoom), ctx.rng);
+  room.me = { pos: [...h.start], facing: 'up', hidden: false, uv: false, lastMoveAt: 0 };
   room.sanity = 100;
   room.hunt = 'calm';
   room.huntUntil = 0;
   room.nextHuntCheckAt = ctx.now + TIMING.huntCheckEveryMs;
   room.cameras = [];
   room.book = null;
-  room.prints = has(room, 'prints') ? shuffle(doorsOf(room.ghostRoom), ctx.rng).slice(0, 2) : [];
+  room.prints = has(room, 'prints') ? shuffle(doorsOf(h, room.ghostRoom), ctx.rng).slice(0, 2) : [];
   room.roomTemps = Object.fromEntries(
-    ROOMS.map((r) => [r.id, r.id === room.ghostRoom ? (has(room, 'freezing') ? -3 : 7) : 15 + Math.floor(ctx.rng() * 5)]),
+    h.rooms.map((r) => [r.id, r.id === room.ghostRoom ? (has(room, 'freezing') ? -3 : 7) : 15 + Math.floor(ctx.rng() * 5)]),
   ) as Record<RoomId, number>;
-  room.readings = { room: roomAt(...START), emf: 1, temp: room.roomTemps.living };
+  const startRoom = roomAt(h, ...h.start);
+  room.readings = { room: startRoom, emf: 1, temp: startRoom ? room.roomTemps[startRoom]! : 18 };
   room.spiritboxReadyAt = 0;
   room.feed = [];
   room.journal = emptyJournal();
@@ -112,7 +133,7 @@ export function beginGame(room: Room, explorerId: string, ctx: Ctx, force?: { gh
   room.tickN = 0;
   room.nextTickAt = ctx.now + TIMING.tickMs;
   room.readyForNext = [];
-  say(room, '🏚️ You step inside. The door creaks shut behind you.', ctx);
+  say(room, `${h.emoji} ${h.name}. You step inside. The door creaks shut behind you.`, ctx);
 }
 
 export function startGame(room: Room, playerId: string, ctx: Ctx): void {
@@ -145,6 +166,7 @@ function finish(room: Room, outcome: 'escaped' | 'wrong' | 'caught' | 'timeout',
   room.results.push({
     n: room.results.length + 1,
     explorerId: room.explorerId!,
+    house: room.houseId,
     ghost: room.ghost,
     ghostRoom: room.ghostRoom,
     guess: room.journal.guess,
@@ -170,9 +192,10 @@ export function move(room: Room, playerId: string, dir: Dir, ctx: Ctx): void {
   const [dx, dy] = DIRS[dir];
   const nx = me.pos[0] + dx;
   const ny = me.pos[1] + dy;
-  if (!walkable(nx, ny)) return;
+  const h = houseIn(room);
+  if (!walkable(h, nx, ny)) return;
   me.lastMoveAt = ctx.now;
-  if (tileAt(nx, ny) === 'E') {
+  if (tileAt(h, nx, ny) === 'E') {
     if (room.hunt !== 'calm') fail('LOCKED', "The door won't open! 😱");
     if (!room.journal.guess) fail('NO_GUESS', 'Write your guess in the journal before you leave 📓');
     me.pos = [nx, ny];
@@ -186,7 +209,8 @@ export function move(room: Room, playerId: string, dir: Dir, ctx: Ctx): void {
 export function useTool(room: Room, playerId: string, tool: 'uv' | 'spiritbox' | 'book' | 'camera' | 'hide', ctx: Ctx): string | void {
   requireExplorer(room, playerId);
   const me = room.me;
-  const here = roomAt(...me.pos);
+  const h = houseIn(room);
+  const here = roomAt(h, ...me.pos);
   switch (tool) {
     case 'uv':
       me.uv = !me.uv;
@@ -196,7 +220,7 @@ export function useTool(room: Room, playerId: string, tool: 'uv' | 'spiritbox' |
         me.hidden = false;
         return;
       }
-      if (tileAt(...me.pos) !== 'c') fail('NO_CLOSET', 'Stand in a closet to hide 🚪');
+      if (tileAt(h, ...me.pos) !== 'c') fail('NO_CLOSET', 'Stand in a closet to hide 🚪');
       me.hidden = true;
       return;
     }
@@ -228,7 +252,7 @@ export function useTool(room: Room, playerId: string, tool: 'uv' | 'spiritbox' |
       if (room.cameras.some((c) => c.room === here)) fail('ALREADY', 'There is already a camera in this room');
       if (room.cameras.length >= CAMERAS) room.cameras.shift(); // move the oldest one
       room.cameras.push({ pos: [...me.pos], room: here! });
-      say(room, `📹 Camera set up in the ${roomById(here!).name}.`, ctx);
+      say(room, `📹 Camera set up in the ${roomById(h, here!).name}.`, ctx);
       return;
     }
   }
@@ -256,27 +280,29 @@ const dist = (a: [number, number], b: [number, number]) => Math.abs(a[0] - b[0])
 function wander(room: Room, ctx: Ctx) {
   const leaveChance = room.ghost === 'banshee' ? 0.35 : room.ghost === 'jinn' ? 0.03 : 0.12;
   const [gx, gy] = room.ghostPos;
-  const inRoom = roomAt(gx, gy) === room.ghostRoom;
+  const h = houseIn(room);
+  const inRoom = roomAt(h, gx, gy) === room.ghostRoom;
   if (!inRoom && ctx.rng() < 0.7) {
-    const [tx, ty] = pick(roomTiles(room.ghostRoom), ctx.rng);
-    const step = nextStep(gx, gy, tx, ty);
+    const [tx, ty] = pick(roomTiles(h, room.ghostRoom), ctx.rng);
+    const step = nextStep(h, gx, gy, tx, ty);
     if (step) room.ghostPos = step;
     return;
   }
   const options = Object.values(DIRS)
     .map(([dx, dy]) => [gx + dx, gy + dy] as [number, number])
-    .filter(([x, y]) => walkable(x, y) && tileAt(x, y) !== 'E' && (!inRoom || roomAt(x, y) === room.ghostRoom || ctx.rng() < leaveChance));
+    .filter(([x, y]) => walkable(h, x, y) && tileAt(h, x, y) !== 'E' && (!inRoom || roomAt(h, x, y) === room.ghostRoom || ctx.rng() < leaveChance));
   if (options.length) room.ghostPos = pick(options, ctx.rng);
 }
 
 function chase(room: Room, ctx: Ctx) {
   const [gx, gy] = room.ghostPos;
   const [x, y] = room.me.pos;
-  const step = nextStep(gx, gy, x, y, (tx, ty) => tileAt(tx, ty) === 'E');
+  const h = houseIn(room);
+  const step = nextStep(h, gx, gy, x, y, (tx, ty) => tileAt(h, tx, ty) === 'E');
   if (step) room.ghostPos = step;
   // A Wraith sometimes glides an extra tile.
   if (room.ghost === 'wraith' && ctx.rng() < 0.25) {
-    const again = nextStep(room.ghostPos[0], room.ghostPos[1], x, y);
+    const again = nextStep(h, room.ghostPos[0], room.ghostPos[1], x, y);
     if (again) room.ghostPos = again;
   }
 }
@@ -323,8 +349,8 @@ function step(room: Room, ctx: Ctx) {
 
   // Instruments, once a second.
   if (room.tickN % TIMING.readingEveryTicks === 0) {
-    const here = roomAt(...room.me.pos) ?? room.readings.room;
-    const base = here ? room.roomTemps[here] : 18;
+    const here = roomAt(houseIn(room), ...room.me.pos) ?? room.readings.room;
+    const base = here ? (room.roomTemps[here] ?? 18) : 18;
     room.readings = { room: here, emf: emfReading(room, here, ctx), temp: base + Math.round((ctx.rng() * 2 - 1) * 10) / 10 };
   }
 

@@ -3,8 +3,8 @@ import { action, publicPlayers, registerGame } from '@gfc/kit/server';
 import { EmptySchema } from '@gfc/kit/shared';
 import {
   CAMERAS,
+  HouseSchema,
   JournalSchema,
-  MAP,
   MoveSchema,
   ToolSchema,
   idx,
@@ -23,10 +23,11 @@ import * as game from './game';
  */
 export function toPublicState(room: Room, viewerId: string, now: number): PublicState {
   let view: PublicState['view'] = null;
+  const h = game.houseIn(room);
   if (room.phase === 'HUNT' && room.explorerId) {
     const me = room.me;
     if (viewerId === room.explorerId) {
-      const vis = me.hidden ? [idx(...me.pos)] : visibleFrom(me.pos[0], me.pos[1], me.facing);
+      const vis = me.hidden ? [idx(...me.pos)] : visibleFrom(h, me.pos[0], me.pos[1], me.facing);
       const seen = new Set(vis);
       const sees = (p: [number, number]) => seen.has(idx(...p));
       const explorer: ExplorerView = {
@@ -35,7 +36,7 @@ export function toPublicState(room: Room, viewerId: string, now: number): Public
         facing: me.facing,
         hidden: me.hidden,
         uv: me.uv,
-        visible: Object.fromEntries(vis.map((i) => [i, MAP[i]!])),
+        visible: Object.fromEntries(vis.map((i) => [i, h.map[i]!])),
         ghost: room.hunt === 'hunt' && !me.hidden && sees(room.ghostPos) ? room.ghostPos : null,
         book: room.book ? { pos: room.book.pos, written: sees(room.book.pos) ? room.book.written : null } : null,
         cameras: room.cameras.map((c) => c.pos),
@@ -43,10 +44,10 @@ export function toPublicState(room: Room, viewerId: string, now: number): Public
       };
       view = explorer;
     } else {
-      const ghostRoom = roomAt(...room.ghostPos);
+      const ghostRoom = roomAt(h, ...room.ghostPos);
       const navigator: NavigatorView = {
         role: 'navigator',
-        map: MAP,
+        map: h.map,
         explorer: { pos: me.pos, facing: me.facing, hidden: me.hidden, uv: me.uv },
         cameras: room.cameras.map((c) => ({
           pos: c.pos,
@@ -68,6 +69,8 @@ export function toPublicState(room: Room, viewerId: string, now: number): Public
     phase: room.phase,
     deadline: room.phase === 'HUNT' ? room.endsAt : null,
     explorerId: room.explorerId,
+    house: room.houseId,
+    houseChoice: room.houseChoice,
     view,
     sanity: Math.round(room.sanity),
     hunt: room.hunt,
@@ -89,6 +92,7 @@ export function registerGhost(io: Server) {
     wakeAt: game.wakeAt,
     tick: game.tick,
     actions: {
+      'settings:update': action(HouseSchema, (room: Room, me, p) => game.setHouse(room, me, p.house)),
       'game:start': action(EmptySchema, (room: Room, me, _p, ctx) => game.startGame(room, me, ctx)),
       'move': action(MoveSchema, (room: Room, me, p, ctx) => game.move(room, me, p.dir, ctx)),
       'tool': action(ToolSchema, (room: Room, me, p, ctx) => ({ answer: game.useTool(room, me, p.tool, ctx) ?? null })),

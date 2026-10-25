@@ -1,8 +1,17 @@
 # Ghost Hunt: Spec
 
-## The house
+## The houses
 
-`shared/map.ts` builds a 30×18 grid from 8 room rectangles (nursery, bedroom, bathroom, study, hallway, kitchen, dining, living), 10 doorways (including side doors that make loops), 6 closets and the front door (`E`). The Explorer starts next to the door in the living room. `roomAt` maps a tile to its room (doorways are in no room).
+`shared/map.ts` has 4 houses (`HOUSES`, looked up with `houseOf(id)`). Each builds a 30×18 grid from room rectangles, doorways (including side doors that make loops), 6 closets and the front door (`E`), and lists the rooms the ghost may live in. The Explorer starts on the tile inside the front door. `roomAt(house, x, y)` maps a tile to its room (doorways are in no room). Every map function takes the house first.
+
+| id | House | Rooms | Front door |
+|---|---|---|---|
+| 0 | 🏚️ The old house | nursery, bedroom, bathroom, study, hallway, kitchen, dining, living | bottom, into the living room |
+| 1 | 🏫 The school | classroom 1A, classroom 2B, library, hallway, gym, cafeteria, principal's office | left end of the hallway |
+| 2 | 🏥 The hospital | ward 1, ward 2, surgery, morgue, corridor, reception, pharmacy, X-ray, chapel | bottom, into reception |
+| 3 | 🌲 The lake cabin | bunk room, kitchen, cellar, hallway (vertical), sauna, boathouse, lounge, workshop | bottom of the hallway |
+
+- **Choosing:** `settings:update {house}` (host, lobby): a house id, or -1 for random. Random never repeats the house just played. The room keeps `houseChoice` and the current `houseId`; results record the house.
 
 - **Line of sight:** Bresenham; walls block, but the wall at the end is visible.
 - **Visible tiles:** the 8 around you, plus a cone 7 tiles long with an 80° spread in the direction you face, with line of sight.

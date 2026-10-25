@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { DIRS, H, ROOMS, W, idx, xy, type Dir, type ExplorerView, type NavigatorView } from '../shared';
+import { DIRS, H, W, idx, xy, type Dir, type ExplorerView, type House, type NavigatorView } from '../shared';
 
 const T = 32;
 const VIEW = `0 0 ${W * T} ${H * T}`;
@@ -104,7 +104,7 @@ export function ExplorerMap({ v, hunt, gameKey }: { v: ExplorerView; hunt: strin
 }
 
 /** The Navigator's blueprint: every room, the Explorer's dot and the cameras. No ghost. */
-export function NavigatorMap({ v, hunt }: { v: NavigatorView; hunt: string }) {
+export function NavigatorMap({ v, hunt, house }: { v: NavigatorView; hunt: string; house: House }) {
   const [px, py] = v.explorer.pos;
   const cx = px * T + T / 2;
   const cy = py * T + T / 2;
@@ -125,7 +125,7 @@ export function NavigatorMap({ v, hunt }: { v: NavigatorView; hunt: string }) {
             </g>
           );
         })}
-        {ROOMS.map((r) => (
+        {house.rooms.map((r) => (
           <text
             key={r.id}
             x={(r.x + r.w / 2) * T}
@@ -141,7 +141,7 @@ export function NavigatorMap({ v, hunt }: { v: NavigatorView; hunt: string }) {
             {r.name}
           </text>
         ))}
-        <text x={23 * T + T / 2} y={17 * T + T * 0.75} textAnchor="middle" fontSize={14} fontWeight={800} fill="#13294b">
+        <text x={house.exit[0] * T + T / 2} y={house.exit[1] * T + T * 0.68} textAnchor="middle" fontSize={house.exit[0] === 0 || house.exit[0] === W - 1 ? 9 : 14} fontWeight={800} fill="#13294b">
           EXIT
         </text>
         {v.book && (

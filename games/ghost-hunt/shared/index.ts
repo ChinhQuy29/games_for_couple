@@ -61,6 +61,7 @@ export interface Journal {
 export interface GameResult {
   n: number;
   explorerId: string;
+  house: number;
   ghost: GhostType;
   ghostRoom: RoomId;
   guess: GhostType | null;
@@ -71,6 +72,10 @@ export interface GameResult {
 export interface Room extends BaseRoom {
   phase: 'LOBBY' | 'HUNT' | 'RESULT';
   explorerId: string | null;
+  /** The host's lobby pick: a house id, or -1 for a random one each game. */
+  houseChoice: number;
+  /** The house being played (or last played). */
+  houseId: number;
   ghost: GhostType;
   ghostRoom: RoomId;
   ghostPos: [number, number];
@@ -124,6 +129,8 @@ export interface NavigatorView {
 export interface PublicState extends PublicBase {
   phase: Room['phase'];
   explorerId: string | null;
+  house: number;
+  houseChoice: number;
   view: ExplorerView | NavigatorView | null;
   sanity: number;
   hunt: Hunt;
@@ -135,6 +142,7 @@ export interface PublicState extends PublicBase {
   readyForNext: string[];
 }
 
+export const HouseSchema = z.object({ house: z.number().int().min(-1).max(20) });
 export const MoveSchema = z.object({ dir: z.enum(['up', 'down', 'left', 'right']) });
 export const ToolSchema = z.object({ tool: z.enum(['uv', 'spiritbox', 'book', 'camera', 'hide']) });
 export const JournalSchema = z.object({
