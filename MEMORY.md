@@ -13,6 +13,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #1: Finish My Sentence** at `/fms`, in `games/finish-my-sentence/` (package `@gfc/fms`). Docs: [README](games/finish-my-sentence/README.md), [spec](games/finish-my-sentence/docs/spec.md).
 - **Game #2: Jjinja Battle** at `/jjinja`. A mic-scoring "jjinja?!" (찐짜) shouting battle the user built earlier as its own project. It now lives in `games/jjinja-battle/` (see its README).
 - **Game #3: Telephone Doodle** at `/doodle`, in `games/telephone-doodle/` (package `@gfc/doodle`). Docs: [README](games/telephone-doodle/README.md), [spec](games/telephone-doodle/docs/spec.md).
+- **Game #4: Would You Rather: Unhinged** at `/wyr`, in `games/would-you-rather/` (package `@gfc/wyr`). Docs: [README](games/would-you-rather/README.md), [spec](games/would-you-rather/docs/spec.md).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -20,6 +21,8 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 **Jjinja Battle:** fully working as imported (classic and rally modes, bot opponent, random matchmaking, camera/WebRTC with a TURN relay, match recording, highlight clips, safety and rate limits). It's served by the shared server at `/jjinja`. Verified in two tabs: invite link, join and WebSocket. Not verified here: the mic and camera, since the browser pane blocks them.
 
 **Telephone Doodle:** playable end to end (prompt deck or your own, 2 parallel chains, 7 chaos rules, synced reveal with stroke replay, gallery). Verified in two tabs with real mouse drawing. 13 unit tests.
+
+**Would You Rather: Unhinged:** playable end to end (secret pick + prediction, debate on disagreement, write-your-own turns, recap with match rate, verdict, reads and hot takes). Verified in two tabs over a full 10-question game. 13 unit tests.
 
 **Finish My Sentence milestones:**
 
@@ -87,6 +90,12 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-24: Would You Rather: Unhinged
+- Built `games/would-you-rather/` (`@gfc/wyr`, Socket.IO namespace `/wyr`), following the same pattern as FMS and Doodle. The portal's "coming soon" card became the playable game.
+- **Flow:** ANSWER (pick + predict) → DEBATE only on disagreement → RESULT. Write-your-own questions every 5th or 3rd, alternating writers, host first.
+- `shared/stats.ts` is shared by the verdict screen, the recap and the tests. Auto-picked answers are left out of the guessing scores.
+- **Next ideas:** the two remaining coming-soon games (Blind Portrait Duel, Two-Body Problem); sound effects and narrator for FMS; deploying, so the games are playable without a tunnel.
 
 ### 2026-10-24: Telephone Doodle
 - Built Telephone Doodle as `games/telephone-doodle/` (`@gfc/doodle`), following the FMS pattern: server-authoritative, a pure `game.ts`, strict `view.ts`, Socket.IO namespace `/doodle`.

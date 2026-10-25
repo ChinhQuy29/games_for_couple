@@ -51,6 +51,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–15 min',
   },
   {
+    id: 'wyr',
+    title: 'Would You Rather: Unhinged',
+    emoji: '🤔',
+    tagline: 'Pick at the same time, guess their pick, then defend your honor.',
+    path: '/wyr',
+    status: 'playable',
+    accent: 'yellow',
+    minutes: '10–15 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',
@@ -69,15 +79,5 @@ export const GAMES: GameInfo[] = [
     status: 'coming-soon',
     accent: 'mint',
     minutes: '15 min',
-  },
-  {
-    id: 'would-you-rather',
-    title: 'Would You Rather: Unhinged',
-    emoji: '🤔',
-    tagline: 'Answer at the same time. Match or start a debate.',
-    path: '/would-you-rather',
-    status: 'coming-soon',
-    accent: 'sky',
-    minutes: '5–15 min',
   },
 ];

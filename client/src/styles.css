@@ -3,6 +3,7 @@
    Add one line per React game: a wildcard over the games folder is not picked up. */
 @source '../../games/finish-my-sentence/client';
 @source '../../games/telephone-doodle/client';
+@source '../../games/would-you-rather/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {
