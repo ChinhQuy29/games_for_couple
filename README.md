@@ -21,6 +21,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 📦 **Moving In** | `/moving-in` | Two-player Dreamy Room: each unpacks your own box and you put every item in its exact spot, together. Six rooms tell a long-distance love story. Co-op. | Laptop (mouse/trackpad) | [README](games/moving-in/README.md) · [spec](games/moving-in/docs/spec.md) |
 | 🔐 **Escape Room for Two** | `/escape` | Locked in two different rooms: one of you sees each clue, the other has the controls. Dials, keypads, colors, levers and a pitch-dark maze. Co-op. | Laptop + a call | [README](games/escape-room/README.md) · [spec](games/escape-room/docs/spec.md) |
 | 📦 **Handle With Care** | `/carry` | Two clumsy movers, one house of valuables, one truck. Small things you carry or throw; the piano and fish tank need both of you holding on. Co-op. | Keyboard | [README](games/handle-with-care/README.md) · [spec](games/handle-with-care/docs/spec.md) |
+| 🚐 **Road Trip** | `/road-trip` | One of you steers; the other has the pedals and the only map. Forks, cows, potholes, fuel and a night drive. Co-op. | Keyboard + a call | [README](games/road-trip/README.md) · [spec](games/road-trip/docs/spec.md) |
 | 🎨 Blind Portrait Duel | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -133,6 +134,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Damage:** door-frame bumps, hard landings and throws chip the value; fragile things break. Put things down in the truck zone to earn their value.
 - **Built with:** the shared kit's 30 Hz loop, with physics copied from Tethered and generalised to bodies of any size, on the Socket.IO namespace `/carry`.
 
+### 🚐 Road Trip
+
+- **Setup:** 2 players with keyboards on a call, 10–15 minutes, co-op. Three trips (beach, mountain pass, night drive); you swap seats every trip.
+- **Split controls:** the Driver only steers. The Co-pilot has gas and brake, and the only map with the town to follow at each fork. A wrong fork means a U-turn.
+- **On the road:** wandering cows, potholes, rocks, mud, grass that rattles the van apart, and a fuel gauge that needs ⛽ cans. Stars for arriving, beating par, and a clean drive.
+- **Built with:** the shared kit's 30 Hz loop, with a top-down canvas road (sine-wave curves, forks), on the Socket.IO namespace `/roadtrip`. The fork answers never leave the server.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -151,7 +159,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape`, `/carry` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape`, `/carry`, `/road-trip` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -188,7 +196,8 @@ games/
 ├─ two-body-problem/     # @gfc/twobody: one body, two players, built on the kit
 ├─ moving-in/            # @gfc/movingin: two-player Dreamy Room, built on the kit
 ├─ escape-room/         # @gfc/escape: co-op two-room escape puzzles, built on the kit
-└─ handle-with-care/    # @gfc/carry: co-op furniture moving (R.E.P.O.-style), built on the kit
+├─ handle-with-care/    # @gfc/carry: co-op furniture moving (R.E.P.O.-style), built on the kit
+└─ road-trip/           # @gfc/roadtrip: co-op split-controls driving, built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

@@ -161,6 +161,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–15 min',
   },
   {
+    id: 'road-trip',
+    title: 'Road Trip',
+    emoji: '🚐',
+    tagline: 'One steers, one has the pedals and the only map. Watch out for cows.',
+    path: '/road-trip',
+    status: 'playable',
+    accent: 'mint',
+    minutes: '10–15 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

@@ -25,6 +25,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #13: Moving In** (two-player Dreamy Room/Unpacking) at `/moving-in`, in `games/moving-in/` (`@gfc/movingin`).
 - **Game #14: Escape Room for Two** (We Were Here-style) at `/escape`, in `games/escape-room/` (`@gfc/escape`). The first of 5 from [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md).
 - **Game #15: Handle With Care** (R.E.P.O.-style) at `/carry`, in `games/handle-with-care/` (`@gfc/carry`).
+- **Game #16: Road Trip** (RV There Yet?-style) at `/road-trip`, in `games/road-trip/` (`@gfc/roadtrip`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-25)
@@ -116,6 +117,16 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Road Trip
+- **Design:**
+  - a top-down road where d = distance and x = sideways; the centre comes from seeded sine waves; forks spread two branches around the centre;
+  - the Driver steers only; the Co-pilot has gas/brake and the route (which town to follow at each fork);
+  - obstacles: cows (moving), potholes, rocks, mud, fuel cans; grass damages the van;
+  - a wrong fork backs you up 40 and stalls you 4s; endings: arrived / broke down / out of gas; seats swap each trip.
+- 8 tests, including an autopilot that finishes all 3 trips for 3 seeds with no wrong turns (so every generated road can be driven), and route redaction.
+- **Play-test fix:** the first view showed under 1s of road ahead at full speed. The view is now 30 units wide with the van lower on screen, the top speed went 15 → 12, and the night headlights reach further.
+- **Not verified in the browser:** a full trip by two people (the forks, cows and the night look are covered by tests and code, not seen in play).
 
 ### 2026-10-25: Handle With Care
 - **Design:**

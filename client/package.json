@@ -19,6 +19,7 @@
     "@gfc/movingin": "*",
     "@gfc/escape": "*",
     "@gfc/carry": "*",
+    "@gfc/roadtrip": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/shared": "*",

@@ -16,6 +16,7 @@
 @source '../../games/moving-in/client';
 @source '../../games/escape-room/client';
 @source '../../games/handle-with-care/client';
+@source '../../games/road-trip/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {
