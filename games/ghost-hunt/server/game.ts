@@ -5,7 +5,7 @@
 // three pieces of evidence, name the ghost in the journal, and leave by the front door.
 // The server simulates the ghost at 5 ticks per second.
 
-import { fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
+import { firstPlayer, fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
 import {
   CAMERAS,
   DIRS,
@@ -120,7 +120,7 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requireHost(room, playerId);
   requireTwo(room);
   room.results = [];
-  beginGame(room, pick(room.players, ctx.rng).id, ctx);
+  beginGame(room, firstPlayer(room, ctx.rng).id, ctx);
 }
 
 export function readyForNext(room: Room, playerId: string, ctx: Ctx): void {

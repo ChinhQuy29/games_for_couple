@@ -46,6 +46,8 @@ export interface Room extends BaseRoom {
   bystanderFor: [boolean[], boolean[]];
   /** Whose turn it is to give a clue. */
   giver: 0 | 1;
+  /** Who gave the first clue on this board (the next board starts with the other). */
+  startGiver: 0 | 1;
   clue: Clue | null;
   turnsLeft: number;
   /** Every clue so far, with what came of it. */

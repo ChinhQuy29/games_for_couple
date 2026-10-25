@@ -24,6 +24,7 @@ export const SettingsPatchSchema = z
     map: z.enum(MAP_OPTIONS),
     taunts: z.boolean(),
     sneaks: z.union([z.literal(0), z.literal(2), z.literal(3)]),
+    firstHider: z.enum(['random', 'host', 'guest']),
   })
   .partial();
 

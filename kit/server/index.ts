@@ -7,6 +7,7 @@ import type { Namespace, Server, Socket } from 'socket.io';
 import type { z } from 'zod';
 import {
   CreateSchema,
+  FirstSchema,
   JoinSchema,
   LIMITS,
   ResumeSchema,
@@ -92,6 +93,19 @@ export function requireTwo(room: BaseRoom): void {
 }
 
 export const partnerOf = (room: BaseRoom, playerId: string) => room.players.find((p) => p.id !== playerId);
+
+/** The player who takes the first role, from the lobby's "who goes first" choice. */
+export function firstPlayer(room: BaseRoom, rng: () => number): BasePlayer {
+  const host = room.players.find((p) => p.isHost) ?? room.players[0]!;
+  const guest = room.players.find((p) => p !== host) ?? host;
+  const pick = room.first ?? 'random';
+  if (pick === 'host') return host;
+  if (pick === 'guest') return guest;
+  return rng() < 0.5 ? host : guest;
+}
+
+/** The same, as a seat index (0 or 1). */
+export const firstSeat = (room: BaseRoom, rng: () => number): 0 | 1 => (room.players.indexOf(firstPlayer(room, rng)) === 1 ? 1 : 0);
 
 export const publicPlayers = (room: BaseRoom) => room.players.map(({ token: _t, ...p }) => p);
 
@@ -220,7 +234,7 @@ export function registerGame<R extends BaseRoom>(io: Server, def: GameDef<R>): N
     for (const s of sockets) {
       const data = s.data as SocketData;
       if (data.playerId && room.players.some((p) => p.id === data.playerId)) {
-        s.emit('room:state', def.view(room, data.playerId, Date.now()));
+        s.emit('room:state', { ...def.view(room, data.playerId, Date.now()), first: room.first ?? 'random' });
       }
     }
   }
@@ -322,7 +336,15 @@ export function registerGame<R extends BaseRoom>(io: Server, def: GameDef<R>): N
       ack?.({ ok: true });
     });
 
-    for (const [event, act] of Object.entries(def.actions)) {
+    const actions: Record<string, Action<R>> = {
+      'settings:first': action(FirstSchema, (room: R, me, p) => {
+        requirePhase(room, 'LOBBY');
+        requireHost(room, me);
+        room.first = p.first;
+      }),
+      ...def.actions,
+    };
+    for (const [event, act] of Object.entries(actions)) {
       socket.on(event, (raw: unknown, ack?: AckFn) => {
         const parsed = act.schema.safeParse(raw ?? {});
         if (!parsed.success) return ack?.({ ok: false, code: 'BAD_INPUT', message: 'Invalid input' });

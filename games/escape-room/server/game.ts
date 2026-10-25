@@ -3,7 +3,7 @@
 // Three rooms, four puzzles each, solved in order. Each puzzle has an "actor" seat that
 // holds the controls; the other seat holds the clue. Mistakes cost time on the score.
 
-import { fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
+import { firstSeat, fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
 import { COLORS, MISTAKE_PENALTY_MS, OBJECTS, ROOMS, SYMBOLS, WALL, type Act, type Dir, type Puzzle, type PuzzleKind, type Room } from '../shared';
 
 export function newRoom(code: string, ctx: Ctx): Room {
@@ -135,7 +135,7 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requireHost(room, playerId);
   requireTwo(room);
   room.results = [];
-  room.firstActor = ctx.rng() < 0.5 ? 0 : 1;
+  room.firstActor = firstSeat(room, ctx.rng);
   beginRoom(room, 0, ctx);
 }
 

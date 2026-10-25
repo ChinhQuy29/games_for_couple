@@ -5,7 +5,7 @@
 // click: click a station with something in your hand to put it down, with empty
 // hands to pick up (or chop).
 
-import { fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
+import { firstPlayer, fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
 import {
   COINS,
   INGREDIENTS,
@@ -113,7 +113,8 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requirePhase(room, 'LOBBY');
   requireHost(room, playerId);
   requireTwo(room);
-  const [a, b] = ctx.rng() < 0.5 ? [room.players[0]!, room.players[1]!] : [room.players[1]!, room.players[0]!];
+  const a = firstPlayer(room, ctx.rng);
+  const b = room.players.find((p) => p !== a)!;
   room.results = [];
   beginShift(room, { prep: a.id, cook: b.id }, ctx);
 }

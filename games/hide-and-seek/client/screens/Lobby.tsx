@@ -106,6 +106,16 @@ export default function Lobby() {
               </button>
             ))}
           </Row>
+          <Row label="🙈 Who hides first?">
+            {(['random', 'host', 'guest'] as const).map((f) => {
+              const who = f === 'host' ? s.players.find((p) => p.isHost) : s.players.find((p) => !p.isHost);
+              return (
+                <button key={f} className="chip" aria-pressed={(s.settings.firstHider ?? 'random') === f} disabled={!canEdit} onClick={() => set({ firstHider: f })}>
+                  {f === 'random' ? '🎲 Random' : `${f === 'host' ? '👑' : '💞'} ${who ? (who.id === s.you ? `${who.name} (you)` : who.name) : f === 'host' ? 'Host' : 'Partner'}`}
+                </button>
+              );
+            })}
+          </Row>
           <Row label="Taunts (the fake wiggles every 15s)">
             <button className="chip" aria-pressed={s.settings.taunts} disabled={!canEdit} onClick={() => set({ taunts: !s.settings.taunts })}>
               {s.settings.taunts ? '👀 On' : 'Off'}

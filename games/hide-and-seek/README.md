@@ -2,6 +2,8 @@
 
 A two-player **prop hunt**. One of you turns into an everyday object (a lamp, a cushion, a duck…) and hides in a room full of real ones. The other gets **5 shots** to find the fake. Then you swap. It's played at `/hns` in the [Games for Two](../../README.md) portal. It's designed for **laptops** with a mouse or trackpad.
 
+> **Who goes first:** in the lobby, the host picks who hides first: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Hide and Seek** from the portal, enters a name, and taps **Create a room**.

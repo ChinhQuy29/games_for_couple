@@ -2,7 +2,7 @@
 // the Jumper owns jump. Swap pads trade the jobs. The physics is shared/physics.ts (copied
 // from Tethered); this file runs the levels at 30 Hz with a fixed step.
 
-import { requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
+import { firstSeat, requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
 import {
   COUNTDOWN_MS,
   GATE_OPEN_S,
@@ -29,6 +29,7 @@ export function newRoom(code: string, ctx: Ctx): Room {
     players: [],
     phase: 'LOBBY',
     startLevel: 0,
+    firstWalker: 0,
     level: 0,
     body: newBody(2, 15),
     walkerId: null,
@@ -75,7 +76,7 @@ function beginLevel(room: Room, level: number, ctx: Ctx) {
   room.phase = 'PLAY';
   room.level = level;
   // Alternate who walks first each level, so nobody is stuck jumping forever.
-  room.walkerId = room.players[level % 2]?.id ?? room.players[0]!.id;
+  room.walkerId = room.players[(room.firstWalker + level - room.startLevel) % 2]?.id ?? room.players[0]!.id;
   room.held = Object.fromEntries(room.players.map((p) => [p.id, { left: false, right: false, jump: false }]));
   room.deaths = 0;
   room.swaps = 0;
@@ -91,6 +92,7 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requireHost(room, playerId);
   requireTwo(room);
   room.results = [];
+  room.firstWalker = firstSeat(room, ctx.rng);
   beginLevel(room, room.startLevel, ctx);
 }
 

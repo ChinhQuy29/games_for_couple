@@ -619,6 +619,24 @@ export function createGameClient<S extends PublicBase>(opts: { ns: string; key: 
     );
   }
 
+  /** "Who goes first?" for role games. `role` names the first role, e.g. "defuses first". */
+  function FirstChoice({ label }: { label: string }) {
+    const { act, state } = useGame();
+    const s = state!;
+    const host = s.players.find((p) => p.isHost);
+    const guest = s.players.find((p) => !p.isHost);
+    const name = (p: typeof host, fallback: string) => (p ? (p.id === s.you ? `${p.name} (you)` : p.name) : fallback);
+    return (
+      <Choice
+        label={label}
+        value={s.first ?? 'random'}
+        options={['random', 'host', 'guest'] as const}
+        onPick={(first) => void act('settings:first', { first })}
+        render={(f) => (f === 'random' ? '🎲 Random' : f === 'host' ? `👑 ${name(host, 'Host')}` : `💞 ${name(guest, 'Partner')}`)}
+      />
+    );
+  }
+
   /** Rematch / leave buttons for a recap screen. */
   function RecapActions() {
     const { act, leave } = useGame();
@@ -656,5 +674,5 @@ export function createGameClient<S extends PublicBase>(opts: { ns: string; key: 
     );
   }
 
-  return { AppShell, useGame, useRoom, useFrame, Avatar, TimerBar, Scores, LobbyShell, Choice, RecapActions, WaitingBlob };
+  return { AppShell, useGame, useRoom, useFrame, FirstChoice, Avatar, TimerBar, Scores, LobbyShell, Choice, RecapActions, WaitingBlob };
 }

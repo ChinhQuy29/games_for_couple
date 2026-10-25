@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { LANGUAGES, TURN_OPTIONS, type Mark, type PublicCard } from '../shared';
 import { kit } from './kit';
 
-const { useGame, useRoom, LobbyShell, Choice, RecapActions } = kit;
+const { useGame, useRoom, LobbyShell, Choice, RecapActions, FirstChoice } = kit;
 
 export function Lobby() {
   const { act } = useGame();
@@ -22,6 +22,7 @@ export function Lobby() {
       }
       settings={
         <>
+          <FirstChoice label="🗣️ Who gives the first clue?" />
           <Choice label="Words" value={s.lang} options={['en', 'vi'] as const} onPick={(lang) => act('settings:update', { lang })} render={(l) => LANGUAGES[l].label} />
           <Choice
             label="Turns"

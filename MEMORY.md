@@ -120,6 +120,17 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 
 ## Log
 
+### 2026-10-25: Polish pass begins: "who goes first" everywhere
+- **The ask:** polish every game:
+  - better art (CC0 packs like Kenney, downloaded only with the user's OK, plus my own; **not Pinterest**: copyrighted);
+  - more maps and items; Bomb Squad with more modules, varied per bomb, and rules that change per game;
+  - phone controls for all keyboard games; a "who does what" choice at room creation for every role game.
+  The user picked the order: role picker → Bomb Squad → Tethered → Hide and Seek → the other environment games → phone controls.
+- **Done: the role picker.**
+  - The kit has `first` on BaseRoom, a built-in `settings:first` action, `first` added to every view, `firstPlayer` / `firstSeat` helpers, and a `kit.FirstChoice` lobby control.
+  - Used by Bomb Squad, Ghost Hunt, Road Trip, Escape Room, Kitchen Chaos (who preps), Two-Body (first walker, then it alternates), Paint & Hide and Codenames (first giver; later boards alternate who starts).
+  - Hide and Seek (pre-kit) got its own `settings.firstHider`. Moving In already had "whose stuff is whose".
+
 ### 2026-10-25: Paint & Hide (plan 2 done)
 - **Design:**
   - a seeded busy scene (mulberry32, 5 palettes, ~270 shapes) drawn identically on both screens;

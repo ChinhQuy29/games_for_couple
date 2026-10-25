@@ -2,6 +2,8 @@
 
 One of you is looking at a ticking bomb. The other has the defusal manual. Neither can see what the other sees, so the only way to win is to talk: "it's a BLUE button that says ABORT!", "how many batteries?!", "which symbol, the little trident?". Inspired by *Keep Talking and Nobody Explodes*. It's played at `/bomb` in the [Games for Two](../../README.md) portal. Play it on a call.
 
+> **Who goes first:** in the lobby, the host picks who defuses the first bomb: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Bomb Squad** from the portal and creates a room. Send the code or link (`/bomb/CODE`).

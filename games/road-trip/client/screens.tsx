@@ -4,7 +4,7 @@ import { TRIPS, type Frame } from '../shared';
 import { kit } from './kit';
 import { Road, type Buffered } from './Road';
 
-const { useGame, useRoom, useFrame, LobbyShell, Avatar, RecapActions } = kit;
+const { useGame, useRoom, useFrame, LobbyShell, Avatar, RecapActions, FirstChoice } = kit;
 
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -24,7 +24,12 @@ export function Lobby() {
           <p>🔁 Three trips; you swap seats every trip.</p>
         </>
       }
-      settings={<p className="font-semibold text-ink-soft">🏖️ To the beach · ⛰️ Mountain pass · 🌙 Night drive</p>}
+      settings={
+        <>
+          <FirstChoice label="🛞 Who drives first?" />
+          <p className="font-semibold text-ink-soft">🏖️ To the beach · ⛰️ Mountain pass · 🌙 Night drive</p>
+        </>
+      }
     />
   );
 }

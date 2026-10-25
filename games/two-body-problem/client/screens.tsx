@@ -5,7 +5,7 @@ import { LEVELS, type Frame } from '../shared';
 import { kit } from './kit';
 import { Stage, type Buffered } from './Stage';
 
-const { useGame, useRoom, useFrame, LobbyShell, Choice, RecapActions } = kit;
+const { useGame, useRoom, useFrame, LobbyShell, Choice, RecapActions, FirstChoice } = kit;
 
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -28,13 +28,16 @@ export function Lobby() {
         </>
       }
       settings={
-        <Choice
+        <>
+          <FirstChoice label="👟 Who walks first?" />
+          <Choice
           label="Start at level"
           value={s.startLevel}
           options={LEVELS.map((_, i) => i)}
           onPick={(startLevel) => act('settings:update', { startLevel })}
           render={(i) => `${i + 1}. ${LEVELS[i]!.name}`}
         />
+        </>
       }
     />
   );

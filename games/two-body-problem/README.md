@@ -2,6 +2,8 @@
 
 One character, two players. One of you can only **walk**, the other can only **jump**, so every gap needs a "three, two, one, NOW!". Swap pads trade your jobs halfway through a level. Inspired by *It Takes Two* and *Pico Park*. It's played at `/two-body-problem` in the [Games for Two](../../README.md) portal. You need a keyboard.
 
+> **Who goes first:** in the lobby, the host picks who walks on the first level: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Two-Body Problem** from the portal and creates a room. Send the code or link (`/two-body-problem/CODE`).

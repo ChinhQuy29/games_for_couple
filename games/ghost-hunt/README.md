@@ -2,6 +2,8 @@
 
 One of you creeps through a dark, haunted house with a flashlight. The other sits at the "van" with the floor plan, two camera feeds, an EMF meter and a thermometer, but can never see the ghost. Together you find the evidence, name the ghost in the journal, and get out the front door. Inspired by *Phasmophobia*. It's played at `/ghost` in the [Games for Two](../../README.md) portal. Best on laptops, on a call, lights off.
 
+> **Who goes first:** in the lobby, the host picks who explores first: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Ghost Hunt** from the portal and creates a room. Send the code or link (`/ghost/CODE`).

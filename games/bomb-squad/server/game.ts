@@ -1,7 +1,7 @@
 // Bomb Squad — the rules. Pure functions with time and randomness passed in.
 // The Defuser acts on the bomb; every action is checked against the manual's solvers.
 
-import { fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
+import { firstPlayer, fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
 import {
   ALL_SYMBOLS,
   BUTTON_COLORS,
@@ -126,7 +126,7 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requireHost(room, playerId);
   requireTwo(room);
   // Coin flip for the first Defuser; roles swap every bomb.
-  room.defuserId = room.players[ctx.rng() < 0.5 ? 0 : 1]!.id;
+  room.defuserId = firstPlayer(room, ctx.rng).id;
   arm(room, ctx);
 }
 

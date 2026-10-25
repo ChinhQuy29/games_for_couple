@@ -4,7 +4,7 @@
 // follow at each fork). Cows, potholes, rocks and mud are in the way, fuel runs low, and a
 // wrong turn means a U-turn. Simulated at 30 Hz with a fixed step.
 
-import { requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
+import { firstPlayer, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
 import {
   COUNTDOWN_MS,
   DRIVE,
@@ -128,7 +128,7 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requireHost(room, playerId);
   requireTwo(room);
   room.results = [];
-  beginTrip(room, 0, room.players[ctx.rng() < 0.5 ? 0 : 1]!.id, ctx);
+  beginTrip(room, 0, firstPlayer(room, ctx.rng).id, ctx);
 }
 
 /** Both ready: next trip, and you swap seats. */

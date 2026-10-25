@@ -23,6 +23,7 @@ registerGame<Room>(io, {
 - **Helpers:**
   - `addPlayer`, `requirePlayer`, `requirePhase`, `requireHost`, `requireTwo`, `partnerOf`, `publicPlayers`, `GameError`/`fail`,
   - `pick`, `shuffle`, `seededRng`, `cleanText`.
+- **Who goes first:** every kit room has `first: 'random' | 'host' | 'guest'`, set by the built-in `settings:first` action (LOBBY, host only) and added to every view. Games call `firstPlayer(room, rng)` / `firstSeat(room, rng)` when they hand out the first role. The client's `kit.FirstChoice({ label })` renders the lobby choice.
 - **Actions:** every action payload is validated with zod, and the room is rebroadcast after each one, unless it's declared `action(Schema, run, { quiet: true })` (for high-frequency input like held keys).
 - **Real-time loop:** with `loop`, the server runs `step` at `hz` while `active(room)` is true and emits a small `frame` event to the room after every step. A full state goes out only when `step` returns true. Tethered and Two-Body Problem use it at 30 Hz.
 

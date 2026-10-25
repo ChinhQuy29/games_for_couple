@@ -2,6 +2,8 @@
 
 The two-player co-op version of Codenames. 25 words on the table, and each of you holds a **different secret key**: 9 agents and 3 assassins each, some shared. Take turns giving a one-word clue and a number; your partner taps the cards they think you mean. Find all 15 agents before you run out of turns, without touching an assassin. Based on the board game *Codenames Duet*. It's played at `/codenames` in the [Games for Two](../../README.md) portal, with **English or Vietnamese** words.
 
+> **Who goes first:** in the lobby, the host picks who gives the first clue: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Codenames Duet** from the portal and creates a room. Send the code or link (`/codenames/CODE`).

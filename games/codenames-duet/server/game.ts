@@ -4,7 +4,7 @@
 // game (15 agents in total). Take turns: one gives a one-word clue and a number, the other
 // guesses using the clue giver's key. A bystander ends the turn; an assassin ends the game.
 
-import { cleanText, fail, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
+import { firstSeat, cleanText, fail, requireHost, requirePhase, requirePlayer, requireTwo, shuffle, type Ctx } from '@gfc/kit/server';
 import { AGENTS_TOTAL, KEY_LAYOUT, LANGUAGES, type Lang, type Mark, type Room, type Turns } from '../shared';
 
 export function newRoom(code: string, ctx: Ctx): Room {
@@ -21,6 +21,7 @@ export function newRoom(code: string, ctx: Ctx): Room {
     found: [],
     bystanderFor: [[], []],
     giver: 0,
+    startGiver: 0,
     clue: null,
     turnsLeft: 9,
     log: [],
@@ -52,13 +53,14 @@ export function dealKeys(rng: () => number): [Mark[], Mark[]] {
   return [pairs.map((p) => p[0]), pairs.map((p) => p[1])];
 }
 
-function deal(room: Room, ctx: Ctx) {
+function deal(room: Room, ctx: Ctx, giver: 0 | 1) {
   room.phase = 'PLAY';
   room.words = shuffle([...LANGUAGES[room.lang].words], ctx.rng).slice(0, 25);
   room.keys = dealKeys(ctx.rng);
   room.found = Array.from({ length: 25 }, () => false);
   room.bystanderFor = [Array.from({ length: 25 }, () => false), Array.from({ length: 25 }, () => false)];
-  room.giver = ctx.rng() < 0.5 ? 0 : 1;
+  room.giver = giver;
+  room.startGiver = giver;
   room.clue = null;
   room.turnsLeft = room.turns;
   room.log = [];
@@ -70,7 +72,7 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requirePhase(room, 'LOBBY');
   requireHost(room, playerId);
   requireTwo(room);
-  deal(room, ctx);
+  deal(room, ctx, firstSeat(room, ctx.rng));
 }
 
 export function playAgain(room: Room, playerId: string, ctx: Ctx): void {
@@ -79,7 +81,7 @@ export function playAgain(room: Room, playerId: string, ctx: Ctx): void {
   if (!room.readyForNext.includes(playerId)) room.readyForNext.push(playerId);
   if (room.readyForNext.length < 2) return;
   requireTwo(room);
-  deal(room, ctx);
+  deal(room, ctx, (1 - room.startGiver) as 0 | 1);
 }
 
 export function toLobby(room: Room, playerId: string): void {

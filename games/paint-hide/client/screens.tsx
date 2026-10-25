@@ -4,7 +4,7 @@ import { CLICKS, CREATURE_SCALE, ROUNDS, SCENE, TEX, toLocal, type Placement } f
 import { kit } from './kit';
 import { SCENE_STYLE, creaturePath, drawCreature, loadImage, sceneCanvas } from './canvas';
 
-const { useGame, useRoom, LobbyShell, Avatar, RecapActions } = kit;
+const { useGame, useRoom, LobbyShell, Avatar, RecapActions, FirstChoice } = kit;
 
 function useNow(ms = 250) {
   const { clockOffset } = useGame();
@@ -46,7 +46,12 @@ export function Lobby() {
           <p>🏆 Found fast = points for the seeker. Not found = 150 points for the hider. You swap every round ({ROUNDS} rounds).</p>
         </>
       }
-      settings={<p className="font-semibold text-ink-soft">80 seconds to hide. A new scene every round.</p>}
+      settings={
+        <>
+          <FirstChoice label="🦎 Who hides first?" />
+          <p className="font-semibold text-ink-soft">80 seconds to hide. A new scene every round.</p>
+        </>
+      }
     />
   );
 }

@@ -3,7 +3,7 @@
 // The Hider places a chameleon somewhere on a busy scene and paints it to blend in. The
 // Seeker then gets 25 seconds and 3 clicks to find it. Roles swap every round.
 
-import { fail, requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
+import { firstPlayer, fail, requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
 import { CLICKS, ROUNDS, SCENE, TIMING, hits, type Placement, type Room } from '../shared';
 
 export function newRoom(code: string, ctx: Ctx): Room {
@@ -58,7 +58,7 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requireTwo(room);
   room.results = [];
   room.scores = Object.fromEntries(room.players.map((p) => [p.id, 0]));
-  beginRound(room, 1, room.players[ctx.rng() < 0.5 ? 0 : 1]!.id, ctx);
+  beginRound(room, 1, firstPlayer(room, ctx.rng).id, ctx);
 }
 
 const seeker = (room: Room) => room.players.find((p) => p.id !== room.hiderId)!.id;

@@ -193,3 +193,16 @@ describe('view', () => {
     expect(JSON.stringify(forDefuser).includes('token-')).toBe(false);
   });
 });
+
+describe('who goes first', () => {
+  it('the lobby choice picks the first Defuser: the host, the guest, or random', () => {
+    for (const [first, expected] of [['host', 'pa'], ['guest', 'pb']] as const) {
+      const room = game.newRoom('ABCD', ctxAt(0));
+      addPlayer(room, { id: 'pa', token: 'token-aaaaaaaaaa', name: 'Alex' });
+      addPlayer(room, { id: 'pb', token: 'token-bbbbbbbbbb', name: 'Bao' });
+      room.first = first;
+      game.startGame(room, 'pa', ctxAt(0, 3));
+      expect(room.defuserId).toBe(expected);
+    }
+  });
+});

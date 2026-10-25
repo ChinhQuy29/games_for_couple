@@ -2,6 +2,8 @@
 
 You're locked in two different rooms. For every puzzle, one of you sees the **clue** (a mural, a note, a stained-glass window, chalk marks, a map) and the other has the **controls** (a dial lock, a keypad, buttons, levers, a dark maze). Neither can see the other's screen, so the only way out is talking. Inspired by *We Were Here* and *Portal 2*'s co-op. It's played at `/escape` in the [Games for Two](../../README.md) portal. Play it on a call.
 
+> **Who goes first:** in the lobby, the host picks who has the controls for the first puzzle: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Escape Room for Two** from the portal and creates a room. Send the code or link (`/escape/CODE`).

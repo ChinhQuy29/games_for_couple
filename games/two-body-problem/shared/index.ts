@@ -20,6 +20,8 @@ export interface LevelResult {
 export interface Room extends BaseRoom {
   phase: 'LOBBY' | 'PLAY' | 'CLEAR' | 'FINISH';
   startLevel: number;
+  /** Seat that walks on the first level played; it alternates after that. */
+  firstWalker: 0 | 1;
   level: number;
   body: Body;
   walkerId: string | null;

@@ -5,7 +5,7 @@ import { kit } from './kit';
 import Manual from './Manual';
 import { ModulePanel } from './Modules';
 
-const { useGame, useRoom, LobbyShell, Choice, Avatar, RecapActions } = kit;
+const { useGame, useRoom, LobbyShell, Choice, Avatar, RecapActions, FirstChoice } = kit;
 
 export function Lobby() {
   const { act } = useGame();
@@ -23,13 +23,16 @@ export function Lobby() {
         </>
       }
       settings={
-        <Choice
+        <>
+          <FirstChoice label="💣 Who defuses the first bomb?" />
+          <Choice
           label="Difficulty"
           value={s.difficulty}
           options={DIFFICULTY_IDS}
           onPick={(difficulty) => act('settings:update', { difficulty })}
           render={(d) => `${DIFFICULTIES[d].label} · ${DIFFICULTIES[d].modules} modules · ${DIFFICULTIES[d].seconds / 60}:00`}
         />
+        </>
       }
     />
   );

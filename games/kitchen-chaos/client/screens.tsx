@@ -16,7 +16,7 @@ import {
 import { kit } from './kit';
 import { HeldIcon, RecipeParts } from './Food';
 
-const { useGame, useRoom, LobbyShell, Choice, Avatar, RecapActions } = kit;
+const { useGame, useRoom, LobbyShell, Choice, Avatar, RecapActions, FirstChoice } = kit;
 
 /** Server time, refreshed often enough for smooth bars. */
 function useNow(ms = 100) {
@@ -51,6 +51,7 @@ export function Lobby() {
       }
       settings={
         <>
+          <FirstChoice label="🔪 Who preps first? (the other cooks)" />
           <Choice
             label="Level"
             value={s.level}

@@ -2,6 +2,8 @@
 
 A camper van, a winding road, and two people who each have half the controls. The **Driver** can only steer. The **Co-pilot** works the pedals and holds the only map: at every fork, only they know which town to follow. Cows wander onto the road, potholes and rocks wreck the van, and the fuel gauge keeps dropping. Inspired by *RV There Yet?* It's played at `/road-trip` in the [Games for Two](../../README.md) portal. Keyboard needed; play on a call.
 
+> **Who goes first:** in the lobby, the host picks who drives first: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Road Trip** from the portal and creates a room. Send the code or link (`/road-trip/CODE`).

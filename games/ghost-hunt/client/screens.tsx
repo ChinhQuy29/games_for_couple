@@ -15,7 +15,7 @@ import {
 import { kit } from './kit';
 import { ExplorerMap, NavigatorMap, useMovementKeys } from './Maps';
 
-const { useGame, useRoom, LobbyShell, Avatar, RecapActions } = kit;
+const { useGame, useRoom, LobbyShell, Avatar, RecapActions, FirstChoice } = kit;
 
 function useNow(ms = 250) {
   const { clockOffset } = useGame();
@@ -45,7 +45,12 @@ export function Lobby() {
           <p>👻 When the lights flicker, it's about to <b>hunt</b>. Hide in a closet 🚪 or run. Roles swap every game.</p>
         </>
       }
-      settings={<p className="font-semibold text-ink-soft">One house, 8 kinds of ghost, 10 minutes before sunrise. A coin flip picks the first Explorer.</p>}
+      settings={
+        <>
+          <FirstChoice label="🔦 Who explores first?" />
+          <p className="font-semibold text-ink-soft">One house, 8 kinds of ghost, 10 minutes before sunrise. A coin flip picks the first Explorer.</p>
+        </>
+      }
     />
   );
 }

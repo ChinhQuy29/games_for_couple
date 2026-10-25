@@ -2,6 +2,8 @@
 
 One of you drops a chameleon onto a crazy painted scene, flowers, leaves, dots and all, and paints it to vanish. The other gets **25 seconds and 3 clicks** to find it. Steal colors with the eyedropper, paint the stripes right across its body, tuck it half behind a flower… Inspired by *Meccha Chameleon*. It's played at `/paint-hide` in the [Games for Two](../../README.md) portal. Best with a mouse.
 
+> **Who goes first:** in the lobby, the host picks who hides first: 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Paint & Hide** from the portal and creates a room. Send the code or link (`/paint-hide/CODE`).

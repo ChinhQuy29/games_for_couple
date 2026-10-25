@@ -10,6 +10,8 @@ export interface Settings {
   map: 'random' | MapId;
   taunts: boolean;
   sneaks: 0 | 2 | 3;
+  /** Who hides in round 1: random, the host, or the guest. Roles swap every round after. */
+  firstHider: 'random' | 'host' | 'guest';
 }
 
 export interface Placement {

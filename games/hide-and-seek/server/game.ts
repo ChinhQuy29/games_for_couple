@@ -54,6 +54,7 @@ export const DEFAULT_SETTINGS: Settings = {
   map: 'random',
   taunts: true,
   sneaks: 2,
+  firstHider: 'random',
 };
 
 const pick = <T>(arr: readonly T[], rng: () => number): T => arr[Math.floor(rng() * arr.length)]!;
@@ -175,7 +176,9 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   room.rounds = [];
   room.scores = Object.fromEntries(room.players.map((p) => [p.id, 0]));
   // Coin flip for who hides first; after that roles alternate.
-  room.firstHider = ctx.rng() < 0.5 ? 0 : 1;
+  const hostSeat = Math.max(0, room.players.findIndex((p) => p.isHost)) as 0 | 1;
+  const pick = room.settings.firstHider ?? 'random';
+  room.firstHider = pick === 'host' ? hostSeat : pick === 'guest' ? ((1 - hostSeat) as 0 | 1) : ctx.rng() < 0.5 ? 0 : 1;
   enterHide(room, ctx);
 }
 

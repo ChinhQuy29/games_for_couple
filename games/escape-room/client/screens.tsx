@@ -4,7 +4,7 @@ import { MISTAKE_PENALTY_MS, ROOMS, type Act, type PuzzleKind } from '../shared'
 import { kit } from './kit';
 import { CardView } from './Cards';
 
-const { useGame, useRoom, LobbyShell, RecapActions } = kit;
+const { useGame, useRoom, LobbyShell, RecapActions, FirstChoice } = kit;
 
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -25,7 +25,12 @@ export function Lobby() {
           <p>⏱️ Three rooms. Your time counts, and every mistake adds 15 seconds.</p>
         </>
       }
-      settings={<p className="font-semibold text-ink-soft">Puzzles are different every game: 🔣 dials, 🔢 keypads, 🎨 colors, ⚙️ levers and a 🌑 dark maze.</p>}
+      settings={
+        <>
+          <FirstChoice label="🎛️ Who has the controls first?" />
+          <p className="font-semibold text-ink-soft">Puzzles are different every game: 🔣 dials, 🔢 keypads, 🎨 colors, ⚙️ levers and a 🌑 dark maze.</p>
+        </>
+      }
     />
   );
 }

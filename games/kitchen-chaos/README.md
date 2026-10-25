@@ -2,6 +2,8 @@
 
 A tiny restaurant for two. One of you preps, the other cooks, and the only way across is the pass in the middle. Tickets keep coming, the meat is burning, and somebody put a raw onion on the plate. Inspired by *Overcooked*. It's played at `/kitchen` in the [Games for Two](../../README.md) portal. Best on laptops, on a call.
 
+> **Who goes first:** in the lobby, the host picks who preps in the first shift (the other cooks): 🎲 random, themselves, or their partner. Roles still swap after that.
+
 ## How to play
 
 1. One of you opens **Kitchen Chaos** from the portal and creates a room. Send the code or link (`/kitchen/CODE`).
