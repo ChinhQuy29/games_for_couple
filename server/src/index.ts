@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { Server } from 'socket.io';
 import { attachJjinja, BASE_PATH as JJINJA_PATH, handleHttp as jjinjaHttp } from '@gfc/jjinja';
-import { registerFms } from './games/fms/namespace';
+import { registerFms } from '@gfc/fms/server';
 
 // `--port` wins so `npm run dev` always lands on 3001 (Vite proxies there); hosts set PORT in prod.
 const portArg = process.argv.indexOf('--port');

@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Games under games/<id>/client import React too; make sure everyone shares one copy.
+  resolve: { dedupe: ['react', 'react-dom', 'react-router-dom'] },
   server: {
     port: 5173,
     proxy: {

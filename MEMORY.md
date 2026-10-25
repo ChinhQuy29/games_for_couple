@@ -10,7 +10,7 @@ Running log of what has been built, decisions made, and what's next.
 A portal of silly, real-time two-player web games for a long-distance couple. Each person plays on their own phone or laptop, usually while they're on a call together. The goal is laughter, not hard competition.
 
 - **Portal home:** `/`. Lists every game from `shared/src/games.ts`.
-- **Game #1: Finish My Sentence** at `/fms`. Full spec in [docs/finish-my-sentence-spec.md](docs/finish-my-sentence-spec.md).
+- **Game #1: Finish My Sentence** at `/fms`, in `games/finish-my-sentence/` (package `@gfc/fms`). Docs: [README](games/finish-my-sentence/README.md), [spec](games/finish-my-sentence/docs/spec.md).
 - **Game #2: Jjinja Battle** at `/jjinja`. A mic-scoring "jjinja?!" (찐짜) shouting battle the user built earlier as its own project. It now lives in `games/jjinja-battle/` (see its README).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
@@ -37,7 +37,7 @@ Content: 162 starters (8 categories), 17 modifiers, 15 AFK lines.
 ```bash
 npm install
 npm run dev        # portal + game at http://localhost:5173 (server on :3001)
-npm test           # 21 server unit tests (rules + hidden-info redaction)
+npm test           # every workspace's tests (21 FMS unit tests: rules + hidden-info redaction)
 npm run typecheck
 npm run build && npm start   # production: one server on $PORT (default 3001) serves everything
 ```
@@ -49,9 +49,11 @@ npm run build && npm start   # production: one server on $PORT (default 3001) se
 - **Jjinja's type boundary:** the server type-checks against `games/jjinja-battle/types.d.ts`, because the server's `noUncheckedIndexedAccess` would flag Jjinja's internals. `server/contract.check.ts` fails typecheck if the real exports drift from it.
 - **Vite dev proxy:** `/jjinja` goes to the game server on :3001. The portal card uses a plain `<a>` (`standalonePage: true`), not a React Router link.
 
-- **npm workspaces:** `shared` (types, zod schemas, game registry), `server` (Express + Socket.IO), `client` (React 18 + Vite + Tailwind v4 + framer-motion).
+- **One folder per game:** `games/finish-my-sentence` (`@gfc/fms`, which exports `./client`, `./server` and `./shared`) and `games/jjinja-battle` (`@gfc/jjinja`). The root workspaces are only the shared parts: `shared` (the game registry `games.ts`), `server` (Express + Socket.IO; mounts every game) and `client` (the portal shell: React 18 + Vite + Tailwind v4, the shared theme in `styles.css`).
+- **Tailwind** only scans `client/` by default, so `client/src/styles.css` has one `@source` line per React game. A `games/*/client` glob did not work; list each folder.
+- **Vite** dedupes react, react-dom and react-router-dom, so games outside `client/` share one React. In `@gfc/fms`, react and socket.io are peer dependencies.
 - **One server, one Socket.IO namespace per game** (`/fms`). It is registered in `server/src/index.ts`.
-- **`server/src/games/fms/game.ts`** holds all the rules. It has no I/O; time and randomness come in through `ctx`. Functions validate, then mutate the room in place, and throw `GameError`.
+- **`games/finish-my-sentence/server/game.ts`** holds all the FMS rules. It has no I/O; time and randomness come in through `ctx`. Functions validate, then mutate the room in place, and throw `GameError`.
 - **`view.ts`** builds each player's redacted snapshot. Hidden starters and unrevealed endings never leave the server, and tests enforce this.
 - **The server broadcasts full per-viewer snapshots** (`room:state`) after every change. The client keeps no game logic.
 - **Rooms live in memory only.** A restart loses games, which is acceptable for v1.
@@ -77,11 +79,16 @@ npm run build && npm start   # production: one server on $PORT (default 3001) se
 Already shown as "coming soon" cards in `shared/src/games.ts`: Blind Portrait Duel, Two-Body Problem, Would You Rather: Unhinged.
 Other ideas from brainstorming: Telephone Doodle, Bad Charades by Webcam, Cook Together Badly, Wobbly Tower, Liar Liar, Pet Rock Tamagotchi (async), Story Chain (async).
 
-To add a game: add a registry entry in `shared/src/games.ts`, add client routes in `client/src/App.tsx` under `client/src/games/<id>/`, and, if it's real-time, add a server namespace in `server/src/games/<id>/` registered in `server/src/index.ts`.
+To add a game, follow "Adding a game" in the root README: make a `games/<id>/` package with its own README and docs, add a registry entry in `shared/src/games.ts`, and plug it into `client/src/App.tsx` / `server/src/index.ts`.
 
 ---
 
 ## Log
+
+### 2026-10-24: Every game in its own folder
+- Moved Finish My Sentence from `client/src/games/fms`, `server/src/games/fms`, `shared/src/fms` and `docs/` into one package, `games/finish-my-sentence/` (`client/`, `server/`, `shared/`, `docs/spec.md`), using `git mv` so history follows. `WaitingBlob` moved in with it, since only FMS uses it.
+- Each game now has its own README (FMS: a new one for players and developers; Jjinja: its existing one). The root README is the overview of all games, including "Adding a game".
+- Verified: 21 tests pass, every workspace typechecks, the production CSS still includes the game's classes, and both games play in the browser.
 
 ### 2026-10-24: Jjinja Battle joins the portal; pushed to GitHub
 - Moved the Jjinja Battle project (from `D:\JjinjaBattle`) into `games/jjinja-battle/` with its history, minus attribution lines.

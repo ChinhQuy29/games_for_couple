@@ -4,6 +4,7 @@
   "type": "module",
   "workspaces": [
     "shared",
+    "games/finish-my-sentence",
     "games/jjinja-battle",
     "server",
     "client"
@@ -12,8 +13,8 @@
     "dev": "concurrently -n server,client -c magenta,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
     "build": "npm run build -w client",
     "start": "npm start -w server",
-    "test": "npm test -w server",
-    "typecheck": "tsc -p shared --noEmit && tsc -p server --noEmit && tsc -p client --noEmit && tsc -p games/jjinja-battle --noEmit"
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "tsc -p shared --noEmit && tsc -p games/finish-my-sentence --noEmit && tsc -p games/jjinja-battle --noEmit && tsc -p server --noEmit && tsc -p client --noEmit"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
