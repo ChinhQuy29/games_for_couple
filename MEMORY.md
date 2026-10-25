@@ -14,6 +14,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #2: Jjinja Battle** at `/jjinja`. A mic-scoring "jjinja?!" (찐짜) shouting battle the user built earlier as its own project. It now lives in `games/jjinja-battle/` (see its README).
 - **Game #3: Telephone Doodle** at `/doodle`, in `games/telephone-doodle/` (package `@gfc/doodle`). Docs: [README](games/telephone-doodle/README.md), [spec](games/telephone-doodle/docs/spec.md).
 - **Game #4: Would You Rather: Unhinged** at `/wyr`, in `games/would-you-rather/` (package `@gfc/wyr`). Docs: [README](games/would-you-rather/README.md), [spec](games/would-you-rather/docs/spec.md).
+- **Game #5: Fan Cứng AOG** (Liên Quân/AOG trivia) at `/aog`, in `games/aog-trivia/` (package `@gfc/aog`). Docs: [README](games/aog-trivia/README.md), [spec](games/aog-trivia/docs/spec.md).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -23,6 +24,8 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 **Telephone Doodle:** playable end to end (prompt deck or your own, 2 parallel chains, 7 chaos rules, synced reveal with stroke replay, gallery). Verified in two tabs with real mouse drawing. 13 unit tests.
 
 **Would You Rather: Unhinged:** playable end to end (secret pick + prediction, debate on disagreement, write-your-own turns, recap with match rate, verdict, reads and hot takes). Verified in two tabs over a full 10-question game. 13 unit tests.
+
+**Fan Cứng AOG:** playable end to end (VI/EN per player, simultaneous answers with device-timed speed, clue questions revealed by the server, SGP Special ×2 finale, streak banners, Liên Quân ranks, 🚩 report). Verified in two tabs over a full game plus a clue question. 16 unit tests. **The 70 questions are sourced but NOT checked by a fan yet**: the user chose to skip checking for now.
 
 **Finish My Sentence milestones:**
 
@@ -90,6 +93,17 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-24: Fan Cứng AOG (Liên Quân trivia)
+- **Built for the user's girlfriend:** a big Liên Quân/AOG fan whose favorite team is **SGP (Saigon Phantom)**, especially the era with **Lai Bâng**, and old members **Fish, Khoa, Shin**. She **dislikes FPT x Flash** (SGP's rival). Both partners play (the user plays Liên Quân too).
+- **User choices:** a VI/EN toggle; coverage back to 2020; only AOG plus international events with Vietnamese teams (no Queens of Glory); skip Facebook; skip fact-checking for now.
+- **Research:**
+  - **Readable:** Vietnamese Wikipedia (ĐTDV + SGP), lienquan.garena.vn recaps and Vietnamese esports news.
+  - **Blocked:** Facebook needs a login (not done), Liquipedia shows a human check (not bypassed), and the YouTube channel pages didn't render (search works; the official channels are `@LienQuanMobileSportsGarena` and `@GarenaLienQuanMobileVN`).
+  - **Left out:** contested facts (the Đông 2024 final score, Lai Bâng's exact leaving date, the V Gaming → One Star rename) and private-life stories, including Lai Bâng's breakup and his old boosting ban.
+- **Fairness:** the server clamps device-claimed answer times to [server − 3s, server + 1.5s].
+- **Avatars:** fixed duplicate player avatars in all four React games; the second player gets the next animal on a collision.
+- **Next ideas:** have a fan check the questions and fix any 🚩 ones; add hero/patch questions, "who said it?" quotes and timeline ordering.
 
 ### 2026-10-24: Would You Rather: Unhinged
 - Built `games/would-you-rather/` (`@gfc/wyr`, Socket.IO namespace `/wyr`), following the same pattern as FMS and Doodle. The portal's "coming soon" card became the playable game.

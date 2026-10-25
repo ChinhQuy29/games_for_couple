@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gfc/aog": "*",
     "@gfc/doodle": "*",
     "@gfc/fms": "*",
     "@gfc/shared": "*",

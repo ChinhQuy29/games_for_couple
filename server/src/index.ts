@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { Server } from 'socket.io';
 import { attachJjinja, BASE_PATH as JJINJA_PATH, handleHttp as jjinjaHttp } from '@gfc/jjinja';
+import { registerAog } from '@gfc/aog/server';
 import { registerDoodle } from '@gfc/doodle/server';
 import { registerFms } from '@gfc/fms/server';
 import { registerWyr } from '@gfc/wyr/server';
@@ -38,6 +39,7 @@ const io = new Server(httpServer, { destroyUpgrade: false });
 registerFms(io);
 registerDoodle(io);
 registerWyr(io);
+registerAog(io);
 attachJjinja(httpServer);
 
 const onListening = () => console.log(`💞 Games for Couple server on http://${HOST ?? 'localhost'}:${PORT}`);

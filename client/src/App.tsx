@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import PortalHome from './portal/PortalHome';
+import AogApp from '@gfc/aog/client';
 import DoodleApp from '@gfc/doodle/client';
 import FmsApp from '@gfc/fms/client';
 import WyrApp from '@gfc/wyr/client';
@@ -13,6 +14,7 @@ export default function App() {
       <Route path="/fms/*" element={<FmsApp />} />
       <Route path="/doodle/*" element={<DoodleApp />} />
       <Route path="/wyr/*" element={<WyrApp />} />
+      <Route path="/aog/*" element={<AogApp />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

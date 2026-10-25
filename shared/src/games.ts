@@ -61,6 +61,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–15 min',
   },
   {
+    id: 'aog',
+    title: 'Fan Cứng AOG',
+    emoji: '👻',
+    tagline: 'Liên Quân & AOG trivia for real fans: SGP, Lai Bâng, the rivals, the drama. VI/EN.',
+    path: '/aog',
+    status: 'playable',
+    accent: 'pink',
+    minutes: '10–15 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',
