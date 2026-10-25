@@ -4,7 +4,7 @@ import { TRIPS, type Frame } from '../shared';
 import { kit } from './kit';
 import { Road, type Buffered } from './Road';
 
-const { useGame, useRoom, useFrame, LobbyShell, Avatar, RecapActions, FirstChoice } = kit;
+const { useGame, useRoom, useFrame, LobbyShell, Avatar, RecapActions, FirstChoice, Choice } = kit;
 
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -12,6 +12,8 @@ const fmt = (ms: number) => {
 };
 
 export function Lobby() {
+  const { act } = useGame();
+  const { s } = useRoom();
   return (
     <LobbyShell
       startLabel="Hit the road 🚐"
@@ -21,13 +23,22 @@ export function Lobby() {
           <p>🛞 The <b>Driver</b> steers: <b>A/D</b> or <b>←/→</b>. That's all they can do.</p>
           <p>🦶 The <b>Co-pilot</b> has the pedals (<b>W/↑</b> gas, <b>S/↓</b> brake) and the <b>map</b>: only they know which town to follow at each fork.</p>
           <p>🐄 Dodge cows, potholes and rocks, grab ⛽ before you run dry, and don't drive on the grass. Wrong fork = U-turn.</p>
-          <p>🔁 Three trips; you swap seats every trip.</p>
+          <p>🔁 {TRIPS.length} trips; you swap seats every trip.</p>
         </>
       }
       settings={
         <>
           <FirstChoice label="🛞 Who drives first?" />
-          <p className="font-semibold text-ink-soft">🏖️ To the beach · ⛰️ Mountain pass · 🌙 Night drive</p>
+          <Choice
+            label="🗺️ Start at"
+            value={s.startTrip}
+            options={TRIPS.map((_, i) => i)}
+            onPick={(startTrip) => act('settings:update', { startTrip })}
+            render={(i) => `${TRIPS[i]!.emoji} ${TRIPS[i]!.name}`}
+          />
+          <p className="font-semibold text-ink-soft">
+            {TRIPS.length - s.startTrip} trip{TRIPS.length - s.startTrip === 1 ? '' : 's'} from here: {TRIPS.slice(s.startTrip).map((t) => t.emoji).join(' ')}
+          </p>
         </>
       }
     />

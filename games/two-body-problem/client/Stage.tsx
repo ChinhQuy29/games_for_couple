@@ -36,7 +36,7 @@ const DECOR: Record<Theme, string[]> = {
 const hash = (x: number, y: number) => {
   let h = (x * 374761393 + y * 668265263) >>> 0;
   h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0;
-  return (h ^ (h >>> 16)) / 4294967296;
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 };
 
 /** Draws one level on a canvas, interpolating the 30 Hz frames. */

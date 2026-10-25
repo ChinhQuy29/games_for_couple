@@ -13,7 +13,7 @@
 
 ## Rules
 
-- **Phases:** LOBBY → DRIVE → ARRIVED, then DRIVE of the next trip with seats swapped (both ready), or FINISH after trip 3. "Rematch" (host) goes back to LOBBY.
+- **Phases:** LOBBY → DRIVE → ARRIVED, then DRIVE of the next trip with seats swapped (both ready), or FINISH after the last trip (6). The host's `settings:update {startTrip}` (lobby) picks the first trip. Obstacles that find no free spot (away from forks and each other) are skipped. "Rematch" (host) goes back to LOBBY.
 - **`input`** (quiet): `{left, right, gas, brake}` from both players. `controls(room)` takes left/right from the Driver and gas/brake from the Co-pilot.
 - **Step** (30 Hz, after the countdown):
   - **Cows** wander and bounce off the road edges.
@@ -40,6 +40,6 @@
 
 ## Client
 
-- **Canvas** (`Road.tsx`): 30 units wide, with the van at 86% of the height and a camera easing between the van and the road ahead. It draws the road strips per branch, dashed centre lines, signs 30 units before each fork, obstacles, the finish line and the van.
+- **Canvas** (`Road.tsx`): 30 units wide, with the van at 86% of the height and a camera easing between the van and the road ahead. It draws the trip's scene first (ground colour, a texture that scrolls with the road, and roadside things placed by a hash of the distance, under the road so forks never cover them), then the road strips per branch, dashed centre lines, signs 30 units before each fork, obstacles, the finish line and the van.
 - **Night:** a radial darkness except the headlights, and obstacles beyond 20 units are hidden.
 - **Sidebar:** the role card, the speedometer, fuel and van meters, a progress bar with fork marks, and the map (co-pilot) or a reminder to ask (driver).

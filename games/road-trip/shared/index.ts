@@ -24,11 +24,17 @@ export const DRIVE = {
   wrongTurnBackUp: 40,
 } as const;
 
+/** How the land beside the road looks. */
+export type Scene = 'coast' | 'mountain' | 'night' | 'rice' | 'desert' | 'snow';
+
 export const TRIPS = [
-  { name: 'To the beach', emoji: '🏖️', length: 900, curve: 0.6, junctions: 3, cows: 6, potholes: 5, rocks: 0, mud: 3, night: false, par: 95 },
-  { name: 'Mountain pass', emoji: '⛰️', length: 1100, curve: 1.1, junctions: 4, cows: 4, potholes: 6, rocks: 6, mud: 4, night: false, par: 115 },
-  { name: 'Night drive', emoji: '🌙', length: 1200, curve: 0.8, junctions: 5, cows: 7, potholes: 6, rocks: 3, mud: 3, night: true, par: 130 },
-] as const;
+  { name: 'To the beach', emoji: '🏖️', scene: 'coast', length: 900, curve: 0.6, junctions: 3, cows: 6, potholes: 5, rocks: 0, mud: 3, night: false, par: 95 },
+  { name: 'Mountain pass', emoji: '⛰️', scene: 'mountain', length: 1100, curve: 1.1, junctions: 4, cows: 4, potholes: 6, rocks: 6, mud: 4, night: false, par: 115 },
+  { name: 'Night drive', emoji: '🌙', scene: 'night', length: 1200, curve: 0.8, junctions: 5, cows: 7, potholes: 6, rocks: 3, mud: 3, night: true, par: 130 },
+  { name: 'Rice fields', emoji: '🌾', scene: 'rice', length: 1000, curve: 0.9, junctions: 4, cows: 11, potholes: 4, rocks: 0, mud: 6, night: false, par: 115 },
+  { name: 'Desert highway', emoji: '🏜️', scene: 'desert', length: 1300, curve: 0.4, junctions: 3, cows: 2, potholes: 9, rocks: 8, mud: 0, night: false, par: 130 },
+  { name: 'Snowy village', emoji: '❄️', scene: 'snow', length: 1000, curve: 1.0, junctions: 5, cows: 3, potholes: 3, rocks: 4, mud: 7, night: false, par: 125 },
+] as const satisfies readonly { name: string; emoji: string; scene: Scene; length: number; curve: number; junctions: number; cows: number; potholes: number; rocks: number; mud: number; night: boolean; par: number }[];
 
 export const TOWNS = ['Pine Hill', 'Lake Town', 'Sunny Bay', 'Old Mill', 'Cloud Peak', 'Fox Hollow', 'Rose Valley', 'Mango Bay', 'Echo Ridge', 'Lantern Bay', 'Cat Island', 'Honey Farm'];
 
@@ -68,6 +74,8 @@ export interface TripResult {
 
 export interface Room extends BaseRoom {
   phase: 'LOBBY' | 'DRIVE' | 'ARRIVED' | 'FINISH';
+  /** The host's pick: the drive starts here and goes on to the last trip. */
+  startTrip: number;
   trip: number;
   driverId: string | null;
   held: Record<string, { left: boolean; right: boolean; gas: boolean; brake: boolean }>;
@@ -101,6 +109,7 @@ export interface Frame {
 
 export interface PublicState extends PublicBase {
   phase: Room['phase'];
+  startTrip: number;
   trip: number;
   driverId: string | null;
   myRole: 'driver' | 'copilot' | null;
@@ -117,6 +126,7 @@ export interface PublicState extends PublicBase {
   frame: Frame | null;
 }
 
+export const SettingsSchema = z.object({ startTrip: z.number().int().min(0).max(TRIPS.length - 1) });
 export const HeldSchema = z.object({ left: z.boolean(), right: z.boolean(), gas: z.boolean(), brake: z.boolean() });
 
 export function roadCenter(curve: Curve, d: number): number {

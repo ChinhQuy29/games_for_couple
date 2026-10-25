@@ -139,7 +139,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 
 ### 🚐 Road Trip
 
-- **Setup:** 2 players with keyboards on a call, 10–15 minutes, co-op. Three trips (beach, mountain pass, night drive); you swap seats every trip.
+- **Setup:** 2 players with keyboards on a call, 10–15 minutes, co-op. Six trips (beach, mountain pass, night drive, rice fields, desert highway, snowy village), each with its own scenery; start at any of them, and you swap seats every trip.
 - **Split controls:** the Driver only steers. The Co-pilot has gas and brake, and the only map with the town to follow at each fork. A wrong fork means a U-turn.
 - **On the road:** wandering cows, potholes, rocks, mud, grass that rattles the van apart, and a fuel gauge that needs ⛽ cans. Stars for arriving, beating par, and a clean drive.
 - **Built with:** the shared kit's 30 Hz loop, with a top-down canvas road (sine-wave curves, forks), on the Socket.IO namespace `/roadtrip`. The fork answers never leave the server.

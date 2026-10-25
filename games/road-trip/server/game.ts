@@ -32,6 +32,7 @@ export function newRoom(code: string, ctx: Ctx): Room {
     lastActivityAt: ctx.now,
     players: [],
     phase: 'LOBBY',
+    startTrip: 0,
     trip: 0,
     driverId: null,
     held: {},
@@ -77,16 +78,17 @@ export function buildTrip(index: number, rng: () => number) {
   });
   const route = junctions.map((j) => (j.correct === 'left' ? j.names[0] : j.names[1]));
   // Keep the forks clear, and the first stretch, so you can get going.
-  const clear = (d: number) => d < 60 || d > trip.length - 30 || junctions.some((j) => d > j.d - 55 && d < j.d + 40);
+  const clear = (d: number) => d < 60 || d > trip.length - 30 || junctions.some((j) => d >= j.d - 55 && d <= j.d + 40);
   const obstacles: Obstacle[] = [];
   let id = 0;
   const place = (kind: ObstacleKind, n: number, spread: () => number) => {
     for (let k = 0; k < n; k++) {
-      let d = 0;
-      for (let tries = 0; tries < 50; tries++) {
-        d = 60 + rng() * (trip.length - 100);
-        if (!clear(d) && !obstacles.some((o) => Math.abs(o.d - d) < 18)) break;
+      let d = -1;
+      for (let tries = 0; tries < 80 && d < 0; tries++) {
+        const at = 60 + rng() * (trip.length - 100);
+        if (!clear(at) && !obstacles.some((o) => Math.abs(o.d - at) < 18)) d = at;
       }
+      if (d < 0) continue; // no room left on this road: skip it rather than block a fork
       obstacles.push({ id: id++, kind, d, x: roadCenter(curve, d) + spread(), vx: kind === 'cow' ? (rng() < 0.5 ? -1 : 1) * (0.8 + rng() * 0.8) : 0, hit: false });
     }
   };
@@ -128,7 +130,13 @@ export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requireHost(room, playerId);
   requireTwo(room);
   room.results = [];
-  beginTrip(room, 0, firstPlayer(room, ctx.rng).id, ctx);
+  beginTrip(room, room.startTrip ?? 0, firstPlayer(room, ctx.rng).id, ctx);
+}
+
+export function setStartTrip(room: Room, playerId: string, startTrip: number): void {
+  requirePhase(room, 'LOBBY');
+  requireHost(room, playerId);
+  room.startTrip = Math.max(0, Math.min(TRIPS.length - 1, startTrip));
 }
 
 /** Both ready: next trip, and you swap seats. */

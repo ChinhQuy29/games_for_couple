@@ -20,6 +20,11 @@ A camper van, a winding road, and two people who each have half the controls. Th
 | 🏖️ To the beach | 900 m | 3 | Gentle curves, a few cows |
 | ⛰️ Mountain pass | 1100 m | 4 | Twisty, rocks on the road |
 | 🌙 Night drive | 1200 m | 5 | You only see what the headlights reach |
+| 🌾 Rice fields | 1000 m | 4 | Paddies and huts, lots of cows and mud |
+| 🏜️ Desert highway | 1300 m | 3 | Long and straight, potholes and rocks, fuel is far apart |
+| ❄️ Snowy village | 1000 m | 5 | Twisty, snowdrifts (mud) and the most forks |
+
+The host picks which trip to **start at**; the drive goes on to the last one. Each trip has its own land beside the road (palms, pines, huts, cacti, snowy houses), drawn in code.
 
 Stars: ⭐ for arriving, another for beating the par time, and another for no wrong turns with the van at 70%+.
 
@@ -34,8 +39,8 @@ games/road-trip/            # @gfc/roadtrip, built on the shared kit (../../kit)
 ├─ shared/index.ts          # trips, driving constants, road shape (curves + forks), types
 ├─ server/game.ts           # trip generation, controls split, driving sim, hits, forks, endings
 ├─ server/index.ts          # view (the route only for the co-pilot) + 30 Hz loop (namespace /roadtrip)
-├─ server/__tests__/        # 8 unit tests, including an autopilot that finishes every trip
-├─ client/Road.tsx          # the top-down canvas: road, forks, signs, obstacles, van, night
+├─ server/__tests__/        # 9 unit tests, including an autopilot that finishes every trip
+├─ client/Road.tsx          # the top-down canvas: scenery, road, forks, signs, obstacles, van, night
 ├─ client/screens.tsx       # Lobby, Drive (dashboard + map), Arrived, Finish
 └─ docs/spec.md
 ```
@@ -50,5 +55,6 @@ The tests cover:
 - forks (both branches are road, the middle isn't), and every trip's layout,
 - the controls split (the driver's gas does nothing), obstacles and fuel, wrong turns,
 - breaking down and running out of gas,
-- an autopilot that finishes all three trips for several seeds with no wrong turns,
+- an autopilot that finishes all six trips for several seeds with no wrong turns,
+- starting at a later trip,
 - the route is hidden from the driver.

@@ -142,6 +142,16 @@ describe('driving', () => {
     }
   });
 
+  it('the host can start at a later trip', () => {
+    const room = game.newRoom('ABCD', ctxAt(0));
+    addPlayer(room, { id: 'pa', token: 'token-aaaaaaaaaa', name: 'Alex' });
+    addPlayer(room, { id: 'pb', token: 'token-bbbbbbbbbb', name: 'Bao' });
+    expect(() => game.setStartTrip(room, 'pb', 2)).toThrow();
+    game.setStartTrip(room, 'pa', TRIPS.length - 1);
+    game.startGame(room, 'pa', ctxAt(0));
+    expect(room.trip).toBe(TRIPS.length - 1);
+  });
+
   it('only the co-pilot sees the route while driving', () => {
     const { room, driver, copilot } = drive();
     expect(toPublicState(room, driver, 0).route).toBeNull();
