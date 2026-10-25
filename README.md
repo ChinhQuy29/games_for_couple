@@ -22,6 +22,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 🔐 **Escape Room for Two** | `/escape` | Locked in two different rooms: one of you sees each clue, the other has the controls. Dials, keypads, colors, levers and a pitch-dark maze. Co-op. | Laptop + a call | [README](games/escape-room/README.md) · [spec](games/escape-room/docs/spec.md) |
 | 📦 **Handle With Care** | `/carry` | Two clumsy movers, one house of valuables, one truck. Small things you carry or throw; the piano and fish tank need both of you holding on. Co-op. | Keyboard | [README](games/handle-with-care/README.md) · [spec](games/handle-with-care/docs/spec.md) |
 | 🚐 **Road Trip** | `/road-trip` | One of you steers; the other has the pedals and the only map. Forks, cows, potholes, fuel and a night drive. Co-op. | Keyboard + a call | [README](games/road-trip/README.md) · [spec](games/road-trip/docs/spec.md) |
+| 🕵️ **Codenames Duet** | `/codenames` | 25 words, two different secret keys. Take turns giving one-word clues to find all 15 agents together, and avoid the assassins. English or Vietnamese. Co-op. | Keyboard + a call | [README](games/codenames-duet/README.md) · [spec](games/codenames-duet/docs/spec.md) |
 | 🎨 Blind Portrait Duel | | Coming soon | | |
 
 ### ✍️ Finish My Sentence

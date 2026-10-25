@@ -20,6 +20,7 @@
     "@gfc/escape": "*",
     "@gfc/carry": "*",
     "@gfc/roadtrip": "*",
+    "@gfc/duet": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/tethered": "*",

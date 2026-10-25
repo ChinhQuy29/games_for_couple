@@ -171,6 +171,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–15 min',
   },
   {
+    id: 'codenames',
+    title: 'Codenames Duet',
+    emoji: '🕵️',
+    tagline: 'One-word clues, two secret keys, 15 agents. English or Vietnamese.',
+    path: '/codenames',
+    status: 'playable',
+    accent: 'pink',
+    minutes: '15–20 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',
