@@ -49,7 +49,7 @@ games/bomb-squad/           # @gfc/bomb, built on the shared kit (../../kit)
 ├─ shared/index.ts          # difficulties, module types, state, zod schemas
 ├─ server/game.ts           # bombs (edition + module mix), actions → ok / strike / solved, timer
 ├─ server/index.ts          # view + registerGame() wiring (namespace /bomb)
-├─ server/__tests__/        # 11 unit tests
+├─ server/__tests__/        # 10 unit tests
 ├─ client/                  # BombApp, screens, Modules (bomb panels), Manual (tabs)
 └─ docs/spec.md
 ```

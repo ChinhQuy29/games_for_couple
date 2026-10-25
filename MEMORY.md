@@ -130,7 +130,7 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
   - Fixed manual → seeded **editions** (`shared/edition.ts`): rules for every module are generated per bomb and rendered as manual text from the same data the solvers use.
   - 4 new modules: Morse (blinking word → frequency), Maze (marker circles identify one of 6 mazes), Memory (5 stages, "same as stage k" steps), Switches (LED-color rules). 9 kinds total.
   - The module mix comes from `pickKinds`, preferring kinds the last bomb lacked; the manual only shows the present kinds; the edition # is on both screens. Hard = 6 modules.
-  - 11 tests, including defusing every kind by following the manual. Play-tested in two tabs: a 6-module hard bomb, and the Expert's Morse tab matching the edition.
+  - 10 tests, including defusing every kind by following the manual. Play-tested in two tabs: a 6-module hard bomb, and the Expert's Morse tab matching the edition.
 - **Done: the role picker.**
   - The kit has `first` on BaseRoom, a built-in `settings:first` action, `first` added to every view, `firstPlayer` / `firstSeat` helpers, and a `kit.FirstChoice` lobby control.
   - Used by Bomb Squad, Ghost Hunt, Road Trip, Escape Room, Kitchen Chaos (who preps), Two-Body (first walker, then it alternates), Paint & Hide and Codenames (first giver; later boards alternate who starts).
