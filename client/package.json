@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gfc/doodle": "*",
     "@gfc/fms": "*",
     "@gfc/shared": "*",
     "react": "^18.3.1",

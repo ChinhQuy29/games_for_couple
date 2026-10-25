@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { Server } from 'socket.io';
 import { attachJjinja, BASE_PATH as JJINJA_PATH, handleHttp as jjinjaHttp } from '@gfc/jjinja';
+import { registerDoodle } from '@gfc/doodle/server';
 import { registerFms } from '@gfc/fms/server';
 
 // `--port` wins so `npm run dev` always lands on 3001 (Vite proxies there); hosts set PORT in prod.
@@ -34,6 +35,7 @@ const io = new Server(httpServer, { destroyUpgrade: false });
 
 // One namespace per Socket.IO game; Jjinja brings its own `ws` server.
 registerFms(io);
+registerDoodle(io);
 attachJjinja(httpServer);
 
 const onListening = () => console.log(`💞 Games for Couple server on http://${HOST ?? 'localhost'}:${PORT}`);

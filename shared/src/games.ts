@@ -41,6 +41,16 @@ export const GAMES: GameInfo[] = [
     minutes: '5 min',
   },
   {
+    id: 'doodle',
+    title: 'Telephone Doodle',
+    emoji: '🖍️',
+    tagline: 'Draw it, guess it, draw the guess. Watch it fall apart.',
+    path: '/doodle',
+    status: 'playable',
+    accent: 'mint',
+    minutes: '10–15 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

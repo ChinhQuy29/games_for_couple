@@ -8,6 +8,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 |---|---|---|---|---|
 | ✍️ **Finish My Sentence** | `/fms` | You start a sentence, your partner finishes it, usually without seeing the whole thing. Then you reveal both, dramatically. | Keyboard | [README](games/finish-my-sentence/README.md) · [spec](games/finish-my-sentence/docs/spec.md) |
 | 🎤 **Jjinja Battle** | `/jjinja` | Say "jjinja?!" (찐짜) into your mic and get scored on pronunciation, tone and funniness. Best of 3, or a rally where each one must beat the last. | Mic (camera optional) | [README](games/jjinja-battle/README.md) |
+| 🖍️ **Telephone Doodle** | `/doodle` | Broken telephone with drawings: draw a prompt, your partner guesses it, you draw their guess… then watch it fall apart. | Mouse or finger | [README](games/telephone-doodle/README.md) · [spec](games/telephone-doodle/docs/spec.md) |
 | 🎨 Blind Portrait Duel · 🕹️ Two-Body Problem · 🤔 Would You Rather: Unhinged | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -23,6 +24,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Scoring:** your browser analyzes each 3-second clip (loudness, syllables, pitch contour), and the server turns that into Pronunciation, Tone and Funny scores. A rising, dramatic "jjin-JAAA?" scores best.
 - **Extras:** round challenges, rally mode, an announcer voice, optional live video (WebRTC with a relay server), match recording as vertical videos, highlight clips, and safety tools for random matches.
 - **Built with:** a vanilla JS frontend and a `ws` WebSocket server, mounted by the shared server at `/jjinja`. It needs `https://` or `localhost` for the mic.
+
+### 🖍️ Telephone Doodle
+
+- **Setup:** 2 players, 10–15 minutes. Two chains run at once each round (one started by each of you), so you're always both drawing or both guessing.
+- **The rule:** you only ever see the step right before yours, so the guesser never sees the original words. Chaos rules make the drawing harder: 🙈 blind draw, ✏️ one stroke, 🪞 mirror hands, 🫨 shaky hands…
+- **Reveal:** you step through each chain together, drawings replay stroke by stroke, and each chain ends with "Started as → Ended as". The gallery crowns the chain that got the most reactions.
+- **Built with:** React with an HTML canvas, and the Socket.IO namespace `/doodle`. Drawings are compact stroke lists on a 1000×1000 grid, validated by the server.
 
 ## Run it locally
 
@@ -42,7 +50,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -66,7 +74,8 @@ Every game lives in its own folder under `games/`, with its own README and docs.
 ```
 games/
 ├─ finish-my-sentence/   # @gfc/fms: client/, server/, shared/, docs/, README.md
-└─ jjinja-battle/        # @gfc/jjinja: public/, server/, README.md
+├─ jjinja-battle/        # @gfc/jjinja: public/, server/, README.md
+└─ telephone-doodle/     # @gfc/doodle: client/, server/, shared/, docs/, README.md
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game
 shared/                  # games.ts, the registry the portal home is built from

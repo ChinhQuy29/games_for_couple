@@ -2,6 +2,7 @@
 /* React games live outside client/, so Tailwind must be told where their class names are.
    Add one line per React game: a wildcard over the games folder is not picked up. */
 @source '../../games/finish-my-sentence/client';
+@source '../../games/telephone-doodle/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

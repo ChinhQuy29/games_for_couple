@@ -12,11 +12,14 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Portal home:** `/`. Lists every game from `shared/src/games.ts`.
 - **Game #1: Finish My Sentence** at `/fms`, in `games/finish-my-sentence/` (package `@gfc/fms`). Docs: [README](games/finish-my-sentence/README.md), [spec](games/finish-my-sentence/docs/spec.md).
 - **Game #2: Jjinja Battle** at `/jjinja`. A mic-scoring "jjinja?!" (찐짜) shouting battle the user built earlier as its own project. It now lives in `games/jjinja-battle/` (see its README).
+- **Game #3: Telephone Doodle** at `/doodle`, in `games/telephone-doodle/` (package `@gfc/doodle`). Docs: [README](games/telephone-doodle/README.md), [spec](games/telephone-doodle/docs/spec.md).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
 
 **Jjinja Battle:** fully working as imported (classic and rally modes, bot opponent, random matchmaking, camera/WebRTC with a TURN relay, match recording, highlight clips, safety and rate limits). It's served by the shared server at `/jjinja`. Verified in two tabs: invite link, join and WebSocket. Not verified here: the mic and camera, since the browser pane blocks them.
+
+**Telephone Doodle:** playable end to end (prompt deck or your own, 2 parallel chains, 7 chaos rules, synced reveal with stroke replay, gallery). Verified in two tabs with real mouse drawing. 13 unit tests.
 
 **Finish My Sentence milestones:**
 
@@ -84,6 +87,12 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-24: Telephone Doodle
+- Built Telephone Doodle as `games/telephone-doodle/` (`@gfc/doodle`), following the FMS pattern: server-authoritative, a pure `game.ts`, strict `view.ts`, Socket.IO namespace `/doodle`.
+- **Two-player design:** two parallel chains per round, one owned by each player. Owners draw and partners guess, so the guesser never sees the original words, and both players are busy at every step.
+- **Drawings** are stroke lists on a 1000×1000 grid. The server validates them and enforces the one-stroke, five-strokes, one-color and tiny chaos rules; blind, mirror and shaky are client-side.
+- Client plumbing (socket, store, storage, timer, waiting blob) was copied from FMS rather than shared, to keep games isolated.
 
 ### 2026-10-24: Every game in its own folder
 - Moved Finish My Sentence from `client/src/games/fms`, `server/src/games/fms`, `shared/src/fms` and `docs/` into one package, `games/finish-my-sentence/` (`client/`, `server/`, `shared/`, `docs/spec.md`), using `git mv` so history follows. `WaitingBlob` moved in with it, since only FMS uses it.
