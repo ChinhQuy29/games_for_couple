@@ -126,6 +126,12 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
   - more maps and items; Bomb Squad with more modules, varied per bomb, and rules that change per game;
   - phone controls for all keyboard games; a "who does what" choice at room creation for every role game.
   The user picked the order: role picker → Bomb Squad → Tethered → Hide and Seek → the other environment games → phone controls.
+- **Done: Tethered (towers, art, phones).**
+  - With the user's OK, downloaded Kenney CC0 packs to the scratchpad: New Platformer Pack 1.1 (3.3 MB) and Mobile Controls (3.1 MB). Only the files used are copied into the repo: `games/tethered/client/assets/` (73 PNGs) and `kit/client/assets/touch/` (9 icons), 108 KB total, each with a CREDITS.md.
+  - Towers: Classic plus a seeded generator (lifts, ferries, crumbles, spikes, 3 camps, summit), as Frozen Peak / Desert Cliffs / Mushroom Caves plus a 🎲 random tower each climb. Lobby choice `towerId`.
+  - Renderer: themed Kenney tiles, sky gradient, parallax backdrop, drifting clouds, decorations, waving flags, posed sprite characters (pink/green).
+  - **Kit `TouchControls`:** on coarse pointers (or `?touch`); multi-touch hold buttons; overlay in landscape, a row underneath in portrait. Tethered uses it; on short screens the HUD hides and the canvas fills the height.
+  - 17 tests (a route reachability check over 60 random seeds; physics confirmed a rise-3/gap-2 jump lands). Play-tested: Frozen Peak on a laptop, phone portrait (buttons below, touch moved the climber) and landscape.
 - **Done: Bomb Squad overhaul.**
   - Fixed manual → seeded **editions** (`shared/edition.ts`): rules for every module are generated per bomb and rendered as manual text from the same data the solvers use.
   - 4 new modules: Morse (blinking word → frequency), Maze (marker circles identify one of 6 mazes), Memory (5 stages, "same as stage k" steps), Switches (LED-color rules). 9 kinds total.

@@ -14,7 +14,19 @@
   - the correction moves through `moveBody`, so nobody is pulled through walls;
   - the velocity component that stretches the chain is removed.
 
-## The tower (`shared/level.ts`)
+## Towers (`shared/level.ts`)
+
+- **`getTower(id, seed)`:** id 0 is Classic (hand-built, below). 1–3 are generated from fixed seeds (Frozen Peak: snow, 78 rows; Desert Cliffs: sand, 72; Mushroom Caves: purple, 84). 4 is random: the seed is new each climb, with a random theme and height 66–84.
+- **The generator** (`generateTower`) builds bottom-up from the full-width ground:
+  - an ordinary step is 3 rows up, width 3–6, beside the previous platform with a 0–2 tile gap, zig-zagging off the walls. A step is solid or crumbling only if `canBeSolid` (nothing 2–3 rows straight below), otherwise one-way. Wide solid ledges sometimes get a spike in the middle;
+  - a lift (14%) is a vertical mover beside the platform, from its row up 6, with the next platform beside the lift's top;
+  - a ferry (12%) is a horizontal mover one step up that crosses 6 tiles to a landing on the same row;
+  - camps: when the route passes 72%, 46% and 22% of the height, a 6-wide solid (or one-way) platform with a flag;
+  - the summit: a 5-wide solid ledge with the flag above it.
+  - The route is returned for tests.
+- **Room state:** `towerId` (host's lobby choice, `settings:update`) and `towerSeed` (set at each climb for the random tower). Server and clients both call `getTower(towerId, towerSeed)`.
+
+## Classic
 
 - **Layout:** 24 × 72 tiles built from platform specs, with each step up 3 rows. No solid (`#`/`x`) tile has another platform 2–3 rows directly below it, so climbs never bonk (a test checks this).
 - **Checkpoints:** Base camp, Camp 1 (row 50), Camp 2 (row 26), Camp 3 (row 8). The summit flag is at (6, 1).

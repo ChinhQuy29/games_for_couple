@@ -20,6 +20,9 @@ import {
   type Input,
   type Room,
   type World,
+  generateTower,
+  getTower,
+  tileOf,
 } from '../../shared';
 import * as game from '../game';
 import { toPublicState } from '../index';
@@ -204,5 +207,68 @@ describe('the climb', () => {
     const v = toPublicState(room, 'pb', 0);
     expect(v.mySlot).toBe(1);
     expect(JSON.stringify(v)).not.toContain('token-');
+  });
+});
+
+describe('generated towers', () => {
+  const towers = [1, 2, 3].map((id) => getTower(id)).concat(Array.from({ length: 40 }, (_, i) => getTower(4, 1000 + i * 77)));
+
+  it('every step of the route is reachable: up to 3 rows, up to 2 tiles across (lifts ride 6)', () => {
+    for (const id of [1, 2, 3]) {
+      const t = generateTower(id, 'x', 'grass', [101, 202, 303][id - 1]!, [78, 72, 84][id - 1]!);
+      for (let i = 1; i < t.route.length; i++) {
+        const a = t.route[i - 1]!;
+        const b = t.route[i]!;
+        const rise = a.row - b.row;
+        expect(rise, `${t.name} step ${i}`).toBeGreaterThanOrEqual(0);
+        expect(rise, `${t.name} step ${i}`).toBeLessThanOrEqual(b.kind === 'lift' ? 6 : 3);
+        const gap = Math.max(0, b.from - a.to - 1, a.from - b.to - 1);
+        expect(gap, `${t.name} step ${i}`).toBeLessThanOrEqual(2);
+      }
+    }
+    for (let seed = 0; seed < 60; seed++) {
+      const t = generateTower(4, 'r', 'sand', seed, 72);
+      for (let i = 1; i < t.route.length; i++) {
+        const a = t.route[i - 1]!;
+        const b = t.route[i]!;
+        expect(a.row - b.row).toBeLessThanOrEqual(b.kind === 'lift' ? 6 : 3);
+        expect(Math.max(0, b.from - a.to - 1, a.from - b.to - 1), `seed ${seed} step ${i}`).toBeLessThanOrEqual(2);
+      }
+      expect(t.route[t.route.length - 1]!.row, `seed ${seed}`).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('camps stand on ground, the summit too, and no solid tile hangs 2–3 rows above another', () => {
+    for (const t of towers) {
+      expect(t.rows).toHaveLength(t.h);
+      for (const r of t.rows) expect(r).toHaveLength(LW);
+      expect(t.checkpoints.length, t.name).toBeGreaterThanOrEqual(3);
+      for (const c of t.checkpoints) {
+        const feet = Math.round(c.y + PHYS.h);
+        expect(tileOf(t, Math.floor(c.x + 0.3), feet), `${t.name} ${c.name}`).toMatch(/[#-]/);
+        expect(tileOf(t, Math.floor(c.x + 1.3), feet), `${t.name} ${c.name}`).toMatch(/[#-]/);
+      }
+      expect(tileOf(t, t.summit.x, t.summit.y + 1), t.name).toMatch(/[#-]/);
+      for (let y = 1; y < t.h - 1; y++)
+        for (let x = 1; x < LW - 1; x++) {
+          if (!'#x'.includes(tileOf(t, x, y))) continue;
+          for (const below of [y + 2, y + 3]) if (below < t.h - 1) expect(' ^'.includes(tileOf(t, x, below)) || tileOf(t, x, below) === tileOf(t, x, y), `${t.name} ${x},${y}`).toBe(true);
+        }
+    }
+  });
+
+  it('the host picks the tower; the random one changes every climb', () => {
+    const room = game.newRoom('ABCD', ctxAt(0));
+    addPlayer(room, { id: 'pa', token: 'token-aaaaaaaaaa', name: 'Alex' });
+    addPlayer(room, { id: 'pb', token: 'token-bbbbbbbbbb', name: 'Bao' });
+    game.setTower(room, 'pa', 4);
+    game.startGame(room, 'pa', { now: 0, rng: () => 0.25 });
+    const first = room.towerSeed;
+    expect(game.towerOf(room).checkpoints[0]!.y).toBeCloseTo(room.bodies[0]!.y, 3);
+    room.phase = 'SUMMIT';
+    game.readyForNext(room, 'pa', { now: 0, rng: () => 0.75 });
+    game.readyForNext(room, 'pb', { now: 0, rng: () => 0.75 });
+    expect(room.towerSeed).not.toBe(first);
+    expect(() => game.setTower(room, 'pb', 1)).toThrow();
   });
 });

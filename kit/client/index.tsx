@@ -87,6 +87,8 @@ export function avatarFor(id: string, playerIds: string[] = []): string {
 }
 
 /** The two player colors used across kit games (player 1, player 2). */
+export { TouchControls, useIsTouch, type TouchButton, type TouchIcon } from './touch';
+
 export const PLAYER_COLORS = ['#ff4f8b', '#4cc9f0'] as const;
 
 export function WaitingBlob({ label, sub }: { label: string; sub?: string }) {

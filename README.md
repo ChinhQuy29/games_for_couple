@@ -102,7 +102,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 
 ### ⛓️ Tethered
 
-- **Setup:** 2 players with keyboards, 10–20 minutes, co-op. One tower with 3 camps.
+- **Setup:** 2 players with keyboards or phones (on-screen buttons), 10–20 minutes, co-op. Five towers: Classic, Frozen Peak, Desert Cliffs, Mushroom Caves, and a random one that's new every climb.
 - **Climbing:** each of you moves and jumps your own climber; a 3.5-tile chain links you. Hold grab to anchor on a floor or wall (uses stamina) while your partner swings up.
 - **The tower:** planks to jump through, crumbling blocks, moving platforms, spikes. Fall too far and you both go back to the last camp. The summit shows time, falls and yanks.
 - **Built with:** the shared kit's 30 Hz loop: the server runs the physics and sends tiny frames; a canvas interpolates them. Socket.IO namespace `/tethered`.
@@ -192,6 +192,10 @@ See [DEPLOY.md](DEPLOY.md). One script sets up a free Oracle Cloud server (or a 
 npm test
 npm run typecheck
 ```
+
+## Credits
+
+Some games use free art from **Kenney** (https://www.kenney.nl), released as CC0 (public domain): the New Platformer Pack (Tethered) and Mobile Controls (the shared on-screen touch buttons). Each folder that holds these images has a `CREDITS.md`. Everything else is drawn in code for this project.
 
 ## Project layout
 

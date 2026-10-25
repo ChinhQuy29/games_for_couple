@@ -9,6 +9,7 @@ export const HZ = 30;
 export const COUNTDOWN_MS = 3000;
 
 export interface ClimbResult {
+  towerId: number;
   n: number;
   ms: number;
   falls: number;
@@ -17,6 +18,9 @@ export interface ClimbResult {
 
 export interface Room extends BaseRoom {
   phase: 'LOBBY' | 'CLIMB' | 'SUMMIT';
+  /** Which tower (see TOWER_CHOICES) and, for the random one, its seed. */
+  towerId: number;
+  towerSeed: number;
   /** Two bodies, in player order. */
   bodies: Body[];
   inputs: Record<string, Input>;
@@ -51,6 +55,8 @@ export interface PublicState extends PublicBase {
   phase: Room['phase'];
   /** Which body is mine: 0 or 1. */
   mySlot: number;
+  towerId: number;
+  towerSeed: number;
   startsAt: number;
   checkpoint: number;
   falls: number;
@@ -62,4 +68,5 @@ export interface PublicState extends PublicBase {
   frame: Frame | null;
 }
 
+export const TowerSchema = z.object({ towerId: z.number().int().min(0).max(4) });
 export const InputSchema = z.object({ left: z.boolean(), right: z.boolean(), jump: z.boolean(), grab: z.boolean() });

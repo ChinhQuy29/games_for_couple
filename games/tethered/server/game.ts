@@ -5,27 +5,26 @@
 import { requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
 import {
   CHAIN_LENGTH,
-  CHECKPOINTS,
   COUNTDOWN_MS,
   CRUMBLE,
   FALL_ROWS,
   HZ,
   LW,
-  MOVERS,
   NO_INPUT,
   PHYS,
-  SUMMIT,
   applyChain,
   center,
   moveBody,
-  moverAt,
+  getTower,
+  moverOf,
   newBody,
   stepBody,
-  tile,
+  tileOf,
   type Body,
   type Frame,
   type Input,
   type Room,
+  type Tower,
   type World,
 } from '../shared';
 
@@ -36,6 +35,8 @@ export function newRoom(code: string, ctx: Ctx): Room {
     lastActivityAt: ctx.now,
     players: [],
     phase: 'LOBBY',
+    towerId: 0,
+    towerSeed: 0,
     bodies: [],
     inputs: {},
     checkpoint: 0,
@@ -57,8 +58,17 @@ export function resetToLobby(room: Room): void {
   room.readyForNext = [];
 }
 
+/** The tower this room is climbing. */
+export const towerOf = (room: Room): Tower => getTower(room.towerId, room.towerSeed);
+
+export function setTower(room: Room, playerId: string, towerId: number): void {
+  requirePhase(room, 'LOBBY');
+  requireHost(room, playerId);
+  room.towerId = towerId;
+}
+
 function spawnAt(room: Room, cp: number) {
-  const c = CHECKPOINTS[cp]!;
+  const c = towerOf(room).checkpoints[cp]!;
   room.bodies = [newBody(c.x, c.y), newBody(c.x + 1, c.y)];
   room.bodies[1]!.facing = -1;
   for (const id of Object.keys(room.inputs)) room.inputs[id] = { ...NO_INPUT };
@@ -66,6 +76,8 @@ function spawnAt(room: Room, cp: number) {
 
 function beginClimb(room: Room, ctx: Ctx) {
   room.phase = 'CLIMB';
+  // The random tower is new every climb; the named ones are always the same.
+  room.towerSeed = room.towerId === 4 ? Math.floor(ctx.rng() * 2 ** 31) : 0;
   room.checkpoint = 0;
   room.falls = 0;
   room.pulls = 0;
@@ -117,13 +129,15 @@ function isGone(room: Room, tx: number, ty: number, t: number): boolean {
 }
 
 export function worldAt(room: Room, t = simTime(room)): World {
+  const tower = towerOf(room);
+  const tile = (tx: number, ty: number) => tileOf(tower, tx, ty);
   return {
     solid: (tx, ty) => {
       const ch = tile(tx, ty);
       return ch === '#' || (ch === 'x' && !isGone(room, tx, ty, t));
     },
     oneWay: (tx, ty) => tile(tx, ty) === '-',
-    platforms: MOVERS.map((_, i) => moverAt(i, t)),
+    platforms: tower.movers.map((_, i) => moverOf(tower, i, t)),
   };
 }
 
@@ -140,11 +154,12 @@ export function step(room: Room, ctx: Ctx): boolean {
   room.steps += 1;
   const t = simTime(room);
   const world = worldAt(room, t);
+  const tower = towerOf(room);
 
   // Moving platforms carry whoever stands on them.
   for (const b of room.bodies) {
     if (b.riding < 0) continue;
-    const before = moverAt(b.riding, t0);
+    const before = moverOf(tower, b.riding, t0);
     const after = world.platforms[b.riding]!;
     moveBody(b, after.x - before.x, 0, world);
     b.y = after.y - PHYS.h;
@@ -162,7 +177,7 @@ export function step(room: Room, ctx: Ctx): boolean {
     const row = Math.floor(body.y + PHYS.h + 0.02);
     if (Math.abs(body.y + PHYS.h - row) > 0.03) continue;
     for (let tx = Math.floor(body.x); tx <= Math.floor(body.x + PHYS.w - 1e-4); tx++) {
-      if (tile(tx, row) !== 'x') continue;
+      if (tileOf(tower, tx, row) !== 'x') continue;
       const key = row * LW + tx;
       const c = room.crumbles[key];
       if (!c || (c.goneUntil !== null && t >= c.goneUntil)) room.crumbles[key] = { since: t, goneUntil: null };
@@ -174,25 +189,25 @@ export function step(room: Room, ctx: Ctx): boolean {
   let changed = false;
   for (const body of room.bodies) {
     const [cx, cy] = center(body);
-    if (tile(Math.floor(cx), Math.floor(cy)) === '^' || tile(Math.floor(cx), Math.floor(body.y + PHYS.h - 0.05)) === '^') {
+    if (tileOf(tower, Math.floor(cx), Math.floor(cy)) === '^' || tileOf(tower, Math.floor(cx), Math.floor(body.y + PHYS.h - 0.05)) === '^') {
       fall(room, ctx);
       return true;
     }
-    for (let k = room.checkpoint + 1; k < CHECKPOINTS.length; k++) {
-      const c = CHECKPOINTS[k]!;
+    for (let k = room.checkpoint + 1; k < tower.checkpoints.length; k++) {
+      const c = tower.checkpoints[k]!;
       if (Math.abs(cx - (c.flagX + 0.5)) < 1.6 && Math.abs(cy - (c.flagY + 0.5)) < 1.2) {
         room.checkpoint = k;
         changed = true;
       }
     }
-    if (Math.abs(cx - (SUMMIT.x + 0.5)) < 1.2 && Math.abs(cy - (SUMMIT.y + 0.5)) < 1.2) {
+    if (Math.abs(cx - (tower.summit.x + 0.5)) < 1.2 && Math.abs(cy - (tower.summit.y + 0.5)) < 1.2) {
       room.phase = 'SUMMIT';
-      room.results.push({ n: room.results.length + 1, ms: Math.round(t * 1000), falls: room.falls, pulls: room.pulls });
+      room.results.push({ towerId: room.towerId, n: room.results.length + 1, ms: Math.round(t * 1000), falls: room.falls, pulls: room.pulls });
       room.readyForNext = [];
       return true;
     }
   }
-  const floorY = CHECKPOINTS[room.checkpoint]!.y + FALL_ROWS;
+  const floorY = tower.checkpoints[room.checkpoint]!.y + FALL_ROWS;
   if (room.bodies.every((body) => body.y > floorY) || room.bodies.some((body) => body.y > floorY + 4)) {
     fall(room, ctx);
     return true;

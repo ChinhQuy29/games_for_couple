@@ -1,7 +1,7 @@
 import type { Server } from 'socket.io';
 import { action, publicPlayers, registerGame } from '@gfc/kit/server';
 import { EmptySchema } from '@gfc/kit/shared';
-import { HZ, InputSchema, type PublicState, type Room } from '../shared';
+import { HZ, InputSchema, TowerSchema, type PublicState, type Room } from '../shared';
 import * as game from './game';
 
 export function toPublicState(room: Room, viewerId: string, now: number): PublicState {
@@ -13,6 +13,8 @@ export function toPublicState(room: Room, viewerId: string, now: number): Public
     phase: room.phase,
     deadline: null,
     mySlot: Math.max(0, room.players.findIndex((p) => p.id === viewerId)),
+    towerId: room.towerId,
+    towerSeed: room.towerSeed,
     startsAt: room.startsAt,
     checkpoint: room.checkpoint,
     falls: room.falls,
@@ -33,6 +35,7 @@ export function registerTethered(io: Server) {
     // The 3-2-1 is drawn by clients from startsAt; the loop simply doesn't step before it.
     loop: { hz: HZ, active: (room) => room.phase === 'CLIMB', step: game.step, frame: (room) => game.frame(room) },
     actions: {
+      'settings:update': action(TowerSchema, (room: Room, me, p) => game.setTower(room, me, p.towerId)),
       'game:start': action(EmptySchema, (room: Room, me, _p, ctx) => game.startGame(room, me, ctx)),
       'input': action(InputSchema, (room: Room, me, p) => game.setInput(room, me, p), { quiet: true }),
       'round:ready': action(EmptySchema, (room: Room, me, _p, ctx) => game.readyForNext(room, me, ctx)),
