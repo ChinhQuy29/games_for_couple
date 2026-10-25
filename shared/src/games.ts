@@ -50,6 +50,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–15 min',
   },
   {
+    id: 'tethered',
+    title: 'Tethered',
+    emoji: '⛓️',
+    tagline: 'Chained together, climbing a tower. If one falls, you both do.',
+    path: '/tethered',
+    status: 'playable',
+    accent: 'yellow',
+    minutes: '10–20 min',
+  },
+  {
     id: 'jjinja',
     title: 'Jjinja Battle',
     emoji: '🎤',

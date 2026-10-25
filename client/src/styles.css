@@ -11,6 +11,7 @@
 @source '../../games/bomb-squad/client';
 @source '../../games/kitchen-chaos/client';
 @source '../../games/ghost-hunt/client';
+@source '../../games/tethered/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

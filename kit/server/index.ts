@@ -104,14 +104,28 @@ export interface Action<R extends BaseRoom> {
   schema: z.ZodTypeAny;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   run: (room: R, playerId: string, payload: any, ctx: Ctx) => ActionResult;
+  /** Don't broadcast a full state after this action (e.g. held-key input for a real-time loop). */
+  quiet?: boolean;
 }
 
 /** Defines an action whose payload type is inferred from its schema. */
 export function action<R extends BaseRoom, S extends z.ZodTypeAny>(
   schema: S,
   run: (room: R, playerId: string, payload: z.infer<S>, ctx: Ctx) => ActionResult,
+  opts: { quiet?: boolean } = {},
 ): Action<R> {
-  return { schema, run };
+  return { schema, run, quiet: opts.quiet };
+}
+
+/** A fixed-rate simulation for real-time games (physics). */
+export interface Loop<R extends BaseRoom> {
+  hz: number;
+  /** Run the loop only while this is true (e.g. phase === 'PLAY'). */
+  active: (room: R) => boolean;
+  /** Advance one step. Return true when clients need a full new state (phase change, score…). */
+  step: (room: R, ctx: Ctx) => boolean;
+  /** The small per-step payload sent to everyone in the room as a 'frame' event. */
+  frame: (room: R, now: number) => object;
 }
 
 export interface GameDef<R extends BaseRoom> {
@@ -126,6 +140,8 @@ export interface GameDef<R extends BaseRoom> {
   /** Handle whatever is due at ctx.now. Return true if clients need a new state. */
   tick?: (room: R, ctx: Ctx) => boolean;
   actions: Record<string, Action<R>>;
+  /** Optional: a fixed-rate loop that emits 'frame' events while active. */
+  loop?: Loop<R>;
   /** Optional: extra listeners per socket (e.g. ephemeral relays). */
   onConnection?: (socket: Socket, getRoom: () => R | undefined, playerId: () => string | undefined, nsp: Namespace) => void;
 }
@@ -170,9 +186,36 @@ export function registerGame<R extends BaseRoom>(io: Server, def: GameDef<R>): N
     timers.set(room.code, { at, handle });
   }
 
+  const loops = new Map<string, NodeJS.Timeout>();
+
+  function syncLoop(room: R) {
+    const loop = def.loop;
+    if (!loop) return;
+    const running = loops.get(room.code);
+    const active = loop.active(room);
+    if (active && !running) {
+      const handle = setInterval(() => {
+        const r = rooms.get(room.code);
+        if (!r || !loop.active(r)) {
+          clearInterval(handle);
+          loops.delete(room.code);
+          return;
+        }
+        const changed = loop.step(r, ctxNow());
+        nsp.to(r.code).emit('frame', loop.frame(r, Date.now()));
+        if (changed) void broadcast(r);
+      }, 1000 / loop.hz);
+      loops.set(room.code, handle);
+    } else if (!active && running) {
+      clearInterval(running);
+      loops.delete(room.code);
+    }
+  }
+
   async function broadcast(room: R) {
     room.lastActivityAt = Date.now();
     syncTimer(room);
+    syncLoop(room);
     const sockets = await nsp.in(room.code).fetchSockets();
     for (const s of sockets) {
       const data = s.data as SocketData;
@@ -188,6 +231,9 @@ export function registerGame<R extends BaseRoom>(io: Server, def: GameDef<R>): N
     const t = timers.get(code);
     if (t) clearTimeout(t.handle);
     timers.delete(code);
+    const l = loops.get(code);
+    if (l) clearInterval(l);
+    loops.delete(code);
   }
 
   function attach(socket: Socket, room: R, playerId: string) {
@@ -285,7 +331,8 @@ export function registerGame<R extends BaseRoom>(io: Server, def: GameDef<R>): N
         try {
           const extra = act.run(room, data.playerId, parsed.data, ctxNow());
           ack?.({ ok: true, ...(extra ?? {}) });
-          void broadcast(room);
+          if (act.quiet) room.lastActivityAt = Date.now();
+          else void broadcast(room);
         } catch (err) {
           errorAck(ack, err);
         }

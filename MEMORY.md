@@ -20,6 +20,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #8: Bomb Squad** (co-op, KTANE-style) at `/bomb`, in `games/bomb-squad/` (`@gfc/bomb`). The first of 5 co-op games planned in [docs/coop-games-plan.md](docs/coop-games-plan.md).
 - **Game #9: Kitchen Chaos** (co-op, Overcooked-style) at `/kitchen`, in `games/kitchen-chaos/` (`@gfc/kitchen`).
 - **Game #10: Ghost Hunt** (co-op, Phasmophobia-style) at `/ghost`, in `games/ghost-hunt/` (`@gfc/ghost`).
+- **Game #11: Tethered** (co-op, Chained Together/PEAK-style platformer) at `/tethered`, in `games/tethered/` (`@gfc/tethered`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -105,6 +106,18 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Kit real-time loop + Tethered
+- **Kit:**
+  - `GameDef.loop {hz, active, step, frame}` runs a per-room interval that emits a small `frame` event; a full broadcast happens only when `step` returns true.
+  - `action(schema, run, { quiet: true })` skips the broadcast (for held-key input).
+  - The client gets `kit.useFrame(handler)`.
+- **Tethered:**
+  - physics in `shared/physics.ts`: tiles, one-way, movers, grab/stamina, jump buffer and coyote time, a chain constraint that routes corrections through collision;
+  - a 24×72 tower built from platform specs with 3 camps, 2 movers, crumbles and spikes;
+  - the server steps at 30 Hz; the client renders on a canvas with interpolation.
+- 14 tests (physics, chain, the level's no-bonk rule, the climb). Play-tested in two tabs: the render, moving, the chain drawing. A headless simulation confirmed the first jumps land on the planks.
+- **Not done:** a full two-person climb to the summit wasn't played in the browser (needs two real keyboards). The summit, checkpoints and respawns are covered by tests.
 
 ### 2026-10-25: Ghost Hunt
 - **Design:**

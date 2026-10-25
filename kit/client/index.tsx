@@ -279,6 +279,20 @@ export function createGameClient<S extends PublicBase>(opts: { ns: string; key: 
     return v;
   }
 
+  /** Calls `handler` for every 'frame' from the server's loop (real-time games). Not React state: render from a ref. */
+  function useFrame<F>(handler: (frame: F) => void) {
+    const { socket } = useGame();
+    const h = useRef(handler);
+    h.current = handler;
+    useEffect(() => {
+      const fn = (f: F) => h.current(f);
+      socket.on('frame', fn);
+      return () => {
+        socket.off('frame', fn);
+      };
+    }, [socket]);
+  }
+
   /** me, partner and the room — only inside a room screen. */
   function useRoom() {
     const { state } = useGame();
@@ -642,5 +656,5 @@ export function createGameClient<S extends PublicBase>(opts: { ns: string; key: 
     );
   }
 
-  return { AppShell, useGame, useRoom, Avatar, TimerBar, Scores, LobbyShell, Choice, RecapActions, WaitingBlob };
+  return { AppShell, useGame, useRoom, useFrame, Avatar, TimerBar, Scores, LobbyShell, Choice, RecapActions, WaitingBlob };
 }

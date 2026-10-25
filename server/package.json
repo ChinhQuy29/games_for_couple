@@ -18,6 +18,7 @@
     "@gfc/kitchen": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
+    "@gfc/tethered": "*",
     "@gfc/wyr": "*",
     "express": "^4.21.2",
     "socket.io": "^4.8.1",

@@ -16,6 +16,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 💣 **Bomb Squad** | `/bomb` | One of you sees a ticking bomb, the other has the defusal manual. Talk fast: wires, a big button, symbols, Simon Says, passwords. Co-op. | Laptop + a call | [README](games/bomb-squad/README.md) · [spec](games/bomb-squad/docs/spec.md) |
 | 🍳 **Kitchen Chaos** | `/kitchen` | One preps, one cooks, and the only way across is the pass. Chop, cook, plate and serve the tickets before customers walk out. Don't burn anything. Co-op. | Laptop (mouse/trackpad) | [README](games/kitchen-chaos/README.md) · [spec](games/kitchen-chaos/docs/spec.md) |
 | 🔦 **Ghost Hunt** | `/ghost` | One walks a dark haunted house with a flashlight; the other has the map, cameras and EMF. Find the evidence, name the ghost, get out. Co-op. | Laptop + keyboard | [README](games/ghost-hunt/README.md) · [spec](games/ghost-hunt/docs/spec.md) |
+| ⛓️ **Tethered** | `/tethered` | Two climbers chained together on a tall tower: jump, anchor, swing. If one falls, you both do. Co-op. | Keyboard | [README](games/tethered/README.md) · [spec](games/tethered/docs/spec.md) |
 | 🎨 Blind Portrait Duel · 🕹️ Two-Body Problem | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -91,6 +92,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Goal:** 6 kinds of evidence, 8 ghost types. Mark evidence in the shared journal, pick the ghost, walk out the front door. Low sanity brings hunts: hide or run.
 - **Built with:** the shared kit, a tile map with line of sight, and a server-side ghost at 5 ticks/s, on the Socket.IO namespace `/ghost`. Each role gets its own redacted view.
 
+### ⛓️ Tethered
+
+- **Setup:** 2 players with keyboards, 10–20 minutes, co-op. One tower with 3 camps.
+- **Climbing:** each of you moves and jumps your own climber; a 3.5-tile chain links you. Hold grab to anchor on a floor or wall (uses stamina) while your partner swings up.
+- **The tower:** planks to jump through, crumbling blocks, moving platforms, spikes. Fall too far and you both go back to the last camp. The summit shows time, falls and yanks.
+- **Built with:** the shared kit's 30 Hz loop: the server runs the physics and sends tiny frames; a canvas interpolates them. Socket.IO namespace `/tethered`.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -109,7 +117,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -141,7 +149,8 @@ games/
 ├─ number-rush/          # @gfc/rush: built on the kit
 ├─ bomb-squad/           # @gfc/bomb: co-op bomb defusal, built on the kit
 ├─ kitchen-chaos/        # @gfc/kitchen: co-op cooking, built on the kit
-└─ ghost-hunt/           # @gfc/ghost: co-op ghost hunting, built on the kit
+├─ ghost-hunt/           # @gfc/ghost: co-op ghost hunting, built on the kit
+└─ tethered/             # @gfc/tethered: co-op chained platformer, built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

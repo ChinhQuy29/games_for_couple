@@ -13,6 +13,7 @@ registerGame<Room>(io, {
   wakeAt?: (room) => number | null,      // next time the server must act on its own
   tick?: (room, ctx) => boolean,         // handle what's due; true = rebroadcast
   actions: { 'pick': action(Schema, (room, me, payload, ctx) => extraAck | void) },
+  loop?: { hz, active: (room) => boolean, step: (room, ctx) => boolean, frame: (room, now) => object },
 });
 ```
 
@@ -22,7 +23,8 @@ registerGame<Room>(io, {
 - **Helpers:**
   - `addPlayer`, `requirePlayer`, `requirePhase`, `requireHost`, `requireTwo`, `partnerOf`, `publicPlayers`, `GameError`/`fail`,
   - `pick`, `shuffle`, `seededRng`, `cleanText`.
-- **Actions:** every action payload is validated with zod, and the room is rebroadcast after each one.
+- **Actions:** every action payload is validated with zod, and the room is rebroadcast after each one, unless it's declared `action(Schema, run, { quiet: true })` (for high-frequency input like held keys).
+- **Real-time loop:** with `loop`, the server runs `step` at `hz` while `active(room)` is true and emits a small `frame` event to the room after every step. A full state goes out only when `step` returns true. Tethered and Two-Body Problem use it at 30 Hz.
 
 ## Shared: `@gfc/kit/shared`
 
@@ -34,6 +36,7 @@ registerGame<Room>(io, {
 export const kit = createGameClient<PublicState>({ ns: '/rush', key: 'rush', basePath: '/rush' });
 // kit.AppShell({ home, phases: { LOBBY, PLAY, RECAP }, wide })
 // kit.useGame() → { state, act, send, clockOffset, showToast, … }   kit.useRoom() → { s, me, partner, seat }
+// kit.useFrame((frame) => …)  — the loop's frames, for real-time games (store them in a ref, not state)
 // kit.LobbyShell({ settings, howTo, startLabel })  kit.Choice  kit.Scores  kit.TimerBar  kit.Avatar  kit.RecapActions
 ```
 
