@@ -141,6 +141,16 @@ export const GAMES: GameInfo[] = [
     minutes: '20–30 min',
   },
   {
+    id: 'escape',
+    title: 'Escape Room for Two',
+    emoji: '🔐',
+    tagline: 'Locked in two rooms. Your clues open their locks. Talk your way out.',
+    path: '/escape',
+    status: 'playable',
+    accent: 'sky',
+    minutes: '15–25 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

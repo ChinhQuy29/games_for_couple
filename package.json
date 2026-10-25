@@ -18,6 +18,7 @@
     "games/tethered",
     "games/two-body-problem",
     "games/moving-in",
+    "games/escape-room",
     "server",
     "client"
   ],
@@ -26,7 +27,7 @@
     "build": "npm run build -w client",
     "start": "npm start -w server",
     "test": "npm test --workspaces --if-present",
-    "typecheck": "tsc -p shared --noEmit && tsc -p kit --noEmit && tsc -p games/finish-my-sentence --noEmit && tsc -p games/jjinja-battle --noEmit && tsc -p games/telephone-doodle --noEmit && tsc -p games/would-you-rather --noEmit && tsc -p games/aog-trivia --noEmit && tsc -p games/hide-and-seek --noEmit && tsc -p games/number-rush --noEmit && tsc -p games/bomb-squad --noEmit && tsc -p games/kitchen-chaos --noEmit && tsc -p games/ghost-hunt --noEmit && tsc -p games/tethered --noEmit && tsc -p games/two-body-problem --noEmit && tsc -p games/moving-in --noEmit && tsc -p server --noEmit && tsc -p client --noEmit"
+    "typecheck": "tsc -p shared --noEmit && tsc -p kit --noEmit && tsc -p games/finish-my-sentence --noEmit && tsc -p games/jjinja-battle --noEmit && tsc -p games/telephone-doodle --noEmit && tsc -p games/would-you-rather --noEmit && tsc -p games/aog-trivia --noEmit && tsc -p games/hide-and-seek --noEmit && tsc -p games/number-rush --noEmit && tsc -p games/bomb-squad --noEmit && tsc -p games/kitchen-chaos --noEmit && tsc -p games/ghost-hunt --noEmit && tsc -p games/tethered --noEmit && tsc -p games/two-body-problem --noEmit && tsc -p games/moving-in --noEmit && tsc -p games/escape-room --noEmit && tsc -p server --noEmit && tsc -p client --noEmit"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

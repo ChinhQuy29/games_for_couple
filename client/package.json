@@ -17,6 +17,7 @@
     "@gfc/hns": "*",
     "@gfc/kitchen": "*",
     "@gfc/movingin": "*",
+    "@gfc/escape": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/shared": "*",

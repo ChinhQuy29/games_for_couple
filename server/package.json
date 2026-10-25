@@ -17,6 +17,7 @@
     "@gfc/jjinja": "*",
     "@gfc/kitchen": "*",
     "@gfc/movingin": "*",
+    "@gfc/escape": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/tethered": "*",

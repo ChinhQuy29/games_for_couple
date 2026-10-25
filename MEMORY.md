@@ -23,6 +23,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #11: Tethered** (co-op, Chained Together/PEAK-style platformer) at `/tethered`, in `games/tethered/` (`@gfc/tethered`).
 - **Game #12: Two-Body Problem** (co-op, It Takes Two/Pico Park-style: one body, walker + jumper) at `/two-body-problem`, in `games/two-body-problem/` (`@gfc/twobody`). It replaced the old coming-soon card.
 - **Game #13: Moving In** (two-player Dreamy Room/Unpacking) at `/moving-in`, in `games/moving-in/` (`@gfc/movingin`).
+- **Game #14: Escape Room for Two** (We Were Here-style) at `/escape`, in `games/escape-room/` (`@gfc/escape`). The first of 5 from [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-25)
@@ -114,6 +115,15 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Couple games plan 2 + Escape Room for Two
+- **The ask:** the user picked ideas #4–#8 from a researched list of 10 (Escape Room, Handle With Care, Road Trip, Codenames Duet, Paint & Hide), to build one by one. The plan is in [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md).
+- **Escape Room:**
+  - 3 rooms × 4 puzzles; clue and controls on different screens, alternating per puzzle, with the first actor flipping per room;
+  - 5 puzzle kinds, randomized: a dial lock, a counting keypad, colors, levers, a DFS perfect maze walked blind;
+  - score = time + 15s per mistake.
+- 8 tests, including a full 3-room escape and the clue/controls redaction. Play-tested in two tabs: the dial (with a wrong try), the keypad (counting from the shelf), colors, levers, room 1 cleared, then the room-2 role flip and the maze with a bump and a keyboard walk to the exit.
+- **Testing note:** the live server and tunnel (port 3001) were left running for the couple. New games were tested on a second server on port 3002 (`$env:PORT = '3002'; npm start`).
 
 ### 2026-10-25: Moving In (two-player Dreamy Room)
 - **The ask:** the user requested a 2-player version of *Dreamy Room* (ABI Games). Their choices:

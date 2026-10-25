@@ -14,6 +14,7 @@
 @source '../../games/tethered/client';
 @source '../../games/two-body-problem/client';
 @source '../../games/moving-in/client';
+@source '../../games/escape-room/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {
