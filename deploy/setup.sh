@@ -4,14 +4,16 @@
 #   sudo bash setup.sh <your-domain> [git-repo-url]
 #   e.g. sudo bash setup.sh jjinja.duckdns.org
 #
-# Installs Node.js, Caddy (automatic HTTPS), and coturn (video relay), clones the game,
+# Installs Node.js, Caddy (automatic HTTPS), and coturn (video relay), clones Games for Two
+# (the portal, Finish My Sentence and Jjinja Battle at /jjinja), builds it,
 # and runs it as a service that restarts on crashes and reboots. Safe to re-run.
 # Works on regular VPSes and on Oracle Cloud (Always Free), whose Ubuntu images
 # ship their own iptables firewall and sit behind NAT.
 set -euo pipefail
 
 DOMAIN="${1:-}"
-REPO="${2:-https://github.com/ChinhQuy29/jjinja_battle.git}"
+REPO="${2:-https://github.com/ChinhQuy29/games_for_couple.git}"
+# Paths, user and service keep their original "jjinja" names so existing servers keep working.
 APP_DIR=/opt/jjinja
 APP_USER=jjinja
 ENV_FILE=/etc/jjinja/env
@@ -75,7 +77,7 @@ fi
 step "Installing coturn (video relay for strict networks)"
 apt-get install -y coturn
 
-step "Creating the app user and downloading the game"
+step "Creating the app user and downloading the games"
 id "$APP_USER" >/dev/null 2>&1 || useradd --system --create-home --home-dir /home/$APP_USER --shell /usr/sbin/nologin "$APP_USER"
 if [[ ! -d "$APP_DIR/.git" ]]; then
   if ! git clone "$REPO" "$APP_DIR"; then
@@ -85,7 +87,7 @@ if [[ ! -d "$APP_DIR/.git" ]]; then
 fi
 chown -R "$APP_USER:$APP_USER" "$APP_DIR"
 sudo -u "$APP_USER" git -C "$APP_DIR" pull --ff-only
-sudo -u "$APP_USER" bash -c "cd $APP_DIR && npm ci --no-audit --no-fund"
+sudo -u "$APP_USER" bash -c "cd $APP_DIR && npm ci --no-audit --no-fund && npm run build"
 
 step "Writing configuration"
 mkdir -p /etc/jjinja
@@ -106,7 +108,7 @@ chown root:"$APP_USER" "$ENV_FILE"
 
 cat > /etc/systemd/system/jjinja.service <<EOF
 [Unit]
-Description=Jjinja Battle game server
+Description=Games for Two server (portal, Finish My Sentence, Jjinja Battle)
 After=network-online.target
 Wants=network-online.target
 
@@ -114,7 +116,7 @@ Wants=network-online.target
 User=$APP_USER
 WorkingDirectory=$APP_DIR
 EnvironmentFile=$ENV_FILE
-ExecStart=$APP_DIR/node_modules/.bin/tsx server/index.ts
+ExecStart=$APP_DIR/node_modules/.bin/tsx server/src/index.ts
 Restart=always
 RestartSec=2
 # basic hardening

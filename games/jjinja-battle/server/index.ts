@@ -1,4 +1,5 @@
-import { createServer } from "node:http";
+import type { IncomingMessage, Server, ServerResponse } from "node:http";
+import type { Duplex } from "node:stream";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,8 +12,8 @@ import { BOT_NAME, botDelayMs, botFeatures, botRallyFeatures } from "./bot.js";
 import { allowAction, closeConnection, MessageBudget, openConnection } from "./limits.js";
 import { hintFor, pickAxis, playRally, type Axis, type RallyResult } from "./rally.js";
 
-const PORT = Number(process.env.PORT ?? 3000);
-const HOST = process.env.HOST ?? "0.0.0.0";
+// Jjinja is served by the shared Games for Two server under this path (see server/src/index.ts).
+export const BASE_PATH = "/jjinja" as const;
 // behind Caddy, the real client IP arrives in X-Forwarded-For
 const TRUST_PROXY = process.env.TRUST_PROXY === "1";
 // coturn relay for players whose networks block direct video (set by deploy/setup.sh)
@@ -37,7 +38,8 @@ const MIME: Record<string, string> = {
   ".svg": "image/svg+xml",
 };
 
-const http = createServer(async (req, res) => {
+// Mounted at BASE_PATH, so req.url arrives with the prefix already stripped.
+export async function handleHttp(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url ?? "/", "http://x");
   const path = url.pathname === "/" || url.pathname.startsWith("/r/") ? "/index.html" : url.pathname;
   const file = normalize(join(PUBLIC_DIR, path));
@@ -49,7 +51,7 @@ const http = createServer(async (req, res) => {
   } catch {
     res.writeHead(404).end("not found");
   }
-});
+}
 
 // ---------- game state ----------
 
@@ -407,7 +409,16 @@ function dequeue(p: Player) {
 
 // ---------- websocket ----------
 
-const wss = new WebSocketServer({ server: http, path: "/ws", maxPayload: 1_000_000 });
+// noServer: the shared HTTP server also carries Socket.IO, so upgrades are routed by path in attachJjinja.
+const wss = new WebSocketServer({ noServer: true, maxPayload: 1_000_000 });
+
+/** Hooks Jjinja's WebSocket endpoint (BASE_PATH/ws) into the shared HTTP server. */
+export function attachJjinja(server: Server) {
+  server.on("upgrade", (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+    if (new URL(req.url ?? "/", "http://x").pathname !== `${BASE_PATH}/ws`) return;
+    wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, req));
+  });
+}
 
 // Short-lived TURN credentials (coturn "use-auth-secret"), so the relay can't be used freely.
 function iceServers(playerId: string) {
@@ -562,8 +573,4 @@ wss.on("connection", (ws, req) => {
     dequeue(p);
     leaveRoom(p);
   });
-});
-
-http.listen(PORT, HOST, () => {
-  console.log(`Jjinja Battle running at http://${HOST === "0.0.0.0" ? "localhost" : HOST}:${PORT}`);
 });

@@ -10,6 +10,8 @@ export interface GameInfo {
   emoji: string;
   tagline: string;
   path: string;
+  /** True for games that are their own page rather than a route in the React app (full page load). */
+  standalonePage?: boolean;
   status: GameStatus;
   /** Accent color token name from client/src/styles.css */
   accent: 'pink' | 'yellow' | 'mint' | 'sky';
@@ -26,6 +28,17 @@ export const GAMES: GameInfo[] = [
     status: 'playable',
     accent: 'pink',
     minutes: '10–20 min',
+  },
+  {
+    id: 'jjinja',
+    title: 'Jjinja Battle',
+    emoji: '🎤',
+    tagline: 'Yell "jjinja?!" (찐짜) into your mic. The most dramatic one wins.',
+    path: '/jjinja',
+    standalonePage: true,
+    status: 'playable',
+    accent: 'sky',
+    minutes: '5 min',
   },
   {
     id: 'blind-portrait',

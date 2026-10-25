@@ -11,8 +11,14 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 
 - **Portal home:** `/`. Lists every game from `shared/src/games.ts`.
 - **Game #1: Finish My Sentence** at `/fms`. Full spec in [docs/finish-my-sentence-spec.md](docs/finish-my-sentence-spec.md).
+- **Game #2: Jjinja Battle** at `/jjinja`. A mic-scoring "jjinja?!" (찐짜) shouting battle the user built earlier as its own project. It now lives in `games/jjinja-battle/` (see its README).
+- **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
+
+**Jjinja Battle:** fully working as imported (classic and rally modes, bot opponent, random matchmaking, camera/WebRTC with a TURN relay, match recording, highlight clips, safety and rate limits). It's served by the shared server at `/jjinja`. Verified in two tabs: invite link, join and WebSocket. Not verified here: the mic and camera, since the browser pane blocks them.
+
+**Finish My Sentence milestones:**
 
 | Milestone (see spec §11) | Status |
 |---|---|
@@ -22,7 +28,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 | M3 Timers & resilience | ✅ mostly done: countdown, auto-submit, AFK and deck fallbacks, disconnect banner, reload resume. Not done: `FMS_TIMER_SCALE` test hook |
 | M4 Fun layer | 🟡 partial: visual style, reveal animation with shake, modifiers, live reactions, typing indicator and waiting blob are done. **TODO:** sound effects (Web Audio), TTS narrator, confetti, mute toggle |
 | M5 Keepsakes | 🟡 partial: ratings, awards and rematch are done. **TODO:** Hall of Fame (localStorage), save-as-image (`html-to-image`) |
-| M6 Polish & ship | ⬜ TODO: Playwright e2e, ESLint/Prettier, Dockerfile, deploy (Render), Lighthouse pass |
+| M6 Polish & ship | 🟡 deploy path now exists (DEPLOY.md, Oracle/VPS with Caddy); still TODO: Playwright e2e, ESLint/Prettier, Lighthouse pass |
 
 Content: 162 starters (8 categories), 17 modifiers, 15 AFK lines.
 
@@ -38,6 +44,11 @@ npm run build && npm start   # production: one server on $PORT (default 3001) se
 
 ## Architecture cheat-sheet
 
+- **One server for everything** (`server/src/index.ts`): the React build, Socket.IO games, and Jjinja's static files plus `ws` WebSocket at `/jjinja` and `/jjinja/ws`. Socket.IO runs with `destroyUpgrade: false` so it doesn't kill Jjinja's upgrade requests.
+- **Jjinja's server** (`games/jjinja-battle/server/index.ts`) exports `handleHttp` and `attachJjinja` instead of listening itself. Its client hardcodes `BASE = "/jjinja"` in `public/app.js`, and its HTML uses `/jjinja/...` paths.
+- **Jjinja's type boundary:** the server type-checks against `games/jjinja-battle/types.d.ts`, because the server's `noUncheckedIndexedAccess` would flag Jjinja's internals. `server/contract.check.ts` fails typecheck if the real exports drift from it.
+- **Vite dev proxy:** `/jjinja` goes to the game server on :3001. The portal card uses a plain `<a>` (`standalonePage: true`), not a React Router link.
+
 - **npm workspaces:** `shared` (types, zod schemas, game registry), `server` (Express + Socket.IO), `client` (React 18 + Vite + Tailwind v4 + framer-motion).
 - **One server, one Socket.IO namespace per game** (`/fms`). It is registered in `server/src/index.ts`.
 - **`server/src/games/fms/game.ts`** holds all the rules. It has no I/O; time and randomness come in through `ctx`. Functions validate, then mutate the room in place, and throw `GameError`.
@@ -46,6 +57,11 @@ npm run build && npm start   # production: one server on $PORT (default 3001) se
 - **Rooms live in memory only.** A restart loses games, which is acceptable for v1.
 
 ## Decisions & gotchas
+
+- **Commit messages:** plain, author ChinhQuy29 only, with **no** Co-Authored-By or "Generated with" lines (the user's explicit rule). Jjinja's imported history had them stripped with `git filter-repo`.
+- **Jjinja history:** its 14 commits were imported into `games/jjinja-battle/` and merged with `--allow-unrelated-histories`. The original `D:\JjinjaBattle` folder and the `jjinja_battle` GitHub repo were left untouched; the user may delete them later.
+- **Deploy scripts** moved to the repo root (`deploy/`, `DEPLOY.md`) and now clone games_for_couple, run `npm ci && npm run build` and start `server/src/index.ts`. Server names were deliberately kept (`/opt/jjinja`, user and service `jjinja`, `/etc/jjinja/env`) so an existing server keeps working. DEPLOY.md has migration steps. Old invite links `/r/CODE` are now `/jjinja/r/CODE`.
+- The shared server honors `HOST`; setup sets `HOST=127.0.0.1`, `PORT=3000`.
 
 - **Two git repos:** `D:\` itself is a git repo (it covers the whole drive). This project has its **own** repo at `D:\GamesForCouple` (branch `main`) so it isn't mixed up with it.
 - **Session token storage:** the token is kept in **sessionStorage**, not localStorage. Each browser tab is a separate player, so you can test with two tabs, and a reload still resumes. The name is in localStorage.
@@ -66,6 +82,12 @@ To add a game: add a registry entry in `shared/src/games.ts`, add client routes 
 ---
 
 ## Log
+
+### 2026-10-24: Jjinja Battle joins the portal; pushed to GitHub
+- Moved the Jjinja Battle project (from `D:\JjinjaBattle`) into `games/jjinja-battle/` with its history, minus attribution lines.
+- Served it from the shared server at `/jjinja`, added its portal card and a "← Games" link back to the portal, and moved its deploy scripts to the root for the whole project.
+- Tested: portal shows both games; Jjinja invite, join and WebSocket work in dev and prod; FMS still works; tests and typecheck pass.
+- Removed the attribution line from the first commit before the first push.
 
 ### 2026-10-24: Portal and Finish My Sentence v0.1
 - Brainstormed couple-game ideas, and the user picked **Finish My Sentence**.

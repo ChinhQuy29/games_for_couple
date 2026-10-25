@@ -1,3 +1,6 @@
+// Served by the Games for Two server under /jjinja (see games/jjinja-battle/server/index.ts).
+const BASE = "/jjinja";
+
 import { analyze } from "./features.js";
 import { startFaceCapture } from "./face.js";
 import { MatchRecorder, fileExtension, recordingSupported } from "./recorder.js";
@@ -19,7 +22,7 @@ const pending = []; // messages queued while (re)connecting
 
 function connect() {
   const proto = location.protocol === "https:" ? "wss" : "ws";
-  ws = new WebSocket(`${proto}://${location.host}/ws`);
+  ws = new WebSocket(`${proto}://${location.host}${BASE}/ws`);
   ws.onopen = () => {
     $("conn").textContent = "";
     send({ t: "hello", name: myName(), adult: ageChoice() === "adult" });
@@ -888,7 +891,7 @@ function onMessage(m) {
       announceTransition(state, m);
       if (m.code !== state?.code) onEnterRoom(m);
       state = m;
-      history.replaceState(null, "", `/r/${m.code}`);
+      history.replaceState(null, "", `${BASE}/r/${m.code}`);
       syncPeer();
       renderRoom();
       break;
@@ -1046,7 +1049,7 @@ if (document.fullscreenEnabled) {
 }
 
 $("btnCopy").onclick = async () => {
-  const link = `${location.origin}/r/${state?.code}`;
+  const link = `${location.origin}${BASE}/r/${state?.code}`;
   try {
     await navigator.clipboard.writeText(link);
     $("btnCopy").innerHTML = "✓<span class=\"lbl\"> Copied</span>";
@@ -1057,7 +1060,7 @@ $("btnCopy").onclick = async () => {
 };
 
 // invite links: /r/CODE prefills the join box
-const inviteMatch = location.pathname.match(/^\/r\/([A-Z0-9]{4})$/i);
+const inviteMatch = location.pathname.match(/^\/jjinja\/r\/([A-Z0-9]{4})$/i);
 if (inviteMatch) {
   $("joinCode").value = inviteMatch[1].toUpperCase();
   $("homeError").textContent = "You've been invited! Enter your name and press Join room.";

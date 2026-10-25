@@ -8,6 +8,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/socket.io': { target: 'http://localhost:3001', ws: true },
+      // Jjinja Battle is served by the game server, not by this React app.
+      '/jjinja': { target: 'http://localhost:3001', ws: true },
     },
   },
 });

@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Jjinja Battle</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/jjinja/style.css" />
 </head>
 <body>
   <main id="app">
     <header>
+      <a class="portal-link small" href="/">← 💞 Games</a>
       <button id="btnMute" class="mute small secondary" aria-label="Toggle announcer">🔊</button>
       <h1>JJINJA<span>?!</span> Battle</h1>
       <p class="tag">Say "jjinja" (찐짜). Get judged. Destroy your friends.</p>
@@ -135,7 +136,7 @@
     </section>
 
     <p id="conn" class="conn"></p>
-    <footer class="legal"><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a></footer>
+    <footer class="legal"><a href="/jjinja/terms.html">Terms</a> · <a href="/jjinja/privacy.html">Privacy</a></footer>
 
     <dialog id="ageGate">
       <h2>Random match</h2>
@@ -145,7 +146,7 @@
         <button data-age="minor" class="secondary">I'm under 18 (audio only)</button>
         <button id="btnAgeCancel" class="secondary">Cancel</button>
       </div>
-      <p class="hint small">By playing you agree to the <a href="/terms.html">Terms</a>.</p>
+      <p class="hint small">By playing you agree to the <a href="/jjinja/terms.html">Terms</a>.</p>
     </dialog>
 
     <dialog id="reportDialog">
@@ -163,6 +164,6 @@
       </div>
     </dialog>
   </main>
-  <script type="module" src="/app.js"></script>
+  <script type="module" src="/jjinja/app.js"></script>
 </body>
 </html>

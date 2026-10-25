@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@gfc/jjinja": "*",
     "@gfc/shared": "*",
     "express": "^4.21.2",
     "socket.io": "^4.8.1",

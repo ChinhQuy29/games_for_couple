@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pulls the latest code from GitHub and restarts the game. Run on the server:
+# Pulls the latest code from GitHub, rebuilds, and restarts the games. Run on the server:
 #   sudo bash /opt/jjinja/deploy/update.sh
 # Matches in progress are dropped by the restart, so update when it's quiet.
 set -euo pipefail
@@ -21,7 +21,7 @@ if [[ "$before" == "$after" ]]; then
   exit 0
 fi
 
-sudo -u "$APP_USER" bash -c "cd $APP_DIR && npm ci --no-audit --no-fund"
+sudo -u "$APP_USER" bash -c "cd $APP_DIR && npm ci --no-audit --no-fund && npm run build"
 systemctl restart jjinja
 sleep 2
 if systemctl is-active --quiet jjinja; then

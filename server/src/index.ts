@@ -4,17 +4,23 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { Server } from 'socket.io';
+import { attachJjinja, BASE_PATH as JJINJA_PATH, handleHttp as jjinjaHttp } from '@gfc/jjinja';
 import { registerFms } from './games/fms/namespace';
 
 // `--port` wins so `npm run dev` always lands on 3001 (Vite proxies there); hosts set PORT in prod.
 const portArg = process.argv.indexOf('--port');
 const PORT = Number(portArg > -1 ? process.argv[portArg + 1] : (process.env.PORT ?? 3001));
+// deploy/setup.sh sets HOST=127.0.0.1 so only Caddy can reach the app.
+const HOST = process.env.HOST;
 const clientDist = join(dirname(fileURLToPath(import.meta.url)), '../../client/dist');
 
 const app = express();
 app.get('/health', (_req, res) => {
   res.send('ok');
 });
+
+// Jjinja Battle is its own static site + WebSocket game, mounted under /jjinja.
+app.use(JJINJA_PATH, (req, res) => void jjinjaHttp(req, res));
 
 // In production the server also hosts the built portal. In dev, Vite does.
 if (existsSync(clientDist)) {
@@ -23,11 +29,13 @@ if (existsSync(clientDist)) {
 }
 
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+// destroyUpgrade: false so Socket.IO leaves other games' WebSocket upgrades (Jjinja's /jjinja/ws) alone.
+const io = new Server(httpServer, { destroyUpgrade: false });
 
-// One namespace per real-time game.
+// One namespace per Socket.IO game; Jjinja brings its own `ws` server.
 registerFms(io);
+attachJjinja(httpServer);
 
-httpServer.listen(PORT, () => {
-  console.log(`💞 Games for Couple server on http://localhost:${PORT}`);
-});
+const onListening = () => console.log(`💞 Games for Couple server on http://${HOST ?? 'localhost'}:${PORT}`);
+if (HOST) httpServer.listen(PORT, HOST, onListening);
+else httpServer.listen(PORT, onListening);

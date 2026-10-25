@@ -6,12 +6,14 @@ Scoring is **vibes-based** for now: the browser measures loudness, syllables, on
 
 ## Run it
 
+Jjinja Battle is part of [Games for Two](../../README.md) and is served by the shared server at `/jjinja`. From the repository root:
+
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:5173/jjinja (or pick it from the portal at http://localhost:5173).
 
 ## Play with a friend over the internet
 
@@ -21,11 +23,20 @@ Browsers only allow microphone access on `https://` (or `localhost`), so give yo
 winget install --id Cloudflare.cloudflared
 ```
 
+From the repository root, run the production server (port 3001):
+
 ```bash
-cloudflared tunnel --url http://localhost:3000
+npm run build
+npm start
 ```
 
-It prints a link like `https://something-random.trycloudflare.com`. Both of you open that link (you should use it too, not localhost), then:
+Then, in another terminal:
+
+```bash
+cloudflared tunnel --url http://localhost:3001
+```
+
+It prints a link like `https://something-random.trycloudflare.com`. Both of you open that link plus `/jjinja` (you should use it too, not localhost), then:
 
 1. You: enter a name, click **Invite a friend**, then **Copy invite link** and send it.
 2. Friend: opens the link, enters a name, clicks **Join room**.
@@ -35,11 +46,12 @@ It prints a link like `https://something-random.trycloudflare.com`. Both of you 
 
 ## Put it online
 
-See [DEPLOY.md](DEPLOY.md): free on Oracle Cloud Always Free (or a ~$5/month VPS), a free DuckDNS subdomain, automatic HTTPS, and a video relay, set up with one script.
+See [DEPLOY.md](../../DEPLOY.md) (it deploys the whole Games for Two project): free on Oracle Cloud Always Free (or a ~$5/month VPS), a free DuckDNS subdomain, automatic HTTPS, and a video relay, set up with one script.
 
 ## Layout
 
-- `server/index.ts`: HTTP + WebSocket server (rooms, invite codes, matchmaking queue, turns, timers)
+- `server/index.ts`: static files + WebSocket game logic (rooms, invite codes, matchmaking queue, turns, timers). Exports `handleHttp` and `attachJjinja`, which the shared server (`server/src/index.ts` at the repo root) mounts at `/jjinja`
+- `types.d.ts`: the interface the shared server type-checks against (`server/contract.check.ts` keeps it in sync)
 - `server/scoring.ts`: the prototype grader (swap this out for the real model later)
 - `public/features.js`: in-browser audio analysis (pitch via autocorrelation, energy, syllables)
 - `public/app.js`: UI and recording

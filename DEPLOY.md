@@ -1,16 +1,16 @@
-# Deploying Jjinja Battle
+# Deploying Games for Two
 
-This puts the game online with a free DuckDNS subdomain and automatic HTTPS. There are two hosting options. Both use the same setup script, so you can start free and move later.
+This puts the whole project online (the portal, Finish My Sentence, and Jjinja Battle at `/jjinja`) with a free DuckDNS subdomain and automatic HTTPS. There are two hosting options. Both use the same setup script, so you can start free and move later.
 
 - **Option A: Oracle Cloud Always Free ($0).** The recommended place to start. A real server that doesn't expire.
 - **Option B: a ~$5/month VPS** (Vultr, DigitalOcean, Hetzner, …). Simpler and more predictable; move here when you outgrow A.
 
 What you end up with either way:
 
-- `https://<your-name>.duckdns.org` serving the game
+- `https://<your-name>.duckdns.org` serving the portal, with Jjinja Battle at `/jjinja` and Finish My Sentence at `/fms`
 - **Caddy**: HTTPS certificates that renew themselves
 - **coturn**: a video relay for players on strict networks (school, office, some mobile data)
-- **systemd**: restarts the game if it crashes or the server reboots
+- **systemd**: restarts the server if it crashes or the server reboots
 - **Firewall and automatic security updates**: turned on
 
 Plan for about 30–45 minutes, most of it waiting.
@@ -96,7 +96,7 @@ ssh ubuntu@203.0.113.45
 On the server, with your own domain:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ChinhQuy29/jjinja_battle/main/deploy/setup.sh -o setup.sh
+curl -fsSL https://raw.githubusercontent.com/ChinhQuy29/games_for_couple/main/deploy/setup.sh -o setup.sh
 sudo bash setup.sh jjinja.duckdns.org
 ```
 
@@ -133,7 +133,7 @@ Moving from Oracle to a VPS later: run the setup on the new server, change the I
 
 ---
 
-## Updating the live game
+## Updating the live site
 
 After you push changes to GitHub, run this from PowerShell (use `root@` instead of `ubuntu@` on a VPS):
 
@@ -147,10 +147,10 @@ A restart drops matches in progress, so update when it's quiet.
 
 | What | Command |
 |---|---|
-| Is the game running? | `systemctl status jjinja` |
-| Live game logs | `journalctl -u jjinja -f` |
+| Is the server running? | `systemctl status jjinja` |
+| Live server logs | `journalctl -u jjinja -f` |
 | Player reports | `journalctl -u jjinja \| grep "\[report\]"` |
-| Restart the game | `systemctl restart jjinja` |
+| Restart the server | `systemctl restart jjinja` |
 | HTTPS / Caddy logs | `journalctl -u caddy -n 50` |
 | Video relay logs | `journalctl -u coturn -n 50` |
 
@@ -170,7 +170,25 @@ The script downloads the code from GitHub, which only works without extra steps 
 3. On the server:
    ```bash
    printf 'Host github.com\n  IdentityFile /root/.ssh/jjinja_deploy\n' | sudo tee -a /root/.ssh/config
-   sudo git clone git@github.com:ChinhQuy29/jjinja_battle.git /opt/jjinja
+   sudo git clone git@github.com:ChinhQuy29/games_for_couple.git /opt/jjinja
    sudo cp /opt/jjinja/deploy/setup.sh . && sudo bash setup.sh jjinja.duckdns.org
    ```
    `update.sh` pulls as the `jjinja` user, so give that user the key too, or run `sudo git -C /opt/jjinja pull` before `update.sh`.
+
+## Already deployed from the old `jjinja_battle` repository?
+
+The server paths, user and service names are unchanged (`/opt/jjinja`, `jjinja`), so you only need to point the existing checkout at the new repository and update once:
+
+```bash
+sudo -u jjinja git -C /opt/jjinja remote set-url origin https://github.com/ChinhQuy29/games_for_couple.git
+sudo -u jjinja git -C /opt/jjinja fetch origin
+sudo -u jjinja git -C /opt/jjinja reset --hard origin/main
+sudo sed -i 's#tsx server/index.ts#tsx server/src/index.ts#' /etc/systemd/system/jjinja.service
+sudo -u jjinja bash -c "cd /opt/jjinja && npm ci --no-audit --no-fund && npm run build"
+sudo systemctl daemon-reload
+sudo systemctl restart jjinja
+```
+
+After that, `update.sh` works as usual.
+
+The game then lives at `https://<your-domain>/jjinja` and the portal at `https://<your-domain>/`. Old invite links (`/r/CODE`) stop working; new ones look like `/jjinja/r/CODE`.

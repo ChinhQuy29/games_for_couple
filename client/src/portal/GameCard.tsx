@@ -36,8 +36,16 @@ export default function GameCard({ game, tilt }: { game: GameInfo; tilt: number 
     </article>
   );
 
+  const linkClass = 'block h-full focus-visible:outline-4 focus-visible:outline-pink rounded-3xl';
+  if (playable && game.standalonePage) {
+    return (
+      <a href={game.path} className={linkClass}>
+        {body}
+      </a>
+    );
+  }
   return playable ? (
-    <Link to={game.path} className="block h-full focus-visible:outline-4 focus-visible:outline-pink rounded-3xl">
+    <Link to={game.path} className={linkClass}>
       {body}
     </Link>
   ) : (

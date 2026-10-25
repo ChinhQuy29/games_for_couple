@@ -231,6 +231,9 @@ td.won { color: var(--good); font-weight: 800; }
 
 header { position: relative; }
 .mute { position: absolute; top: 0; right: 0; font-size: 1.1rem; padding: 6px 10px; }
+.portal-link { position: absolute; top: 0; left: 0; padding: 6px 4px; color: inherit; opacity: 0.75; text-decoration: none; font-weight: 600; }
+.portal-link:hover { opacity: 1; }
+body.arena .portal-link { display: none; }
 
 /* ---------- funniest faces ---------- */
 

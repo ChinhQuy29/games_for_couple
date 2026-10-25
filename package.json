@@ -4,6 +4,7 @@
   "type": "module",
   "workspaces": [
     "shared",
+    "games/jjinja-battle",
     "server",
     "client"
   ],
@@ -12,7 +13,7 @@
     "build": "npm run build -w client",
     "start": "npm start -w server",
     "test": "npm test -w server",
-    "typecheck": "tsc -p shared --noEmit && tsc -p server --noEmit && tsc -p client --noEmit"
+    "typecheck": "tsc -p shared --noEmit && tsc -p server --noEmit && tsc -p client --noEmit && tsc -p games/jjinja-battle --noEmit"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
