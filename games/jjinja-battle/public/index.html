@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jjinja Battle</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main id="app">
+    <header>
+      <button id="btnMute" class="mute small secondary" aria-label="Toggle announcer">🔊</button>
+      <h1>JJINJA<span>?!</span> Battle</h1>
+      <p class="tag">Say "jjinja" (찐짜). Get judged. Destroy your friends.</p>
+    </header>
+
+    <!-- home -->
+    <section id="home" class="screen">
+      <label class="field">
+        <span>Your name</span>
+        <input id="name" maxlength="20" placeholder="Jjinja Master" autocomplete="off" />
+      </label>
+      <div class="buttons">
+        <button id="btnPractice" class="secondary">🎤 Practice</button>
+        <button id="btnCreate">⚔️ Invite a friend</button>
+        <button id="btnQuick">🎲 Random match</button>
+      </div>
+      <div class="join">
+        <input id="joinCode" maxlength="4" placeholder="CODE" autocomplete="off" />
+        <button id="btnJoin" class="secondary">Join room</button>
+      </div>
+      <p class="hint small">We'll ask for your camera and mic. In random matches, cameras stay off unless both players turn them on.</p>
+      <p id="homeError" class="error"></p>
+    </section>
+
+    <!-- queue -->
+    <section id="queue" class="screen hidden">
+      <div class="spinner"></div>
+      <p id="queueText">Looking for an opponent…</p>
+      <div class="buttons">
+        <button id="btnBot">🤖 Play Jjinja Bot instead</button>
+        <button id="btnCancelQuick" class="secondary">Cancel</button>
+      </div>
+    </section>
+
+    <!-- practice -->
+    <section id="practice" class="screen hidden">
+      <h2>Practice room</h2>
+      <label class="challengePick">
+        <span>Challenge</span>
+        <select id="practiceChallenge"></select>
+      </label>
+      <p class="hint" id="practiceHint"></p>
+      <div class="stage solo">
+        <div class="tile" id="practiceTile">
+          <video playsinline autoplay muted class="mirror"></video>
+          <div class="noCam">🙂</div>
+          <div class="tileHead"><span class="pname">You</span><span>Best: <b id="practiceBest">—</b></span></div>
+          <div class="overlay"></div>
+        </div>
+      </div>
+      <p id="practiceError" class="error"></p>
+      <button id="btnPracticeBack" class="secondary">← Back</button>
+    </section>
+
+    <!-- room -->
+    <section id="room" class="screen wide hidden">
+      <div class="stage">
+        <div class="tile" id="tile0">
+          <video playsinline autoplay></video>
+          <div class="noCam">🙂</div>
+          <div class="tileHead"><span class="pname"></span><span class="wins"></span><button class="reportBtn small" hidden>🚩 Report</button></div>
+          <div class="overlay"></div>
+        </div>
+        <div class="tile" id="tile1">
+          <video playsinline autoplay></video>
+          <div class="noCam">🙂</div>
+          <div class="tileHead"><span class="pname"></span><span class="wins"></span><button class="reportBtn small" hidden>🚩 Report</button></div>
+          <div class="overlay"></div>
+        </div>
+      </div>
+
+      <div class="timer"><div id="timerBar"></div></div>
+
+      <div class="hud hudTopLeft roomHead">
+        <div><span class="lbl">Room </span><b id="roomCode"></b></div>
+        <button id="btnCopy" class="small secondary" title="Copy invite link">🔗<span class="lbl"> Invite</span></button>
+      </div>
+
+      <div class="hud hudTopRight">
+        <button id="btnFilm" class="small secondary" title="Record this match as a vertical video">⏺<span class="lbl"> Rec</span></button>
+        <button id="btnClean" class="small secondary" title="Hide the overlay for a clean view">👁</button>
+        <button id="btnFullscreen" class="small secondary" title="Full screen">⛶</button>
+        <button id="btnLeave" class="small secondary" title="Leave room">✕<span class="lbl"> Leave</span></button>
+      </div>
+
+      <div class="hud hudTop status">
+        <p class="round" id="roundLabel"></p>
+        <div class="challenge" id="challengeLabel"></div>
+        <p class="turn" id="turnLabel"></p>
+      </div>
+
+      <div class="hudCenter">
+        <div class="hudPanel" id="hudPanel">
+          <p id="roomNotice" class="notice"></p>
+
+          <div id="modePicker" class="modePicker hidden">
+            <button class="secondary" data-mode="classic">⚔️ Classic<small>random challenge each round</small></button>
+            <button class="secondary" data-mode="rally">🔁 Rally<small>each jjinja must beat the last</small></button>
+          </div>
+
+          <div id="lobbyPanel">
+            <p id="lobbyText"></p>
+            <button id="btnReady">I'm ready</button>
+          </div>
+
+          <div id="overPanel" class="hidden">
+            <h2 id="overTitle"></h2>
+            <div id="overTable"></div>
+            <div id="overFaces"></div>
+            <div id="overSaves" class="saves"></div>
+            <button id="btnRematch">Rematch</button>
+          </div>
+
+          <p id="mediaError" class="error"></p>
+        </div>
+      </div>
+
+      <div id="recBadge" class="hud hudBottomLeft recBadge hidden"></div>
+
+      <div id="camConsent" class="hud hudBottom camConsent hidden">
+        <p id="camText"></p>
+        <button id="btnCam" class="small"></button>
+      </div>
+    </section>
+
+    <p id="conn" class="conn"></p>
+    <footer class="legal"><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a></footer>
+
+    <dialog id="ageGate">
+      <h2>Random match</h2>
+      <p>You'll play a stranger. Cameras stay off unless you both turn them on, and only players 18 or older can turn theirs on. You can report anyone, any time.</p>
+      <div class="buttons">
+        <button data-age="adult">I'm 18 or older</button>
+        <button data-age="minor" class="secondary">I'm under 18 (audio only)</button>
+        <button id="btnAgeCancel" class="secondary">Cancel</button>
+      </div>
+      <p class="hint small">By playing you agree to the <a href="/terms.html">Terms</a>.</p>
+    </dialog>
+
+    <dialog id="reportDialog">
+      <h2>Report player</h2>
+      <p>This ends the match and hides their video right away. You won't be matched with them again.</p>
+      <select id="reportReason">
+        <option value="video">Inappropriate video</option>
+        <option value="harassment">Harassment or hate</option>
+        <option value="name">Offensive name</option>
+        <option value="other">Something else</option>
+      </select>
+      <div class="buttons">
+        <button id="btnReportSend">Report and leave</button>
+        <button id="btnReportCancel" class="secondary">Cancel</button>
+      </div>
+    </dialog>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
