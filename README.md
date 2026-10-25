@@ -15,6 +15,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 🔢 **Number Rush** | `/rush` | 1 to 100 on one board: race to click the next number first. Ascending, descending or random order. | Laptop (mouse/trackpad) | [README](games/number-rush/README.md) · [spec](games/number-rush/docs/spec.md) |
 | 💣 **Bomb Squad** | `/bomb` | One of you sees a ticking bomb, the other has the defusal manual. Talk fast: wires, a big button, symbols, Simon Says, passwords. Co-op. | Laptop + a call | [README](games/bomb-squad/README.md) · [spec](games/bomb-squad/docs/spec.md) |
 | 🍳 **Kitchen Chaos** | `/kitchen` | One preps, one cooks, and the only way across is the pass. Chop, cook, plate and serve the tickets before customers walk out. Don't burn anything. Co-op. | Laptop (mouse/trackpad) | [README](games/kitchen-chaos/README.md) · [spec](games/kitchen-chaos/docs/spec.md) |
+| 🔦 **Ghost Hunt** | `/ghost` | One walks a dark haunted house with a flashlight; the other has the map, cameras and EMF. Find the evidence, name the ghost, get out. Co-op. | Laptop + keyboard | [README](games/ghost-hunt/README.md) · [spec](games/ghost-hunt/docs/spec.md) |
 | 🎨 Blind Portrait Duel · 🕹️ Two-Body Problem | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -82,6 +83,14 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Cooking:** chop with 5 clicks; stoves cook in 7s and burn 8s later. Serve exact dishes for coins plus a speed tip; walk-outs cost coins. ⭐ to ⭐⭐⭐ per shift.
 - **Built with:** the shared kit, on the Socket.IO namespace `/kitchen`. The server owns every item and timer.
 
+### 🔦 Ghost Hunt
+
+- **Setup:** 2 players on a call, up to 10 minutes per house, co-op. Roles swap every game.
+- **Explorer:** walks with WASD in the dark and sees only the flashlight cone. Tools: UV light, spirit box, a book, 2 cameras, closets to hide in.
+- **Navigator:** sees the floor plan, the Explorer's dot, EMF and temperature for their room, and the camera feeds, but never the ghost.
+- **Goal:** 6 kinds of evidence, 8 ghost types. Mark evidence in the shared journal, pick the ghost, walk out the front door. Low sanity brings hunts: hide or run.
+- **Built with:** the shared kit, a tile map with line of sight, and a server-side ghost at 5 ticks/s, on the Socket.IO namespace `/ghost`. Each role gets its own redacted view.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -100,7 +109,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -131,7 +140,8 @@ games/
 ├─ hide-and-seek/        # @gfc/hns: client/, server/, shared/, docs/, README.md
 ├─ number-rush/          # @gfc/rush: built on the kit
 ├─ bomb-squad/           # @gfc/bomb: co-op bomb defusal, built on the kit
-└─ kitchen-chaos/        # @gfc/kitchen: co-op cooking, built on the kit
+├─ kitchen-chaos/        # @gfc/kitchen: co-op cooking, built on the kit
+└─ ghost-hunt/           # @gfc/ghost: co-op ghost hunting, built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

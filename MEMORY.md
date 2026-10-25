@@ -19,6 +19,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #7: Number Rush** at `/rush`, in `games/number-rush/` (`@gfc/rush`), the first game on the shared **kit** (`kit/`, `@gfc/kit`).
 - **Game #8: Bomb Squad** (co-op, KTANE-style) at `/bomb`, in `games/bomb-squad/` (`@gfc/bomb`). The first of 5 co-op games planned in [docs/coop-games-plan.md](docs/coop-games-plan.md).
 - **Game #9: Kitchen Chaos** (co-op, Overcooked-style) at `/kitchen`, in `games/kitchen-chaos/` (`@gfc/kitchen`).
+- **Game #10: Ghost Hunt** (co-op, Phasmophobia-style) at `/ghost`, in `games/ghost-hunt/` (`@gfc/ghost`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -104,6 +105,17 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Ghost Hunt
+- **Design:**
+  - Explorer + Navigator on a 30×18 tile house (8 rooms, loops, 6 closets);
+  - 6 evidence types, split between the roles so they must talk: EMF, temperature and orbs show on the Navigator's side; writing, the spirit box and handprints on the Explorer's;
+  - 8 ghosts with unique triples and small behaviors;
+  - sanity, hunts (3s warning + 15s chase, door locked), hiding, a shared journal, a 10-minute limit.
+- **Server:** simulation at 5 ticks/s through the kit's `wakeAt`/`tick` (`nextTickAt`). The Explorer gets only visible tiles; nobody gets the ghost's type, room or position until the result.
+- 13 tests. Play-tested in two tabs: movement and fog memory, the Navigator's blueprint and readings, a camera feed, journal filtering, leaving with a wrong guess → result.
+- **Fixed in play-test:** the key handler crashed when the event target was `window` (`closest` isn't on Window); it now checks `instanceof Element`.
+- **Added** a shared `.flicker` animation to `client/src/styles.css`.
 
 ### 2026-10-25: Kitchen Chaos
 - **Design:** click-only (no walking), so it works on trackpads. Prep side (crates, 2 boards, trash), the pass (3 slots), cook side (3 stoves, plates, 2 counters, serve, trash). One item or plate in hand. Both players see the whole kitchen.

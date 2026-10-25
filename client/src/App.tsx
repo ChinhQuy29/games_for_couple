@@ -7,6 +7,7 @@ import HnsApp from '@gfc/hns/client';
 import RushApp from '@gfc/rush/client';
 import BombApp from '@gfc/bomb/client';
 import KitchenApp from '@gfc/kitchen/client';
+import GhostApp from '@gfc/ghost/client';
 import WyrApp from '@gfc/wyr/client';
 import NotFound from './portal/NotFound';
 
@@ -23,6 +24,7 @@ export default function App() {
       <Route path="/rush/*" element={<RushApp />} />
       <Route path="/bomb/*" element={<BombApp />} />
       <Route path="/kitchen/*" element={<KitchenApp />} />
+      <Route path="/ghost/*" element={<GhostApp />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

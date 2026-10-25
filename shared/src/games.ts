@@ -40,6 +40,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–15 min',
   },
   {
+    id: 'ghost',
+    title: 'Ghost Hunt',
+    emoji: '🔦',
+    tagline: 'One walks the haunted house, one has the map. Name the ghost, then run.',
+    path: '/ghost',
+    status: 'playable',
+    accent: 'sky',
+    minutes: '10–15 min',
+  },
+  {
     id: 'jjinja',
     title: 'Jjinja Battle',
     emoji: '🎤',

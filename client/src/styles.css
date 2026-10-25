@@ -10,6 +10,7 @@
 @source '../../games/number-rush/client';
 @source '../../games/bomb-squad/client';
 @source '../../games/kitchen-chaos/client';
+@source '../../games/ghost-hunt/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {
@@ -224,10 +225,30 @@ body {
   animation: jiggle 0.3s infinite;
 }
 
+@keyframes flicker {
+  0%,
+  100% {
+    background: rgba(0, 0, 0, 0);
+  }
+  10%,
+  30%,
+  55% {
+    background: rgba(0, 0, 0, 0.75);
+  }
+  20%,
+  45% {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+.flicker {
+  animation: flicker 0.9s steps(1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wobble,
   .blink,
-  .jiggle {
+  .jiggle,
+  .flicker {
     animation: none;
   }
 }

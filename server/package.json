@@ -12,6 +12,7 @@
     "@gfc/bomb": "*",
     "@gfc/doodle": "*",
     "@gfc/fms": "*",
+    "@gfc/ghost": "*",
     "@gfc/hns": "*",
     "@gfc/jjinja": "*",
     "@gfc/kitchen": "*",
