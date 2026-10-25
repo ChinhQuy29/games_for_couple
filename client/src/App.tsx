@@ -5,6 +5,7 @@ import DoodleApp from '@gfc/doodle/client';
 import FmsApp from '@gfc/fms/client';
 import HnsApp from '@gfc/hns/client';
 import RushApp from '@gfc/rush/client';
+import BombApp from '@gfc/bomb/client';
 import WyrApp from '@gfc/wyr/client';
 import NotFound from './portal/NotFound';
 
@@ -19,6 +20,7 @@ export default function App() {
       <Route path="/aog/*" element={<AogApp />} />
       <Route path="/hns/*" element={<HnsApp />} />
       <Route path="/rush/*" element={<RushApp />} />
+      <Route path="/bomb/*" element={<BombApp />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -91,6 +91,16 @@ export const GAMES: GameInfo[] = [
     minutes: '5–10 min',
   },
   {
+    id: 'bomb',
+    title: 'Bomb Squad',
+    emoji: '💣',
+    tagline: 'One of you sees the bomb, the other has the manual. Talk fast.',
+    path: '/bomb',
+    status: 'playable',
+    accent: 'pink',
+    minutes: '10–20 min',
+  },
+  {
     id: 'blind-portrait',
     title: 'Blind Portrait Duel',
     emoji: '🎨',

@@ -8,6 +8,7 @@
 @source '../../games/hide-and-seek/client';
 @source '../../kit/client';
 @source '../../games/number-rush/client';
+@source '../../games/bomb-squad/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

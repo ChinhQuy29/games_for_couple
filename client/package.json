@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gfc/aog": "*",
+    "@gfc/bomb": "*",
     "@gfc/doodle": "*",
     "@gfc/fms": "*",
     "@gfc/hns": "*",

@@ -13,6 +13,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 👻 **Fan Cứng AOG** | `/aog` | Liên Quân & AOG trivia battle: SGP, Lai Bâng and the golden era, FPT x Flash, finals, international events, drama. Vietnamese or English. | Keyboard or tap | [README](games/aog-trivia/README.md) · [spec](games/aog-trivia/docs/spec.md) |
 | 🙈 **Hide and Seek** | `/hns` | Prop hunt for two: one turns into a lamp, a cushion or a duck and hides in a room full of real ones; the other gets 5 shots to find the fake. | Laptop (mouse/trackpad) | [README](games/hide-and-seek/README.md) · [spec](games/hide-and-seek/docs/spec.md) |
 | 🔢 **Number Rush** | `/rush` | 1 to 100 on one board: race to click the next number first. Ascending, descending or random order. | Laptop (mouse/trackpad) | [README](games/number-rush/README.md) · [spec](games/number-rush/docs/spec.md) |
+| 💣 **Bomb Squad** | `/bomb` | One of you sees a ticking bomb, the other has the defusal manual. Talk fast: wires, a big button, symbols, Simon Says, passwords. Co-op. | Laptop + a call | [README](games/bomb-squad/README.md) · [spec](games/bomb-squad/docs/spec.md) |
 | 🎨 Blind Portrait Duel · 🕹️ Two-Body Problem | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -66,6 +67,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Recap:** the winner, fastest find, average time, best streak, and the board colored by who found what.
 - **Built with:** the shared game kit (`kit/`) and an SVG board, on the Socket.IO namespace `/rush`.
 
+### 💣 Bomb Squad
+
+- **Setup:** 2 players on a call, 10–20 minutes. Co-op: you win or explode together. Easy (3 modules, 5:00), Normal (4, 4:00) or Hard (5, 3:00).
+- **Roles:** the Defuser sees the bomb, the Expert reads the manual. Neither sees the other's screen, and the roles swap every bomb.
+- **Modules:** wires, the button (tap or hold, release on the right digit), symbols, Simon Says and passwords, with rules that depend on the serial number and batteries. Three strikes or the timer ends it.
+- **Built with:** the shared kit, on the Socket.IO namespace `/bomb`. The server never sends the armed bomb to the Expert.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -84,7 +92,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -113,7 +121,8 @@ games/
 ├─ would-you-rather/     # @gfc/wyr: client/, server/, shared/, docs/, README.md
 ├─ aog-trivia/           # @gfc/aog: client/, server/, shared/, docs/, README.md
 ├─ hide-and-seek/        # @gfc/hns: client/, server/, shared/, docs/, README.md
-└─ number-rush/          # @gfc/rush: built on the kit
+├─ number-rush/          # @gfc/rush: built on the kit
+└─ bomb-squad/           # @gfc/bomb: co-op bomb defusal, built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

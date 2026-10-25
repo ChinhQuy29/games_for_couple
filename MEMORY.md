@@ -17,6 +17,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #5: Fan Cứng AOG** (Liên Quân/AOG trivia) at `/aog`, in `games/aog-trivia/` (package `@gfc/aog`). Docs: [README](games/aog-trivia/README.md), [spec](games/aog-trivia/docs/spec.md).
 - **Game #6: Hide and Seek** (prop hunt) at `/hns`, in `games/hide-and-seek/` (package `@gfc/hns`). Docs: [README](games/hide-and-seek/README.md), [spec](games/hide-and-seek/docs/spec.md).
 - **Game #7: Number Rush** at `/rush`, in `games/number-rush/` (`@gfc/rush`), the first game on the shared **kit** (`kit/`, `@gfc/kit`).
+- **Game #8: Bomb Squad** (co-op, KTANE-style) at `/bomb`, in `games/bomb-squad/` (`@gfc/bomb`). The first of 5 co-op games planned in [docs/coop-games-plan.md](docs/coop-games-plan.md).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -102,6 +103,16 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Co-op plan + Bomb Squad
+- **Research:** read up on popular co-op Steam games (Keep Talking and Nobody Explodes, Overcooked 2, It Takes Two, PEAK, Chained Together, Phasmophobia, Lethal Company, Pico Park, The Chameleon). Picked 5 to adapt for two players on laptops; the plan with sources is [docs/coop-games-plan.md](docs/coop-games-plan.md).
+- **Build order:** 💣 Bomb Squad → 🍳 Kitchen Chaos → 🔦 Ghost Hunt → ⛓️ Tethered → 🕹️ Two-Body Problem (replaces the coming-soon card).
+- **Bomb Squad:**
+  - Defuser/Expert roles that swap every bomb; 3 difficulties; 5 modules (wires, button, symbols, Simon, password).
+  - The manual is original text. `shared/rules.ts` holds solvers that implement it, with 14 tests.
+  - The button's hold uses the timer text shown on the Defuser's screen, trusted within ±1.5s of the server's.
+  - Play-tested in two tabs at 1280×800: a strike, every module solved, the result screen, the role swap.
+- **Next:** Kitchen Chaos. The physics games (Tethered, Two-Body) need a real-time loop in the kit.
 
 ### 2026-10-25: Shared kit + Number Rush
 - **The ask:** the user requested a 1–100 number-finding race. They also requested: then research popular co-op Steam games, plan 5 couple-friendly adaptations, and build them one by one without asking, retrying failures, and not stopping until all are done.
