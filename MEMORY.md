@@ -32,9 +32,9 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 
 ## Current status (2026-10-25)
 
-**Playable games: 13** (Moving In added later the same day). The 7 earlier games (below), plus Number Rush and the 5 co-op games built from [docs/coop-games-plan.md](docs/coop-games-plan.md): Bomb Squad, Kitchen Chaos, Ghost Hunt, Tethered and Two-Body Problem. All of these are built on the shared kit (`kit/`) and have unit tests; each was play-tested in two browser tabs at 1280×800.
+**Playable games: 18.** The 7 earlier games, Number Rush, the 5 co-op games from [docs/coop-games-plan.md](docs/coop-games-plan.md), Moving In, and the 5 from [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md): Escape Room for Two, Handle With Care, Road Trip, Codenames Duet and Paint & Hide. All of these newer games are built on the shared kit (`kit/`) and have unit tests; each was play-tested in two browser tabs at 1280×800.
 
-- **What two tabs couldn't verify:** the physics games (Tethered, Two-Body) need two real people on two keyboards to judge feel and difficulty. Two-Body's levels 1 and 6 are proven finishable by scripted tests, and Tethered's first jumps by a headless simulation. Tuning knobs are in `shared/physics.ts` (`PHYS`) and the level specs.
+- **What two tabs couldn't verify:** the physics/real-time games (Tethered, Two-Body, Handle With Care, Road Trip) need two real people on two keyboards to judge feel and difficulty. Two-Body's levels 1 and 6 are proven finishable by scripted tests, and Tethered's first jumps by a headless simulation. Tuning knobs are in `shared/physics.ts` (`PHYS`) and the level specs.
 - **Only coming-soon card left:** Blind Portrait Duel.
 
 

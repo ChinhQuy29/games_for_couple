@@ -1,5 +1,7 @@
 # Couple games plan, part 2: 5 more games
 
+> **Status: all 5 built and pushed (2026-10-25):** 🔐 [Escape Room for Two](../games/escape-room/README.md) · 📦 [Handle With Care](../games/handle-with-care/README.md) · 🚐 [Road Trip](../games/road-trip/README.md) · 🕵️ [Codenames Duet](../games/codenames-duet/README.md) · 🦎 [Paint & Hide](../games/paint-hide/README.md). Each game's `docs/spec.md` describes what was actually built.
+>
 > Written 2026-10-25, before building. Picked by the user from a list of 10 ideas (#4–#8). Each game gets its own folder under `games/` with a README and `docs/spec.md`, is built on the shared kit (`kit/`), and is committed and pushed when done. Part 1 is [coop-games-plan.md](coop-games-plan.md).
 
 ## Research summary
