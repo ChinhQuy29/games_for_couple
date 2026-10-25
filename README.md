@@ -142,6 +142,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **On the road:** wandering cows, potholes, rocks, mud, grass that rattles the van apart, and a fuel gauge that needs ⛽ cans. Stars for arriving, beating par, and a clean drive.
 - **Built with:** the shared kit's 30 Hz loop, with a top-down canvas road (sine-wave curves, forks), on the Socket.IO namespace `/roadtrip`. The fork answers never leave the server.
 
+### 🕵️ Codenames Duet
+
+- **Setup:** 2 players on a call, 15–20 minutes per board, co-op. English or Vietnamese words; 11, 9 or 7 turns.
+- **Keys:** each of you sees a different secret key (9 agents and 3 assassins each, overlapping: 15 agents in total).
+- **Turns:** one gives a one-word clue and a number; the other taps cards, read with the clue giver's key. An agent continues, a bystander ends the turn, an assassin loses the game. Find all 15 to win; your record carries across boards.
+- **Built with:** the shared kit, on the Socket.IO namespace `/duet`. Your partner's key is only revealed when the game is over.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -160,7 +167,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape`, `/carry`, `/road-trip` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen`, `/ghost`, `/tethered`, `/two-body-problem`, `/moving-in`, `/escape`, `/carry`, `/road-trip`, `/codenames` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -198,7 +205,8 @@ games/
 ├─ moving-in/            # @gfc/movingin: two-player Dreamy Room, built on the kit
 ├─ escape-room/         # @gfc/escape: co-op two-room escape puzzles, built on the kit
 ├─ handle-with-care/    # @gfc/carry: co-op furniture moving (R.E.P.O.-style), built on the kit
-└─ road-trip/           # @gfc/roadtrip: co-op split-controls driving, built on the kit
+├─ road-trip/           # @gfc/roadtrip: co-op split-controls driving, built on the kit
+└─ codenames-duet/      # @gfc/duet: co-op word clues (two secret keys), built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

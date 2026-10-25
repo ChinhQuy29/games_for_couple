@@ -26,6 +26,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #14: Escape Room for Two** (We Were Here-style) at `/escape`, in `games/escape-room/` (`@gfc/escape`). The first of 5 from [docs/couple-games-plan-2.md](docs/couple-games-plan-2.md).
 - **Game #15: Handle With Care** (R.E.P.O.-style) at `/carry`, in `games/handle-with-care/` (`@gfc/carry`).
 - **Game #16: Road Trip** (RV There Yet?-style) at `/road-trip`, in `games/road-trip/` (`@gfc/roadtrip`).
+- **Game #17: Codenames Duet** at `/codenames`, in `games/codenames-duet/` (`@gfc/duet`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-25)
@@ -117,6 +118,17 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Codenames Duet
+- **Rules:**
+  - the official Duet key layout (9 overlapping categories → 9 agents and 3 assassins per side, 15 agents total);
+  - a clue (one word, at most 2 parts for Vietnamese compounds, never a board word) + a number; the guesser reads cards with the giver's key;
+  - a bystander marks the card for that giver and ends the turn; the assassin loses;
+  - turns 11/9/7; the giver alternates unless the other side has no agents left; win/loss record across boards.
+- **Words:** ~280 English, ~150 Vietnamese.
+- **Bug caught before testing:** the first draft kept the found-words list in a module-level variable, shared across every room on the server. It now lives on the clue.
+- 8 tests (key layout, clue/guess rules, bystander/stop/assassin/out of turns, a full win, key redaction). Play-tested in two tabs with Vietnamese words: a clue, an agent found, a bystander ending the turn and passing the clue to the other player, the log.
+- **Polish:** own agents and assassins are tinted, not just striped.
 
 ### 2026-10-25: Road Trip
 - **Design:**
