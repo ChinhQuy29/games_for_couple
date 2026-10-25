@@ -15,7 +15,7 @@
 
 ## Rules (`server/game.ts`)
 
-- **Phases:** LOBBY → MOVE → DONE, then MOVE in the next house (both ready), or FINISH after house 3. "Rematch" (host) goes back to LOBBY.
+- **Phases:** LOBBY → MOVE → DONE, then MOVE in the next house (both ready), or FINISH after the last house (5). The host's `settings:update {startHouse}` (lobby) picks where the move starts. "Rematch" (host) goes back to LOBBY.
 - **`input`** (quiet): `{left, right, jump, grab, throw}`. Grab and throw are edge-triggered on the server, by comparing with the previous step.
 - **Grab (E):** if holding something, let go. A small item keeps 60% of your speed when you put it down. Otherwise, take the nearest item within `REACH` (1.3 tiles, centre to centre; for big items, distance to anywhere along its width) that still has a free hand slot: 1 for small, 2 for big.
 - **Throw (F):** small items only. vx = facing × 9 (+30% of your speed), vy = −7.

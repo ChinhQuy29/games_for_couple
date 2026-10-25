@@ -116,7 +116,7 @@ export function Play() {
     <main className="relative flex flex-1 flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <span className="sticker px-3 py-1 font-display font-extrabold">
-          Level {s.level + 1}/6 · {level.name}
+          Level {s.level + 1}/{LEVELS.length} · {level.name}
         </span>
         <AnimatePresence mode="wait">
           <motion.span

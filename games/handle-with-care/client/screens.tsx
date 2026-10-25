@@ -4,12 +4,14 @@ import { HOUSES, ITEMS, type Frame, type ItemKind } from '../shared';
 import { kit } from './kit';
 import { Stage, type Buffered } from './Stage';
 
-const { useGame, useRoom, useFrame, LobbyShell, RecapActions } = kit;
+const { useGame, useRoom, useFrame, LobbyShell, RecapActions, Choice } = kit;
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.max(0, s) % 60).padStart(2, '0')}`;
 const money = (n: number) => `$${n.toLocaleString('en-US')}`;
 
 export function Lobby() {
+  const { act } = useGame();
+  const { s } = useRoom();
   return (
     <LobbyShell
       startLabel="Start the move 🚚"
@@ -22,7 +24,20 @@ export function Lobby() {
           <p>🚚 Put things down in the green truck zone. Bumps and drops cost money; fragile things break.</p>
         </>
       }
-      settings={<p className="font-semibold text-ink-soft">Three houses. Every dollar you deliver counts.</p>}
+      settings={
+        <>
+          <Choice
+            label="🏠 Start at"
+            value={s.startHouse}
+            options={HOUSES.map((_, i) => i)}
+            onPick={(startHouse) => act('settings:update', { startHouse })}
+            render={(i) => `${i + 1}. ${HOUSES[i]!.name}`}
+          />
+          <p className="font-semibold text-ink-soft">
+            {HOUSES.length - s.startHouse} house{HOUSES.length - s.startHouse === 1 ? '' : 's'} to move, from {HOUSES[s.startHouse]!.name.replace(/^The /, 'the ')} on. Every dollar you deliver counts.
+          </p>
+        </>
+      }
     />
   );
 }
@@ -96,7 +111,7 @@ export function Move() {
     <main className="relative flex flex-1 flex-col gap-2">
       <div className="flex flex-wrap items-center gap-3">
         <span className="sticker px-3 py-1 font-display font-extrabold">
-          🏠 {s.house + 1}/3 · {house.name}
+          🏠 {s.house + 1}/{HOUSES.length} · {house.name}
         </span>
         <span className={`rounded-xl border-[3px] border-line bg-[#1f1b2e] px-3 py-1 font-mono text-2xl font-bold ${left < 20 ? 'text-[#ff4f4f]' : 'text-white'}`}>⏱️ {fmt(left)}</span>
         <span className="sticker px-3 py-1 font-display font-extrabold">

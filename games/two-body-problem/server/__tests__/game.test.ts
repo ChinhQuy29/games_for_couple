@@ -26,7 +26,7 @@ const put = (room: Room, x: number, y: number) => {
 
 describe('levels', () => {
   it('are 32×18 with a start and a goal; doors have keys and gates have buttons', () => {
-    expect(LEVELS).toHaveLength(6);
+    expect(LEVELS).toHaveLength(10);
     for (const l of LEVELS) {
       expect(l.rows).toHaveLength(LH);
       for (const r of l.rows) expect(r).toHaveLength(LW);
@@ -113,22 +113,23 @@ describe('two players, one body', () => {
   });
 
   it('clearing a level, then the next one swaps who walks first; the last one finishes', () => {
-    const { room, walker } = play(4);
-    const [gx, gy] = find(LEVELS[4]!, 'G')!;
+    const last = LEVELS.length - 1;
+    const { room, walker } = play(last - 1);
+    const [gx, gy] = find(LEVELS[last - 1]!, 'G')!;
     put(room, gx, gy);
     tick(room);
     expect(room.phase).toBe('CLEAR');
     game.readyForNext(room, 'pa', ctxAt(50_000));
     game.readyForNext(room, 'pb', ctxAt(50_000));
-    expect(room.level).toBe(5);
+    expect(room.level).toBe(last);
     expect(room.walkerId).not.toBe(walker);
-    const [g6x, g6y] = find(LEVELS[5]!, 'G')!;
+    const [g6x, g6y] = find(LEVELS[last]!, 'G')!;
     put(room, g6x, g6y);
     game.step(room, ctxAt(50_000 + COUNTDOWN_MS + 33));
     game.readyForNext(room, 'pa', ctxAt(90_000));
     game.readyForNext(room, 'pb', ctxAt(90_000));
     expect(room.phase).toBe('FINISH');
-    expect(room.results.map((r) => r.level)).toEqual([4, 5]);
+    expect(room.results.map((r) => r.level)).toEqual([last - 1, last]);
   });
 
   it('the view tells me my role and leaks no tokens', () => {

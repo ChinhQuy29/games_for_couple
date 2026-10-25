@@ -11,11 +11,12 @@
   - `#` solid, `-` one-way, `^` spikes,
   - `D` a door (solid until the key is taken), `H` a gate (solid unless the button was touched in the last 5s),
   - markers: `S` start, `K` key, `B` button, `~` swap pad, `G` goal.
-- **Movers:** level 5 has a horizontal ferry, level 6 a vertical lift. Each is a triangle wave over its period, a pure function of time.
+- **Themes:** each level has a `theme` (grass, snow, sand, purple, stone) for its Kenney terrain and backdrop; older levels default by number.
+- **Movers:** levels 5 and 10 have a horizontal ferry, level 6 a vertical lift. Each is a triangle wave over its period, a pure function of time.
 
 ## Rules (`server/game.ts`)
 
-- **Phases:** LOBBY → PLAY → CLEAR, then PLAY on the next level (both ready), or FINISH after level 6. "Rematch" (host) goes back to LOBBY from CLEAR or FINISH.
+- **Phases:** LOBBY → PLAY → CLEAR, then PLAY on the next level (both ready), or FINISH after the last level (10). "Rematch" (host) goes back to LOBBY from CLEAR or FINISH.
 - **Level start:** the Walker is `players[level % 2]`, so it alternates. A 2s countdown runs (the loop doesn't step before `startsAt`). The body spawns at `S`.
 - **`input {left, right, jump}`** (quiet): each player's held keys. `combinedInput` takes left/right from the Walker and jump from the Jumper; everything else is ignored.
 - **`step`** (30 Hz):

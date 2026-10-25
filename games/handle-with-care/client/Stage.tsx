@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { PLAYER_COLORS } from '@gfc/kit/client';
 import { HOUSES, ITEMS, LH, LW, PHYS, moverAt, type Frame, type ItemKind } from '../shared';
+import { preloadSprites, sprite } from './sprites';
 
 export interface Buffered {
   prev: Frame | null;
@@ -10,6 +11,14 @@ export interface Buffered {
 
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
 const L = '#2b2140';
+/** Wallpaper per house: base and stripe. */
+const WALLPAPER: [string, string][] = [
+  ['#f3dcc9', '#efd2bc'],
+  ['#e3efd9', '#d8e8cc'],
+  ['#e6def5', '#dcd2f0'],
+  ['#fdebd3', '#f8e0c0'],
+  ['#ececec', '#e2e2e2'],
+];
 
 /** Draws one valuable inside its box (x, y, w, h in pixels). */
 function drawItem(ctx: CanvasRenderingContext2D, kind: ItemKind, x: number, y: number, w: number, h: number) {
@@ -141,8 +150,12 @@ export function Stage({
   mySlot: number;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  useEffect(() => preloadSprites(), []);
   useEffect(() => {
     const H = HOUSES[house]!;
+    const empty = (x: number, y: number) => (H.rows[y]?.[x] ?? '#') === ' ';
+    const windows: [number, number][] = [];
+    for (const [wx, wy] of [[4, 2], [14, 2], [20, 3], [8, 11], [18, 11]] as const) if ([0, 1].every((dy) => [0, 1].every((dx) => empty(wx + dx, wy + dy)))) windows.push([wx + 0.3, wy + 0.3]);
     let raf = 0;
     const draw = () => {
       raf = requestAnimationFrame(draw);
@@ -162,45 +175,72 @@ export function Stage({
       const k = prev ? Math.min(1, (performance.now() - at) / (1000 / 30)) : 1;
       const t = prev ? lerp(prev.t, last.t, k) : last.t;
 
-      // Inside walls, outside sky (right of the house wall).
-      ctx.fillStyle = '#f3dcc9';
+      const tile = (name: string) => sprite(`tiles/${name}`);
+      const draw1 = (img: HTMLImageElement | null, x: number, y: number, w = T, h = T) => img && ctx.drawImage(img, x, y, w + 0.5, h + 0.5);
+
+      // Outside: sky, hills and clouds. Inside (left of the outer wall): wallpaper with windows.
+      const sky = ctx.createLinearGradient(0, 0, 0, ch);
+      sky.addColorStop(0, '#8fd3ff');
+      sky.addColorStop(1, '#e7f7ff');
+      ctx.fillStyle = sky;
       ctx.fillRect(0, 0, cw, ch);
-      ctx.fillStyle = '#bfe6ff';
-      ctx.fillRect(26 * T, 0, cw - 26 * T, ch);
+      const hills = sprite('backgrounds/background_color_hills');
+      if (hills) ctx.drawImage(hills, 22 * T, ch - 12 * T, 12 * T, 12 * T);
+      const clouds = sprite('backgrounds/background_clouds');
+      if (clouds) {
+        ctx.globalAlpha = 0.6;
+        ctx.drawImage(clouds, 24 * T - ((t * 4) % (8 * T)), -T * 2, 10 * T, 10 * T);
+        ctx.globalAlpha = 1;
+      }
+      const [paper, stripe] = WALLPAPER[house % WALLPAPER.length]!;
+      ctx.fillStyle = paper;
+      ctx.fillRect(T, T, 23 * T, 15 * T);
+      ctx.fillStyle = stripe;
+      for (let x = 1; x < 24; x += 1) if (x % 2) ctx.fillRect(x * T, T, T * 0.5, 15 * T);
+      // Windows, only on bare wall (nothing in the 2×2 tiles behind them).
+      for (const [wx, wy] of windows) draw1(tile('window'), wx * T, wy * T, T * 1.4, T * 1.4);
+
       for (let ty = 0; ty < LH; ty++)
         for (let tx = 0; tx < LW; tx++) {
           const tch = H.rows[ty]![tx]!;
           const x = tx * T;
           const y = ty * T;
+          const outside = tx >= 26;
           if (tch === '#') {
-            ctx.fillStyle = tx >= 24 && tx <= 25 ? '#a86d3a' : ty >= 16 ? '#8a6a4a' : '#c9b89a';
-            ctx.fillRect(x, y, T + 0.5, T + 0.5);
+            const border = tx === 0 || tx === LW - 1 || ty === 0;
+            const above = H.rows[ty - 1]?.[tx];
+            if (border) draw1(tile('terrain_stone_block_center'), x, y);
+            else if (ty < 16 && (tx === 24 || tx === 25)) draw1(tile('bricks_brown'), x, y);
+            else if (ty >= 16) draw1(tile(outside ? (above === '#' ? 'terrain_grass_block_center' : 'terrain_grass_block_top') : above === '#' ? 'terrain_stone_block_center' : 'terrain_stone_block_top'), x, y);
+            else draw1(tile('brick_brown'), x, y);
           } else if (tch === '-') {
-            ctx.fillStyle = '#c98b4f';
-            ctx.fillRect(x, y, T + 0.5, T * 0.3);
-          } else if (tch === 'T') {
-            ctx.fillStyle = 'rgba(61,220,151,0.22)';
-            ctx.fillRect(x, y - T * 2, T + 0.5, T * 3);
+            const l = H.rows[ty]![tx - 1] === '-';
+            const r = H.rows[ty]![tx + 1] === '-';
+            draw1(tile(`terrain_stone_horizontal_${l && r ? 'middle' : l ? 'right' : r ? 'left' : 'middle'}`), x, y);
           }
         }
-      // The truck, behind the drop zone.
+      // The doorway in the outer wall, and an exit sign over it.
+      draw1(tile('sign_exit'), 24.45 * T, 10.5 * T, T * 1.1, T * 1.1);
+
+      // The truck: a box with an open back, the green drop zone inside, wheels below.
+      ctx.fillStyle = '#fff8e7';
       ctx.strokeStyle = L;
       ctx.lineWidth = 3;
-      ctx.fillStyle = '#fff8e7';
       ctx.beginPath();
-      ctx.roundRect(26 * T, 12.3 * T, 4.7 * T, 0.6 * T, 4);
+      ctx.roundRect(26.6 * T, 11.6 * T, 4.2 * T, 4.4 * T, 8);
       ctx.fill();
       ctx.stroke();
+      ctx.fillStyle = 'rgba(61,220,151,0.28)';
+      ctx.fillRect(26.8 * T, 12.9 * T, 3.9 * T, 3 * T);
       ctx.fillStyle = L;
       ctx.font = `bold ${T * 0.42}px system-ui`;
       ctx.textAlign = 'center';
-      ctx.fillText('🚚 TRUCK', 28.35 * T, 12.78 * T);
+      ctx.fillText('🚚 TRUCK', 28.7 * T, 12.45 * T);
 
       H.movers.forEach((_, i) => {
         const m = moverAt(H, i, t);
-        ctx.fillStyle = '#4cc9f0';
-        ctx.fillRect(m.x * T, m.y * T, m.w * T, T * 0.3);
-        ctx.strokeRect(m.x * T, m.y * T, m.w * T, T * 0.3);
+        for (let j = 0; j < m.w; j++) draw1(tile('terrain_stone_cloud_middle'), (m.x + j) * T, m.y * T, T, T * 0.5);
+        draw1(tile('chain'), (m.x + m.w / 2 - 0.25) * T, m.y * T - T * 0.6, T * 0.5, T * 0.6);
       });
 
       // Items.

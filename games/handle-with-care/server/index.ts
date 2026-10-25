@@ -1,7 +1,7 @@
 import type { Server } from 'socket.io';
 import { action, publicPlayers, registerGame } from '@gfc/kit/server';
 import { EmptySchema } from '@gfc/kit/shared';
-import { HZ, HeldSchema, type PublicState, type Room } from '../shared';
+import { HZ, HeldSchema, SettingsSchema, type PublicState, type Room } from '../shared';
 import * as game from './game';
 
 export function toPublicState(room: Room, viewerId: string, now: number): PublicState {
@@ -12,6 +12,7 @@ export function toPublicState(room: Room, viewerId: string, now: number): Public
     players: publicPlayers(room),
     phase: room.phase,
     deadline: null,
+    startHouse: room.startHouse,
     house: room.house,
     mySlot: Math.max(0, room.players.findIndex((p) => p.id === viewerId)),
     startsAt: room.startsAt,
@@ -33,6 +34,7 @@ export function registerCarry(io: Server) {
     view: toPublicState,
     loop: { hz: HZ, active: (room) => room.phase === 'MOVE', step: game.step, frame: (room) => game.frame(room) },
     actions: {
+      'settings:update': action(SettingsSchema, (room: Room, me, p) => game.setStartHouse(room, me, p.startHouse)),
       'game:start': action(EmptySchema, (room: Room, me, _p, ctx) => game.startGame(room, me, ctx)),
       'input': action(HeldSchema, (room: Room, me, p) => game.setHeld(room, me, p), { quiet: true }),
       'round:ready': action(EmptySchema, (room: Room, me, _p, ctx) => game.readyForNext(room, me, ctx)),

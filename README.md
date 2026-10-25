@@ -109,7 +109,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 
 ### 🕹️ Two-Body Problem
 
-- **Setup:** 2 players with keyboards, about 15 minutes for all 6 levels, co-op.
+- **Setup:** 2 players with keyboards, about 25 minutes for all 10 levels (or start at any level), co-op. Kenney art with a different look per level.
 - **One body:** the Walker has left/right, the Jumper has jump (hold for higher). ⇄ pads swap the jobs; who walks first alternates every level.
 - **Levels:** spikes, one-way platforms, a key and door, a 5-second button gate, a ferry over spikes, and a final level with everything. R restarts a level.
 - **Built with:** the same 30 Hz kit loop, with physics copied from Tethered, on the Socket.IO namespace `/twobody`.
@@ -132,7 +132,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 
 ### 📦 Handle With Care
 
-- **Setup:** 2 players with keyboards, about 10 minutes, co-op. Three houses: a studio, a two-floor family house, a mansion with a freight lift.
+- **Setup:** 2 players with keyboards, about 10 minutes, co-op. Five houses: a studio, a two-floor family house, a mansion with a freight lift, an apartment with three balconies, an art gallery. Start at any of them. Kenney art.
 - **Carrying:** E grabs or drops, F throws small things. Big things (TV, piano, fish tank, sofa) need both of you holding on and walking in step: no jumping, and pulling apart drops it.
 - **Damage:** door-frame bumps, hard landings and throws chip the value; fragile things break. Put things down in the truck zone to earn their value.
 - **Built with:** the shared kit's 30 Hz loop, with physics copied from Tethered and generalised to bodies of any size, on the Socket.IO namespace `/carry`.
@@ -195,7 +195,7 @@ npm run typecheck
 
 ## Credits
 
-Some games use free art from **Kenney** (https://www.kenney.nl), released as CC0 (public domain): the New Platformer Pack (Tethered) and Mobile Controls (the shared on-screen touch buttons). Each folder that holds these images has a `CREDITS.md`. Everything else is drawn in code for this project.
+Some games use free art from **Kenney** (https://www.kenney.nl), released as CC0 (public domain): the New Platformer Pack (Tethered, Two-Body Problem, Handle With Care) and Mobile Controls (the shared on-screen touch buttons). Each folder that holds these images has a `CREDITS.md`. Everything else is drawn in code for this project.
 
 ## Project layout
 

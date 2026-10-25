@@ -19,6 +19,10 @@ You're two very unqualified movers. Get the valuables out of the house and into 
 | 🏠 The studio | 2:30 | A loft (jump up via the step) and your first TV and sofa |
 | 🏡 The family house | 2:30 | Small stuff upstairs; the piano and fish tank stay on the ground floor |
 | 🏰 The mansion | 3:00 | The sofa and TV are upstairs: ride the freight lift down together |
+| 🏢 The apartment | 3:00 | Three floors of balconies. Small things live upstairs; the TV and fish tank wait below |
+| 🖼️ The art gallery | 2:50 | Three paintings, two gold cats, a vase and a grand piano. Expensive and fragile |
+
+The host picks which house to **start at**; the move goes on to the last one. The tiles, backgrounds, bricks, windows and signs are from Kenney's free **New Platformer Pack** (CC0, public domain): see `client/assets/CREDITS.md`.
 
 ## Run it
 
@@ -33,8 +37,9 @@ games/handle-with-care/     # @gfc/carry, built on the shared kit (../../kit)
 ├─ shared/index.ts          # room, item, frame and view types, input schema
 ├─ server/game.ts           # grabbing, carrying (alone or together), throwing, damage, the truck
 ├─ server/index.ts          # view + registerGame() with a 30 Hz loop (namespace /carry)
-├─ server/__tests__/        # 10 unit tests
-├─ client/Stage.tsx         # the canvas: house, truck, lift, valuables, movers
+├─ server/__tests__/        # 11 unit tests
+├─ client/Stage.tsx         # the canvas: Kenney tiles, wallpaper, windows, truck, lift, valuables, movers
+├─ client/assets/           # the Kenney CC0 images we use, with CREDITS.md
 ├─ client/screens.tsx       # Lobby, Move, Done, Finish
 └─ docs/spec.md
 ```
@@ -51,4 +56,4 @@ The tests cover:
 - carrying small things, big things needing two, pulling apart, no jumping when heavy,
 - throwing and landing damage, breaking, loading the truck,
 - carrying the TV through the doorway into the truck,
-- the time limit and the next house, the view.
+- the time limit and the next house, starting at a later house, the view.

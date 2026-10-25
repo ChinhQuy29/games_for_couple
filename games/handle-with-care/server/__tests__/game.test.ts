@@ -177,6 +177,21 @@ describe('carrying', () => {
     expect(room.house).toBe(1);
   });
 
+  it('the host can start at a later house; the move goes on to the last one', () => {
+    const room = game.newRoom('ABCD', ctxAt(0));
+    addPlayer(room, { id: 'pa', token: 'token-aaaaaaaaaa', name: 'Alex' });
+    addPlayer(room, { id: 'pb', token: 'token-bbbbbbbbbb', name: 'Bao' });
+    expect(() => game.setStartHouse(room, 'pb', 3)).toThrow();
+    game.setStartHouse(room, 'pa', HOUSES.length - 1);
+    game.startGame(room, 'pa', ctxAt(0));
+    expect(room.house).toBe(HOUSES.length - 1);
+    room.steps = HOUSES[room.house]!.timeS * 30 - 1;
+    tick(room, 2);
+    game.readyForNext(room, 'pa', ctxAt(0));
+    game.readyForNext(room, 'pb', ctxAt(0));
+    expect(room.phase).toBe('FINISH');
+  });
+
   it('the view leaks no tokens and tells me my slot', () => {
     const room = play();
     const v = toPublicState(room, 'pb', 0);

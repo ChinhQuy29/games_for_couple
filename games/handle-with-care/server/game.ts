@@ -38,6 +38,7 @@ export function newRoom(code: string, ctx: Ctx): Room {
     lastActivityAt: ctx.now,
     players: [],
     phase: 'LOBBY',
+    startHouse: 0,
     house: 0,
     bodies: [],
     holding: {},
@@ -82,12 +83,18 @@ function beginHouse(room: Room, index: number, ctx: Ctx) {
   room.readyForNext = [];
 }
 
+export function setStartHouse(room: Room, playerId: string, startHouse: number): void {
+  requirePhase(room, 'LOBBY');
+  requireHost(room, playerId);
+  room.startHouse = Math.max(0, Math.min(HOUSES.length - 1, startHouse));
+}
+
 export function startGame(room: Room, playerId: string, ctx: Ctx): void {
   requirePhase(room, 'LOBBY');
   requireHost(room, playerId);
   requireTwo(room);
   room.results = [];
-  beginHouse(room, 0, ctx);
+  beginHouse(room, room.startHouse ?? 0, ctx);
 }
 
 export function readyForNext(room: Room, playerId: string, ctx: Ctx): void {

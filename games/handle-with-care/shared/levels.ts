@@ -1,4 +1,4 @@
-// Three houses, 32 × 18 tiles each, built from specs like Two-Body's levels.
+// Five houses, 32 × 18 tiles each, built from specs like Two-Body's levels.
 // '#' solid, '-' one-way, 'T' the moving truck (put things down here), 'S' start.
 
 export const LW = 32;
@@ -117,6 +117,45 @@ export const HOUSES: House[] = [
       ['fishtank', 18, 16],
     ],
     timeS: 180,
+  },
+  {
+    name: 'The apartment',
+    hint: 'Three floors of balconies. Jump up through them, then carry or throw things down. Gently.',
+    rows: build(
+      [[17, 1, 30, '#'], [16, 1, 30, '#'], [13, 6, 22, '-'], [10, 3, 19, '-'], [7, 6, 22, '-'], ...col(24, 1, 11, '#'), ...col(25, 1, 11, '#'), [15, 26, 30, 'T']],
+      [['S', 3, 15]],
+    ),
+    movers: [],
+    items: [
+      ['plates', 8, 7],
+      ['statue', 18, 7],
+      ['lamp', 5, 10],
+      ['painting', 14, 10],
+      ['vase', 12, 13],
+      ['plant', 20, 13],
+      ['tv', 9, 16],
+      ['fishtank', 15, 16],
+    ],
+    timeS: 180,
+  },
+  {
+    name: 'The art gallery',
+    hint: 'Paintings, statues and a grand piano. Everything here is worth a lot, so no throwing!',
+    rows: build(
+      [[17, 1, 30, '#'], [16, 1, 30, '#'], [12, 3, 10, '-'], [12, 14, 21, '-'], [8, 7, 17, '-'], ...col(24, 1, 11, '#'), ...col(25, 1, 11, '#'), [15, 26, 30, 'T']],
+      [['S', 2, 15]],
+    ),
+    movers: [],
+    items: [
+      ['painting', 4, 12],
+      ['painting', 9, 12],
+      ['statue', 15, 12],
+      ['painting', 20, 12],
+      ['vase', 10, 8],
+      ['statue', 14, 8],
+      ['piano', 11, 16],
+    ],
+    timeS: 170,
   },
 ];
 

@@ -18,7 +18,7 @@ One character, two players. One of you can only **walk**, the other can only **j
    - **Red spikes, or falling off:** back to the start (and the key is lost).
    - **⭐:** the goal.
 5. **R** (or the Retry button) restarts the level if you're stuck. It counts as a death.
-6. Who walks first alternates every level. After level 6 you get your total time and deaths.
+6. Who walks first alternates every level. After the last level you get your total time and deaths. The host can start at any level.
 
 | # | Level | What's new |
 |---|---|---|
@@ -28,6 +28,12 @@ One character, two players. One of you can only **walk**, the other can only **j
 | 4 | Hold the gate | a button and a timed gate |
 | 5 | All aboard | a moving platform over a spike pit |
 | 6 | The two-body problem | a lift, key, swap, button, gate and door, all at once |
+| 7 | Stairway ❄️ | the floor is all spikes: four jumps up a staircase |
+| 8 | Locked in 🍄 | one-way ledges up to the key, a spike pit, the door |
+| 9 | Sprint 🏜️ | the button is up high: drop and run before the gate shuts |
+| 10 | The ferry 🌲 | swap first, then ride a raft over a long spike river |
+
+Each level has its own look (grass, snow, sand, mushroom land or forest). The tiles, backgrounds, keys, locks, switches and flags are from Kenney's free **New Platformer Pack** (CC0, public domain): see `client/assets/CREDITS.md`.
 
 ## Run it
 
@@ -38,12 +44,13 @@ From the repository root, `npm install`, then `npm run dev`. Open http://localho
 ```
 games/two-body-problem/     # @gfc/twobody, built on the shared kit (../../kit)
 ├─ shared/physics.ts        # platformer physics, copied from Tethered (games stay independent)
-├─ shared/levels.ts         # the 6 levels (built from specs), movers, gate time
+├─ shared/levels.ts         # the 10 levels (built from specs) and their themes, movers, gate time
 ├─ shared/index.ts          # room, frame and view types, schemas
 ├─ server/game.ts           # levels, combined input, keys/doors/gates/swaps, deaths, goal
 ├─ server/index.ts          # view + registerGame() with a 30 Hz loop (namespace /twobody)
-├─ server/__tests__/        # 10 unit tests, including scripted runs through levels 1 and 6
-├─ client/                  # TwoBodyApp, Stage (canvas renderer), screens
+├─ server/__tests__/        # 14 unit tests, including scripted runs through levels 1, 6, 7, 8, 9 and 10
+├─ client/                  # TwoBodyApp, Stage (canvas renderer with Kenney sprites), screens
+├─ client/assets/           # the Kenney CC0 images we use, with CREDITS.md
 └─ docs/spec.md
 ```
 
@@ -58,4 +65,4 @@ The tests cover:
 - the input mapping (Walker = left/right, Jumper = jump),
 - the countdown, spikes and respawn, swap pads, keys and doors, the gate timer,
 - the level flow (clear → next, swap who walks → finish), the view,
-- scripted runs that finish level 1 and level 6.
+- scripted runs that finish levels 1, 6, 7, 8, 9 and 10 with only the two half-controls.

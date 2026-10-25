@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { BaseRoom, PublicBase } from '@gfc/kit/shared';
 import type { Body } from './physics';
-import type { ItemKind } from './levels';
+import { HOUSES, type ItemKind } from './levels';
 
 export * from './physics';
 export * from './levels';
@@ -38,6 +38,8 @@ export interface HouseResult {
 
 export interface Room extends BaseRoom {
   phase: 'LOBBY' | 'MOVE' | 'DONE' | 'FINISH';
+  /** The host's pick: the move starts here and goes on to the last house. */
+  startHouse: number;
   house: number;
   bodies: Body[];
   /** What each player is holding (item id) or null. */
@@ -67,6 +69,7 @@ export interface Frame {
 
 export interface PublicState extends PublicBase {
   phase: Room['phase'];
+  startHouse: number;
   house: number;
   mySlot: number;
   startsAt: number;
@@ -80,4 +83,5 @@ export interface PublicState extends PublicBase {
   frame: Frame | null;
 }
 
+export const SettingsSchema = z.object({ startHouse: z.number().int().min(0).max(HOUSES.length - 1) });
 export const HeldSchema = z.object({ left: z.boolean(), right: z.boolean(), jump: z.boolean(), grab: z.boolean(), throw: z.boolean() });

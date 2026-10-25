@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { BaseRoom, PublicBase } from '@gfc/kit/shared';
 import type { Body } from './physics';
+import { LEVELS } from './levels';
 
 export * from './physics';
 export * from './levels';
@@ -66,4 +67,4 @@ export interface PublicState extends PublicBase {
 }
 
 export const HeldSchema = z.object({ left: z.boolean(), right: z.boolean(), jump: z.boolean() });
-export const SettingsSchema = z.object({ startLevel: z.number().int().min(0).max(5) });
+export const SettingsSchema = z.object({ startLevel: z.number().int().min(0).max(LEVELS.length - 1) });

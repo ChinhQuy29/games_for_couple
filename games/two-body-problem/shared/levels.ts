@@ -1,4 +1,4 @@
-// Six one-screen levels, 32 × 18 tiles, built from specs like Tethered's tower.
+// Ten one-screen levels, 32 × 18 tiles, built from specs like Tethered's tower.
 // '#' solid, '-' one-way, '^' spikes, 'D' door (opens with the key), 'H' gate (opens for a
 // few seconds after the button), and markers: 'S' start, 'K' key, 'B' button, '~' swap pad
 // (walker and jumper trade jobs), 'G' goal.
@@ -14,9 +14,13 @@ interface Mover {
   periodS: number;
 }
 
+export type Theme = 'grass' | 'snow' | 'sand' | 'purple' | 'stone';
+
 export interface Level {
   name: string;
   hint: string;
+  /** The look: Kenney terrain and background (defaults by level number). */
+  theme?: Theme;
   rows: string[];
   movers: Mover[];
 }
@@ -99,9 +103,52 @@ export const LEVELS: Level[] = [
     ),
     movers: [{ from: [2, 15], to: [2, 7], w: 3, periodS: 6 }],
   },
+  {
+    name: 'Stairway',
+    hint: 'The floor is all spikes now. Climb the steps, one jump each.',
+    theme: 'snow',
+    rows: build(
+      [[17, 1, 30, '#'], [16, 1, 5, '#'], [16, 6, 30, '^'], [13, 7, 10, '#'], [10, 12, 15, '#'], [7, 17, 20, '#'], [4, 22, 30, '#']],
+      [['S', 2, 15], ['G', 28, 3]],
+    ),
+    movers: [],
+  },
+  {
+    name: 'Locked in',
+    hint: 'The 🔑 is up the ledges, the door is past the pit.',
+    theme: 'purple',
+    rows: build(
+      [[17, 1, 30, '#'], [16, 1, 18, '#'], [16, 19, 21, '^'], [16, 22, 30, '#'], [13, 4, 7, '-'], [10, 9, 12, '-'], ...col(23, 1, 11, '#'), ...col(23, 12, 15, 'D')],
+      [['S', 2, 15], ['K', 11, 9], ['G', 28, 15]],
+    ),
+    movers: [],
+  },
+  {
+    name: 'Sprint',
+    hint: 'Hit the button up top, then drop and run. Five seconds!',
+    theme: 'sand',
+    rows: build(
+      [[17, 1, 30, '#'], [16, 1, 22, '#'], [16, 23, 25, '^'], [16, 26, 30, '#'], [13, 5, 8, '#'], [10, 10, 14, '-'], ...col(20, 1, 10, '#'), ...col(20, 11, 15, 'H')],
+      [['S', 2, 15], ['B', 13, 9], ['G', 29, 15]],
+    ),
+    movers: [],
+  },
+  {
+    name: 'The ferry',
+    hint: 'Swap jobs on the ⇄ pad, then ride the raft over the spikes and climb off.',
+    theme: 'stone',
+    rows: build(
+      [[17, 1, 30, '#'], [16, 1, 6, '#'], [16, 7, 24, '^'], [16, 25, 30, '#'], [13, 28, 30, '#']],
+      [['S', 2, 15], ['~', 4, 15], ['G', 29, 12]],
+    ),
+    movers: [{ from: [7, 13], to: [21, 13], w: 3, periodS: 6 }],
+  },
 ];
 
 export const GATE_OPEN_S = 5;
+
+const DEFAULT_THEMES: Theme[] = ['grass', 'stone', 'sand', 'purple', 'grass', 'stone'];
+export const levelTheme = (i: number): Theme => LEVELS[i]?.theme ?? DEFAULT_THEMES[i % DEFAULT_THEMES.length]!;
 
 export function moverAt(level: Level, i: number, t: number) {
   const m = level.movers[i]!;
