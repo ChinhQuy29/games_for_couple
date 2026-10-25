@@ -130,7 +130,11 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 - **Redaction:** slot kinds never leave the server.
 - 12 tests. Play-tested in two tabs at 1280×800: all 6 rooms completed by real pointer drags from both tabs (each tab placing its own box), plus a hint, the polaroids and the final album.
 - **Fixed after the play-test:** unpacked items stacked on one spot; they now fan out across the box top.
-- **Possible polish:** the rooms read a bit sparse; items could be larger, with more decor and sounds.
+- **Polish pass (same day, the user's request):**
+  - items are drawn 1.4× bigger (`ITEM_SCALE`, with `sizeOf()` used by the server and tests), and 6 slot pairs moved so the bigger items don't overlap;
+  - decoration-only furniture added (curtains, garlands, wall art, floor lamps, big plants, a suitcase, a backsplash, a pendant lamp), plus a wallpaper pattern per room and a baseboard;
+  - all 6 rooms replayed in two tabs and the album checked.
+- **Still possible:** sounds, personal items.
 
 ### 2026-10-25: Two-Body Problem (all 5 co-op games done)
 - **Game:** one body; Walker = left/right, Jumper = jump (only the matching part of each player's input counts). Swap pads trade jobs once per visit, and the first Walker alternates per level. 6 one-screen levels (32×18) with spikes, one-way platforms, a key/door, a 5s button gate, a ferry and a lift. R retries.

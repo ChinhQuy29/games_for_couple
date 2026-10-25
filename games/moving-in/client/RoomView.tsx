@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { PLAYER_COLORS } from '@gfc/kit/client';
-import { BOX_AT, KINDS, SNAP } from '../shared';
+import { BOX_AT, SNAP, sizeOf } from '../shared';
 import { kit } from './kit';
 import { PlacedItem, Scene, variants } from './Scene';
 
@@ -148,7 +148,7 @@ export function RoomView() {
       {showHint && s.hint && (
         <g className="animate-pulse">
           <PlacedItem kind={s.hint.kind} x={s.hint.x} y={s.hint.y} variant={v.get(s.hint.item) ?? 0} ghost />
-          <circle cx={s.hint.x} cy={s.hint.y - KINDS[s.hint.kind].h / 2} r={Math.max(KINDS[s.hint.kind].w, KINDS[s.hint.kind].h) / 2 + 16} fill="none" stroke="#ffc93c" strokeWidth={5} strokeDasharray="10 8" />
+          <circle cx={s.hint.x} cy={s.hint.y - sizeOf(s.hint.kind).h / 2} r={Math.max(sizeOf(s.hint.kind).w, sizeOf(s.hint.kind).h) / 2 + 16} fill="none" stroke="#ffc93c" strokeWidth={5} strokeDasharray="10 8" />
         </g>
       )}
       {[0, 1].map((seat) => (

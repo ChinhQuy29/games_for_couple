@@ -67,7 +67,7 @@ export function FurnitureArt({ f }: { f: Furniture }) {
       return (
         <g>
           <rect x={x} y={y} width={w} height={h} rx={3} fill="#c98b4f" {...P} />
-          <path d={`M${x + 30} ${y + h} v14 q0 8 8 6 M${x + 100} ${y + h} v14 q0 8 8 6`} fill="none" {...P} strokeWidth={3} />
+          <path d={`M${x + 30} ${y + h} v14 q0 8 8 6 M${x + 118} ${y + h} v14 q0 8 8 6`} fill="none" {...P} strokeWidth={3} />
         </g>
       );
     case 'chair':
@@ -183,5 +183,106 @@ export function FurnitureArt({ f }: { f: Furniture }) {
       );
     case 'rug':
       return <ellipse cx={x + w / 2} cy={y + h / 2} rx={w / 2} ry={h / 2} fill="#ff9f43" opacity={0.6} {...P} strokeWidth={3} />;
+    // ---------- decoration ----------
+    case 'curtains': {
+      // Drawn around a window rect: a rod and two gathered panels.
+      const panel = (x0: number, dir: 1 | -1) => (
+        <path
+          d={`M${x0} ${y - 8} h${dir * 62} q${dir * -14} ${h / 2} ${dir * -4} ${h + 40} q${dir * -14} 10 ${dir * -28} 0 q${dir * -14} 10 ${dir * -30} 0 Z`}
+          fill="#ff9fb2"
+          {...P}
+          strokeWidth={3}
+        />
+      );
+      return (
+        <g>
+          {panel(x - 40, 1)}
+          {panel(x + w + 40, -1)}
+          <path d={`M${x - 26} ${y + h * 0.5} l40 6 M${x + w + 26} ${y + h * 0.5} l-40 6`} stroke="#ffc93c" strokeWidth={6} strokeLinecap="round" />
+          <rect x={x - 54} y={y - 16} width={w + 108} height={10} rx={5} fill="#c98b4f" {...P} strokeWidth={3} />
+        </g>
+      );
+    }
+    case 'garland': {
+      // Fairy lights sagging between two points.
+      const bulbs = Math.max(4, Math.round(w / 45));
+      const colors = ['#ffc93c', '#ff4f8b', '#4cc9f0', '#3ddc97'];
+      return (
+        <g>
+          <path d={`M${x} ${y} Q${x + w / 2} ${y + 60} ${x + w} ${y}`} fill="none" stroke={L} strokeWidth={2.5} />
+          {Array.from({ length: bulbs + 1 }, (_, i) => {
+            const t = i / bulbs;
+            const bx = x + w * t;
+            const by = y + 2 * (1 - t) * t * 60 + 6;
+            return <circle key={i} cx={bx} cy={by} r={7} fill={colors[i % 4]} stroke={L} strokeWidth={2} style={{ filter: `drop-shadow(0 0 5px ${colors[i % 4]})` }} />;
+          })}
+        </g>
+      );
+    }
+    case 'wallart':
+      return (
+        <g>
+          <rect x={x} y={y} width={w} height={h} rx={4} fill="#fff8e7" {...P} />
+          <rect x={x + 12} y={y + 12} width={w - 24} height={h - 24} fill="#bfe6ff" />
+          <circle cx={x + w * 0.7} cy={y + h * 0.38} r={Math.min(w, h) * 0.12} fill="#ffc93c" />
+          <path d={`M${x + 12} ${y + h - 12} L${x + w * 0.38} ${y + h * 0.48} L${x + w * 0.58} ${y + h * 0.7} L${x + w * 0.72} ${y + h * 0.56} L${x + w - 12} ${y + h - 12} Z`} fill="#3ddc97" />
+        </g>
+      );
+    case 'floorlamp':
+      return (
+        <g>
+          <path d={`M${x + w / 2} ${y + 40} V${y + h - 6}`} {...P} strokeWidth={5} />
+          <ellipse cx={x + w / 2} cy={y + h - 5} rx={w / 2} ry={7} fill="#3a3346" {...P} strokeWidth={3} />
+          <path d={`M${x - 8} ${y + 44} L${x + w + 8} ${y + 44} L${x + w - 6} ${y} L${x + 6} ${y} Z`} fill="#ffe08a" {...P} strokeWidth={3} style={{ filter: 'drop-shadow(0 6px 14px rgba(255,224,138,0.9))' }} />
+        </g>
+      );
+    case 'bigplant':
+      return (
+        <g>
+          {[-50, -20, 10, 40, 70].map((a, i) => (
+            <ellipse
+              key={i}
+              cx={x + w / 2}
+              cy={y + h * 0.42}
+              rx={w * 0.17}
+              ry={h * 0.32}
+              fill={i % 2 ? '#3ddc97' : '#2bb57a'}
+              stroke={L}
+              strokeWidth={3}
+              transform={`rotate(${a - 10} ${x + w / 2} ${y + h * 0.7})`}
+            />
+          ))}
+          <path d={`M${x + 8} ${y + h * 0.68} H${x + w - 8} L${x + w - 18} ${y + h} H${x + 18} Z`} fill="#e07a4f" {...P} strokeWidth={3} />
+        </g>
+      );
+    case 'suitcase':
+      return (
+        <g>
+          <path d={`M${x + w * 0.35} ${y} v-14 h${w * 0.3} v14`} fill="none" {...P} strokeWidth={4} />
+          <rect x={x} y={y} width={w} height={h} rx={12} fill="#ff6b6b" {...P} />
+          <path d={`M${x + w * 0.3} ${y} V${y + h} M${x + w * 0.7} ${y} V${y + h}`} stroke="#c94b4b" strokeWidth={4} />
+          <circle cx={x + w * 0.5} cy={y + h * 0.5} r={10} fill="#ffc93c" stroke={L} strokeWidth={2} />
+        </g>
+      );
+    case 'tiles':
+      return (
+        <g>
+          <rect x={x} y={y} width={w} height={h} fill="#ffffff" opacity={0.75} />
+          {Array.from({ length: Math.floor(w / 40) + 1 }, (_, i) => (
+            <path key={`v${i}`} d={`M${x + i * 40} ${y} V${y + h}`} stroke="#9fd8c0" strokeWidth={2} />
+          ))}
+          {Array.from({ length: Math.floor(h / 40) + 1 }, (_, i) => (
+            <path key={`h${i}`} d={`M${x} ${y + i * 40} H${x + w}`} stroke="#9fd8c0" strokeWidth={2} />
+          ))}
+        </g>
+      );
+    case 'pendant':
+      return (
+        <g>
+          <path d={`M${x + w / 2} ${y} V${y + h - 40}`} {...P} strokeWidth={3} />
+          <path d={`M${x - 10} ${y + h} Q${x + w / 2} ${y + h - 70} ${x + w + 10} ${y + h} Z`} fill="#ff9f43" {...P} strokeWidth={3} />
+          <circle cx={x + w / 2} cy={y + h + 4} r={9} fill="#fff6c8" style={{ filter: 'drop-shadow(0 0 12px #ffe08a)' }} />
+        </g>
+      );
   }
 }

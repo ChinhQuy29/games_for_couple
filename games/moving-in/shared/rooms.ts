@@ -57,6 +57,11 @@ export const KINDS = {
 } as const;
 export type Kind = keyof typeof KINDS;
 
+/** Items are drawn at their KINDS size and shown this much bigger. */
+export const ITEM_SCALE = 1.4;
+/** An item's size in the room. */
+export const sizeOf = (kind: Kind) => ({ w: KINDS[kind].w * ITEM_SCALE, h: KINDS[kind].h * ITEM_SCALE });
+
 export type FurnitureType =
   | 'window'
   | 'bed'
@@ -78,7 +83,16 @@ export type FurnitureType =
   | 'sofa'
   | 'tvstand'
   | 'tv'
-  | 'rug';
+  | 'rug'
+  // Decoration only.
+  | 'curtains'
+  | 'garland'
+  | 'wallart'
+  | 'floorlamp'
+  | 'bigplant'
+  | 'suitcase'
+  | 'tiles'
+  | 'pendant';
 
 export interface Furniture {
   t: FurnitureType;
@@ -101,6 +115,8 @@ export interface RoomDef {
   caption: string;
   wall: string;
   floor: string;
+  /** Wallpaper pattern drawn over the wall color. */
+  pattern?: 'dots' | 'stripes' | 'tiles' | 'hearts';
   furniture: Furniture[];
   slots: SlotDef[];
   /** Box contents, in unpacking order, per player seat. */
@@ -116,30 +132,39 @@ export const ROOMS: RoomDef[] = [
     caption: 'Far apart, but the phones are always on.',
     wall: '#cfe3f0',
     floor: '#b98a5a',
+    pattern: 'dots',
     furniture: [
+      f('wallart', 120, 170, 160, 120),
+      f('garland', 70, 470, 310, 0),
+      f('floorlamp', 690, 560, 60, 200),
       f('window', 420, 120, 220, 180),
+      f('curtains', 420, 120, 220, 180),
       f('bed', 60, 600, 330, 160),
-      f('nightstand', 410, 640, 110, 120),
+      f('nightstand', 410, 640, 120, 120),
       f('shelf', 560, 380, 200, 16),
       f('shelf', 560, 520, 200, 16),
       f('divider', 780, 0, 40, 900),
       f('window', 960, 120, 220, 180),
+      f('curtains', 960, 120, 220, 180),
+      f('wallart', 1320, 170, 160, 120),
+      f('garland', 1220, 470, 310, 0),
+      f('bigplant', 840, 560, 100, 200),
       f('bed', 1210, 600, 330, 160),
-      f('nightstand', 1080, 640, 110, 120),
+      f('nightstand', 1070, 640, 120, 120),
       f('shelf', 840, 380, 200, 16),
       f('shelf', 840, 520, 200, 16),
     ],
     slots: [
       s('pillow', 140, 600, 0),
-      s('phone', 445, 640, 0),
-      s('lamp', 490, 640, 0),
+      s('phone', 433, 640, 0),
+      s('lamp', 492, 640, 0),
       s('controller', 600, 380, 0),
       s('book', 700, 380, 0),
       s('frame', 650, 520, 0),
       s('pillow', 1460, 600, 1),
       s('plush', 1300, 600, 1),
-      s('phone', 1155, 640, 1),
-      s('lamp', 1110, 640, 1),
+      s('phone', 1167, 640, 1),
+      s('lamp', 1108, 640, 1),
       s('book', 900, 380, 1),
       s('frame', 950, 520, 1),
     ],
@@ -153,22 +178,26 @@ export const ROOMS: RoomDef[] = [
     caption: 'Finally in the same room. Two suitcases, one tiny hotel.',
     wall: '#f3dcc9',
     floor: '#8a6a4a',
+    pattern: 'stripes',
     furniture: [
+      f('wallart', 960, 150, 160, 110),
       f('door', 30, 320, 150, 440),
-      f('hooks', 200, 300, 130, 14),
+      f('hooks', 200, 300, 150, 14),
       f('chair', 250, 640, 120, 120),
       f('nightstand', 405, 640, 100, 120),
       f('bed', 520, 600, 560, 160),
       f('window', 680, 110, 240, 170),
+      f('curtains', 680, 110, 240, 170),
       f('nightstand', 1095, 640, 100, 120),
       f('desk', 1230, 600, 300, 160),
+      f('suitcase', 1280, 670, 140, 90),
       f('shelf', 1260, 400, 220, 16),
     ],
     slots: [
-      s('shoes', 80, 760),
-      s('shoes', 180, 760),
+      s('shoes', 72, 760),
+      s('shoes', 190, 760),
       s('hat', 230, 340),
-      s('scarf', 300, 410),
+      s('scarf', 318, 410),
       s('backpack', 310, 640),
       s('charger', 455, 640),
       s('plush', 800, 600),
@@ -188,18 +217,23 @@ export const ROOMS: RoomDef[] = [
     caption: 'One bed, two pillows, and a lot of negotiating.',
     wall: '#e4d7f5',
     floor: '#a87b52',
+    pattern: 'hearts',
     furniture: [
-      f('desk', 60, 560, 380, 200),
+      f('desk', 50, 560, 410, 200),
       f('shelf', 80, 330, 300, 16),
       f('window', 600, 110, 400, 190),
+      f('curtains', 600, 110, 400, 190),
+      f('garland', 570, 420, 460, 0),
       f('bed', 560, 600, 480, 160),
+      f('wallart', 1070, 330, 100, 130),
+      f('bigplant', 1195, 560, 100, 200),
       f('nightstand', 1060, 640, 110, 120),
       f('shelf', 1220, 420, 300, 16),
       f('rug', 520, 780, 560, 60),
     ],
     slots: [
-      s('monitor', 170, 560),
-      s('keyboard', 340, 560),
+      s('monitor', 150, 560),
+      s('keyboard', 350, 560),
       s('headphones', 130, 330),
       s('controller', 220, 330),
       s('clock', 320, 330),
@@ -221,12 +255,16 @@ export const ROOMS: RoomDef[] = [
     caption: 'Two mugs. A worrying amount of instant noodles.',
     wall: '#d8f0dc',
     floor: '#c9b89a',
+    pattern: 'stripes',
     furniture: [
+      f('tiles', 60, 370, 860, 190),
       f('shelf', 80, 330, 560, 16),
       f('counter', 60, 560, 620, 200),
       f('stove', 700, 560, 220, 200),
       f('fridge', 960, 220, 200, 540),
       f('window', 1240, 120, 260, 180),
+      f('curtains', 1240, 120, 260, 180),
+      f('pendant', 1380, 0, 60, 400),
       f('table', 1220, 600, 320, 160),
     ],
     slots: [
@@ -253,7 +291,10 @@ export const ROOMS: RoomDef[] = [
     caption: 'Two toothbrushes, one cup. That is commitment.',
     wall: '#d4eef7',
     floor: '#e8e8ee',
+    pattern: 'tiles',
     furniture: [
+      f('wallart', 1010, 220, 170, 120),
+      f('rug', 950, 785, 380, 50),
       f('rail', 120, 380, 260, 14),
       f('mirror', 560, 230, 220, 260),
       f('shelf', 540, 520, 260, 14),
@@ -285,15 +326,19 @@ export const ROOMS: RoomDef[] = [
     caption: 'Home. Every room so far, hanging on the wall.',
     wall: '#f6e7c8',
     floor: '#9b6f47',
+    pattern: 'stripes',
     furniture: [
       f('rug', 480, 790, 640, 70),
+      f('garland', 560, 300, 480, 0),
+      f('bigplant', 10, 560, 90, 200),
+      f('floorlamp', 1100, 450, 60, 310),
       f('sofa', 520, 560, 560, 200),
       f('tv', 1220, 330, 260, 160),
       f('tvstand', 1180, 640, 340, 120),
     ],
     slots: [
       s('posterLq', 190, 520),
-      s('posterSgp', 380, 520),
+      s('posterSgp', 400, 520),
       s('frame', 600, 440),
       s('frame', 700, 440),
       s('frame', 900, 440),

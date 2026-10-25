@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { addPlayer, seededRng } from '@gfc/kit/server';
-import { H, KINDS, ROOMS, W, type Room } from '../../shared';
+import { H, ROOMS, W, sizeOf, type Room } from '../../shared';
 import * as game from '../game';
 import { toPublicState } from '../index';
 
@@ -42,7 +42,7 @@ describe('the rooms', () => {
       expect(r.boxes[1]).toHaveLength(6);
       for (const s of r.slots) {
         if (s.owner !== undefined) expect(r.boxes[s.owner], `${r.name} ${s.kind}`).toContain(s.kind);
-        const k = KINDS[s.kind];
+        const k = sizeOf(s.kind);
         expect(s.x - k.w / 2, `${r.name} ${s.kind}`).toBeGreaterThanOrEqual(0);
         expect(s.x + k.w / 2).toBeLessThanOrEqual(W);
         expect(s.y - k.h).toBeGreaterThanOrEqual(0);

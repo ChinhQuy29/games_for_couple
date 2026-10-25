@@ -5,7 +5,7 @@
 // every item is unpacked and in a right spot.
 
 import { fail, pick, requireHost, requirePhase, requirePlayer, requireTwo, type Ctx } from '@gfc/kit/server';
-import { BOX_AT, FLOOR, H, HINTS_PER_ROOM, HINT_MS, KINDS, ROOMS, SNAP, W, type Item, type Room } from '../shared';
+import { BOX_AT, FLOOR, H, HINTS_PER_ROOM, HINT_MS, ROOMS, SNAP, W, sizeOf, type Item, type Room } from '../shared';
 
 export function newRoom(code: string, ctx: Ctx): Room {
   return {
@@ -137,7 +137,7 @@ export function drop(room: Room, playerId: string, id: number, x: number, y: num
   const item = itemOf(room, id);
   if (item.inBox) fail('IN_BOX', 'Unpack it first');
   if (room.held[playerId] === id) room.held[playerId] = null;
-  const k = KINDS[item.kind];
+  const k = sizeOf(item.kind);
   const cx = Math.max(k.w / 2, Math.min(W - k.w / 2, x));
   const cy = Math.max(k.h, Math.min(H - 5, y));
   const slots = ROOMS[room.room]!.slots;

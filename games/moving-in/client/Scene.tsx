@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { FLOOR, H, KINDS, ROOMS, W, type Item, type Kind } from '../shared';
+import { FLOOR, H, ITEM_SCALE, KINDS, ROOMS, W, type Item, type Kind } from '../shared';
 import { FurnitureArt } from './FurnitureArt';
 import { ItemArt } from './ItemArt';
 
@@ -19,7 +19,7 @@ export function PlacedItem({ kind, x, y, variant, glow, ring, ghost }: { kind: K
   const { w, h } = KINDS[kind];
   return (
     <g
-      transform={`translate(${x - w / 2} ${y - h})`}
+      transform={`translate(${x - (w * ITEM_SCALE) / 2} ${y - h * ITEM_SCALE}) scale(${ITEM_SCALE})`}
       opacity={ghost ? 0.45 : 1}
       style={glow ? { filter: 'drop-shadow(0 0 6px #ff3b3b) drop-shadow(0 0 10px #ff3b3b)' } : undefined}
     >
@@ -34,8 +34,27 @@ export function Scene({ room, children, className, svgRef, ...rest }: { room: nu
   const def = ROOMS[room]!;
   return (
     <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className={className} {...rest}>
+      <defs>
+        <pattern id={`wp-dots-${room}`} width={60} height={60} patternUnits="userSpaceOnUse">
+          <circle cx={15} cy={15} r={5} fill="#ffffff" opacity={0.55} />
+          <circle cx={45} cy={45} r={5} fill="#ffffff" opacity={0.55} />
+        </pattern>
+        <pattern id={`wp-stripes-${room}`} width={56} height={56} patternUnits="userSpaceOnUse">
+          <rect x={0} y={0} width={22} height={56} fill="#ffffff" opacity={0.28} />
+        </pattern>
+        <pattern id={`wp-tiles-${room}`} width={50} height={50} patternUnits="userSpaceOnUse">
+          <rect x={1} y={1} width={48} height={48} rx={4} fill="#ffffff" opacity={0.4} />
+        </pattern>
+        <pattern id={`wp-hearts-${room}`} width={80} height={80} patternUnits="userSpaceOnUse">
+          <text x={20} y={30} fontSize={16} opacity={0.35}>♥</text>
+          <text x={60} y={70} fontSize={16} opacity={0.35}>♥</text>
+        </pattern>
+      </defs>
       <rect x={0} y={0} width={W} height={FLOOR} fill={def.wall} />
+      {def.pattern && <rect x={0} y={0} width={W} height={FLOOR} fill={`url(#wp-${def.pattern}-${room})`} />}
       <rect x={0} y={FLOOR} width={W} height={H - FLOOR} fill={def.floor} />
+      <rect x={0} y={FLOOR - 18} width={W} height={18} fill="#fff8e7" opacity={0.85} />
+      <path d={`M0 ${FLOOR - 18} H${W}`} stroke="#2b2140" strokeWidth={3} />
       <path d={`M0 ${FLOOR} H${W}`} stroke="#2b2140" strokeWidth={5} />
       {Array.from({ length: 9 }, (_, i) => (
         <path key={i} d={`M${i * 200 + 100} ${FLOOR} V${H}`} stroke="rgba(0,0,0,0.08)" strokeWidth={3} />

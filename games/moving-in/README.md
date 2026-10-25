@@ -37,7 +37,7 @@ games/moving-in/            # @gfc/movingin, built on the shared kit (../../kit)
 ├─ server/index.ts          # view (slot kinds stay secret) + live drag relay (namespace /movingin)
 ├─ server/__tests__/        # 12 unit tests
 ├─ client/ItemArt.tsx       # 43 hand-drawn SVG items
-├─ client/FurnitureArt.tsx  # the furniture
+├─ client/FurnitureArt.tsx  # the furniture and decorations (curtains, fairy lights, plants, lamps…)
 ├─ client/Scene.tsx         # a room (and a finished room, for the photos)
 ├─ client/RoomView.tsx      # boxes, dragging, snapping preview, hints, red glow, partner drags
 ├─ client/screens.tsx       # Lobby, Unpack, Clear (polaroid), Finish (album)

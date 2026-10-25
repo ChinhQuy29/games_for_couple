@@ -3,8 +3,10 @@
 ## World
 
 - **Layout:** each room is a front view (a dollhouse cut-away) of 1600 × 900 world units. The floor starts at y = 760.
-- **Item positions:** an item's position is its **bottom-centre**, and its size comes from `KINDS` (43 kinds).
+- **Item positions:** an item's position is its **bottom-centre**.
+- **Item sizes:** each item is drawn at its `KINDS` size (43 kinds) and shown `ITEM_SCALE` (1.4×) bigger. `sizeOf(kind)` gives the size in the room, which the server uses for clamping and the tests use for bounds.
 - **Furniture:** scenery only, `{type, x, y, w, h}`. The top edge `y` is the surface things rest on.
+- **Decoration:** some furniture types are decoration only: curtains around windows, fairy-light garlands, wall art, floor lamps, big plants, a suitcase, a tiled backsplash and a pendant lamp. Each room also has a wallpaper `pattern` (dots, stripes, tiles or hearts) and a baseboard.
 - **Slots:** `{x, y, kind, owner?}` mark where items belong.
 - **Boxes:** each room has two box lists of 6 kinds, one per player. The slot kinds match the box contents exactly (a test checks this).
 - **Room 1** puts an `owner` on every slot, so your pillow only counts on your own bed.
@@ -42,5 +44,4 @@
 
 ## Ideas for later
 
-- Bigger items, more decoration per room. The rooms read a little sparse at full size.
 - Sounds (box rustle, snap pop), a "both hands on it" heavy item, and personal items (your photos, her favourite things).
