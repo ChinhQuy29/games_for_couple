@@ -9,6 +9,7 @@
 @source '../../kit/client';
 @source '../../games/number-rush/client';
 @source '../../games/bomb-squad/client';
+@source '../../games/kitchen-chaos/client';
 
 /* ---------- theme tokens (shared by the portal and every game) ---------- */
 :root {

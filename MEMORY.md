@@ -18,6 +18,7 @@ A portal of silly, real-time two-player web games for a long-distance couple. Ea
 - **Game #6: Hide and Seek** (prop hunt) at `/hns`, in `games/hide-and-seek/` (package `@gfc/hns`). Docs: [README](games/hide-and-seek/README.md), [spec](games/hide-and-seek/docs/spec.md).
 - **Game #7: Number Rush** at `/rush`, in `games/number-rush/` (`@gfc/rush`), the first game on the shared **kit** (`kit/`, `@gfc/kit`).
 - **Game #8: Bomb Squad** (co-op, KTANE-style) at `/bomb`, in `games/bomb-squad/` (`@gfc/bomb`). The first of 5 co-op games planned in [docs/coop-games-plan.md](docs/coop-games-plan.md).
+- **Game #9: Kitchen Chaos** (co-op, Overcooked-style) at `/kitchen`, in `games/kitchen-chaos/` (`@gfc/kitchen`).
 - **GitHub:** https://github.com/ChinhQuy29/games_for_couple (branch `main`).
 
 ## Current status (2026-10-24)
@@ -103,6 +104,14 @@ To add a game, follow "Adding a game" in the root README: make a `games/<id>/` p
 ---
 
 ## Log
+
+### 2026-10-25: Kitchen Chaos
+- **Design:** click-only (no walking), so it works on trackpads. Prep side (crates, 2 boards, trash), the pass (3 slots), cook side (3 stoves, plates, 2 counters, serve, trash). One item or plate in hand. Both players see the whole kitchen.
+- **Rules:** 7 recipes over 3 levels; chop = 5 clicks; cook 7s, burn 8s later; coins = 10 per part + up to 10 tip; walk-out −10 (floor 0); stars per level; sides swap each shift.
+- **Server wake-ups** include stove done/burn times, so burns are counted even if nobody clicks.
+- **Client:** station tiles use container-query units (`cqw`) so they scale with the panel.
+- 10 tests. Play-tested in two tabs: a burger from crate to coins, cooking and burning, walk-outs, a full 3-minute shift to the summary.
+- **Gotcha:** while the browser pane is hidden, framer-motion exit animations don't finish, so old tickets linger on screen. That's a test-environment artifact only.
 
 ### 2026-10-25: Co-op plan + Bomb Squad
 - **Research:** read up on popular co-op Steam games (Keep Talking and Nobody Explodes, Overcooked 2, It Takes Two, PEAK, Chained Together, Phasmophobia, Lethal Company, Pico Park, The Chameleon). Picked 5 to adapt for two players on laptops; the plan with sources is [docs/coop-games-plan.md](docs/coop-games-plan.md).

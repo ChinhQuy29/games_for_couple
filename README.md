@@ -14,6 +14,7 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 | 🙈 **Hide and Seek** | `/hns` | Prop hunt for two: one turns into a lamp, a cushion or a duck and hides in a room full of real ones; the other gets 5 shots to find the fake. | Laptop (mouse/trackpad) | [README](games/hide-and-seek/README.md) · [spec](games/hide-and-seek/docs/spec.md) |
 | 🔢 **Number Rush** | `/rush` | 1 to 100 on one board: race to click the next number first. Ascending, descending or random order. | Laptop (mouse/trackpad) | [README](games/number-rush/README.md) · [spec](games/number-rush/docs/spec.md) |
 | 💣 **Bomb Squad** | `/bomb` | One of you sees a ticking bomb, the other has the defusal manual. Talk fast: wires, a big button, symbols, Simon Says, passwords. Co-op. | Laptop + a call | [README](games/bomb-squad/README.md) · [spec](games/bomb-squad/docs/spec.md) |
+| 🍳 **Kitchen Chaos** | `/kitchen` | One preps, one cooks, and the only way across is the pass. Chop, cook, plate and serve the tickets before customers walk out. Don't burn anything. Co-op. | Laptop (mouse/trackpad) | [README](games/kitchen-chaos/README.md) · [spec](games/kitchen-chaos/docs/spec.md) |
 | 🎨 Blind Portrait Duel · 🕹️ Two-Body Problem | | Coming soon | | |
 
 ### ✍️ Finish My Sentence
@@ -74,6 +75,13 @@ Silly real-time games for couples who are far apart. Each of you plays on your o
 - **Modules:** wires, the button (tap or hold, release on the right digit), symbols, Simon Says and passwords, with rules that depend on the serial number and batteries. Three strikes or the timer ends it.
 - **Built with:** the shared kit, on the Socket.IO namespace `/bomb`. The server never sends the armed bomb to the Expert.
 
+### 🍳 Kitchen Chaos
+
+- **Setup:** 2 players, 3-minute shifts, co-op. Three levels with 3 to 7 recipes (salad, burger, soup, sushi, taco, omelette, fried rice).
+- **Sides:** the prep cook has the crates and chopping boards; the cook has the stoves, plates and serving window. Hand things over through the pass. Sides swap every shift.
+- **Cooking:** chop with 5 clicks; stoves cook in 7s and burn 8s later. Serve exact dishes for coins plus a speed tip; walk-outs cost coins. ⭐ to ⭐⭐⭐ per shift.
+- **Built with:** the shared kit, on the Socket.IO namespace `/kitchen`. The server owns every item and timer.
+
 ## Run it locally
 
 Requires Node 20+.
@@ -92,7 +100,7 @@ npm run build
 npm start
 ```
 
-Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb` or `/jjinja` to go straight into a game:
+Then, in another terminal, expose it with a free Cloudflare tunnel. This prints an `https://….trycloudflare.com` link to send; add `/fms`, `/doodle`, `/wyr`, `/aog`, `/hns`, `/rush`, `/bomb`, `/kitchen` or `/jjinja` to go straight into a game:
 
 ```bash
 cloudflared tunnel --url http://localhost:3001
@@ -122,7 +130,8 @@ games/
 ├─ aog-trivia/           # @gfc/aog: client/, server/, shared/, docs/, README.md
 ├─ hide-and-seek/        # @gfc/hns: client/, server/, shared/, docs/, README.md
 ├─ number-rush/          # @gfc/rush: built on the kit
-└─ bomb-squad/           # @gfc/bomb: co-op bomb defusal, built on the kit
+├─ bomb-squad/           # @gfc/bomb: co-op bomb defusal, built on the kit
+└─ kitchen-chaos/        # @gfc/kitchen: co-op cooking, built on the kit
 kit/                     # @gfc/kit: rooms, sockets, lobby, timers and UI pieces shared by newer games
 client/                  # the portal: home page, routing, shared theme (styles.css)
 server/                  # the one server: serves the portal and mounts every game

@@ -30,6 +30,16 @@ export const GAMES: GameInfo[] = [
     minutes: '10–20 min',
   },
   {
+    id: 'kitchen',
+    title: 'Kitchen Chaos',
+    emoji: '🍳',
+    tagline: 'One preps, one cooks, orders keep coming. Something is on fire.',
+    path: '/kitchen',
+    status: 'playable',
+    accent: 'mint',
+    minutes: '10–15 min',
+  },
+  {
     id: 'jjinja',
     title: 'Jjinja Battle',
     emoji: '🎤',

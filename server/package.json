@@ -14,6 +14,7 @@
     "@gfc/fms": "*",
     "@gfc/hns": "*",
     "@gfc/jjinja": "*",
+    "@gfc/kitchen": "*",
     "@gfc/kit": "*",
     "@gfc/rush": "*",
     "@gfc/wyr": "*",
